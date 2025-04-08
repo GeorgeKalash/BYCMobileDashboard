@@ -14,7 +14,7 @@ export const LogoWrapper = () => {
     <>
       <div className="logo-wrapper">
         <Link href={`/${i18LangStatus}/dashboard/default_dashboard`}>
-          <img className="img-fluid" src={`${ImagePath}/logo/logo_light.png`} alt="" />
+          <img className="img-fluid" src={`${ImagePath}/logo/شعار-بن-يعلا-شركة-مساهمة-مقفلة.png`} alt="" />
         </Link>
         <div className="back-btn" onClick={() => dispatch(handleResponsiveToggle())}>
           <i className="fa fa-angle-left"></i>
