@@ -1,4 +1,4 @@
-import { CreateAccount, DontHaveAccount, EmailAddressLogIn, OrSignInWith, Password, RememberPassword, SignIn, SignInToAccount } from "@/Constant";
+import { EmailAddressLogIn, OrSignInWith, Password, RememberPassword, SignIn, SignInToAccount } from "@/Constant";
 import { useAppSelector } from "@/Redux/Hooks";
 import Cookies from "js-cookie";
 import Link from "next/link";
@@ -60,10 +60,6 @@ export const UserForm = () => {
               <Button color="primary" block className="w-100" onClick={formSubmitHandle}>{SignIn}</Button>
             </div>
           </FormGroup>
-          <h6 className="text-muted mt-4 or">{OrSignInWith}</h6>
-          <p className="mt-4 mb-0 text-center">{DontHaveAccount}
-            <Link className="ms-2" href={`/${i18LangStatus}/authentication/registersimple`}>{CreateAccount}</Link>
-          </p>
         </Form>
       </div>
     </div>
