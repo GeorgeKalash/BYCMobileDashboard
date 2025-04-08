@@ -1,5 +1,4 @@
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
-import { SmallProgressBars } from "@/Constant";
 import { SmallProgressData, SmallProgressList } from "@/Data/Uikits/progress";
 import { Row, Col, Card, Progress, CardBody } from "reactstrap";
 
@@ -7,7 +6,7 @@ export const SmallProgressBarsCart = () => {
   return (
     <Col xl="6">
       <Card className="height-equal">
-        <CommonCardHeader title={SmallProgressBars} span={SmallProgressData} />
+        <CommonCardHeader title='SmallProgressBars' span={SmallProgressData} />
         <CardBody className="progress-showcase progress-b-space">
           <Row>
             <Col>

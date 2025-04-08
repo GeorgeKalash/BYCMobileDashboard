@@ -1,4 +1,4 @@
-import { AgeWizard, BirthdayWizard, EnterYourEmailPasswordToLoginWizard, HavePassport, SignUpToAccount } from "@/Constant";
+import {  EnterYourEmailPasswordToLoginWizard } from "@/Constant";
 import { RegisterWizardForm } from "@/Types/AuthType";
 import { FormGroup, Input, Label } from "reactstrap";
 
@@ -8,21 +8,21 @@ const MessageForm:React.FC<RegisterWizardForm> = ({formValue,getUserData}) => {
   return (
     <div id="step-3" className="content">
     <div className="wizard-title">
-      <h2>{SignUpToAccount}</h2>
+      <h2>SignUpToAccount</h2>
       <h5 className="text-muted mb-4">{EnterYourEmailPasswordToLoginWizard}</h5>
     </div>
     <div className="login-main">
       <div className="theme-form">
         <FormGroup className="mb-3">
-          <Label htmlFor="exampleFormControlInput1" check>{BirthdayWizard}</Label>
+          <Label htmlFor="exampleFormControlInput1" check>BirthdayWizard</Label>
           <Input onChange={getUserData} value={birthDate} type="date" name="birthDate"  />
         </FormGroup>
         <FormGroup className="mb-3">
-          <Label className="control-label" check>{AgeWizard}</Label>
+          <Label className="control-label" check>AgeWizard</Label>
           <Input onChange={getUserData} value={age} placeholder="Age" type="text" name="age"  />
         </FormGroup>
         <FormGroup className="mb-3">
-          <Label className="control-label" check>{HavePassport}</Label>
+          <Label className="control-label" check>HavePassport</Label>
           <Input onChange={getUserData} value={passPort} placeholder="Yes/No" type="text" name="passPort" />
         </FormGroup>
       </div>

@@ -6,7 +6,6 @@ import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 
 const DefaultCalendar = () => {
   const [dateValue, setDateValue] = useState<Date>(new Date());
-  const date = `${dateValue.getDate()} - ${dateValue.getMonth() + 1} - ${dateValue.getFullYear()} `
 
   return (
     <Col xl="6">

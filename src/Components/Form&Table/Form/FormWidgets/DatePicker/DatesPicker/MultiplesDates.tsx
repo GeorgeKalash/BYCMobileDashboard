@@ -4,7 +4,7 @@ import { Col, InputGroup, Label, Row } from "reactstrap";
 import { MultiplesDatesHeading } from "@/Constant";
 
 export const MultiplesDates = () => {
-  const [value, setValue] = useState<DateObject | DateObject[] | null>(new DateObject());
+  const [value, setValue] = useState<DateObject[]>([new DateObject()]);
 
   return (
     <Row>
@@ -13,7 +13,13 @@ export const MultiplesDates = () => {
       </Col>
       <Col xxl="9" className="box-col-12">
         <InputGroup className="flatpicker-calender">
-          <DatePicker monthYearSeparator="::" inputClass="form-control" multiple value={value} onChange={setValue} />
+          <DatePicker
+            monthYearSeparator="::"
+            inputClass="form-control"
+            multiple
+            value={value}
+            onChange={setValue}
+          />
         </InputGroup>
       </Col>
     </Row>

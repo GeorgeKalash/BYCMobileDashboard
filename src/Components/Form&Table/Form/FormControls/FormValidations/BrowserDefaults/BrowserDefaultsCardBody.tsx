@@ -1,5 +1,5 @@
 import { Button, CardBody, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
-import { AgreeToThePolicies, ChooseFile, Description, EmailAddress, EmailPlaceholder, FirstName, FirstNamePlaceholder, PasswordBrowserDefault, SelectYourPaymentMethod, State, StateChoose, SubmitButton, SureInformation } from "@/Constant";
+import { AgreeToThePolicies, ChooseFile, EmailAddress, EmailPlaceholder, FirstName, FirstNamePlaceholder, PasswordBrowserDefault, SelectYourPaymentMethod, State, StateChoose, SubmitButton, SureInformation } from "@/Constant";
 import { BrowserRadioList, BrowserStateList } from "@/Data/Form&Table/Form";
 
 export const BrowserDefaultsCardBody = () => {
@@ -57,7 +57,7 @@ export const BrowserDefaultsCardBody = () => {
           </Col>
           <Col sm="12">
             <FormGroup>
-              <Label>{Description}</Label>
+              <Label>Description</Label>
               <Input type="textarea" rows={3} />
             </FormGroup>
           </Col>

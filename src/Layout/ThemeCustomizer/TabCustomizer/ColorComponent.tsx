@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Apply, UnlimitedColor } from '@/Constant';
+import { UnlimitedColor } from '@/Constant';
 import { Button, Input } from 'reactstrap';
 import { useAppDispatch, useAppSelector } from '@/Redux/Hooks';
 import ConfigDB from '@/Config/ThemeConfig';
@@ -42,7 +42,7 @@ const ColorComponent = () => {
         <ul className="layout-grid unlimited-color-layout">
           <Input className="p-0" type="color" name="Color-Background1" value={colorBackground1} onChange={(e) => handleUnlimitedColor1Change(e)}/>
           <Input className="p-0" type="color" name="Color-Background2" value={colorBackground2} onChange={(e) => handleUnlimitedColor2Change(e)}/>
-          <Button color="primary" className="color-apply-btn color-apply-btn" onClick={OnUnlimitedColorClick}>{Apply}</Button>
+          <Button color="primary" className="color-apply-btn color-apply-btn" onClick={OnUnlimitedColorClick}>Apply</Button>
         </ul>
       </>
     );

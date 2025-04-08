@@ -1,4 +1,3 @@
-import { DateLearning } from "@/Constant";
 
 const BlogDetails = () => {
   const DetailedCourseParagraph1 = `Knowledge can be defined as awareness of facts or as practical skills, and may also refer to familiarity with objects or situations. Knowledge of facts, also called propositional knowledge, is often defined as true belief that is distinct from opinion or guesswork by virtue of justification. While there is wide agreement among philosophers that it is a form of true belief, many controversies in philosophy focus on justification: whether it is needed at all, how to understand it, and whether something else besides it is needed.`;
@@ -8,7 +7,7 @@ const BlogDetails = () => {
   return (
     <div className="blog-details">
       <ul className="blog-social d-block">
-        <li className="rounded-0">{DateLearning}</li>
+        <li className="rounded-0">'DateLearning'</li>
         <li><i className="icofont icofont-user" />Mark <span>Jecno </span></li>
         <li><i className="icofont icofont-thumbs-up" />02 <span>Hits </span></li>
         <li><i className="icofont icofont-ui-chat" />Comments</li>

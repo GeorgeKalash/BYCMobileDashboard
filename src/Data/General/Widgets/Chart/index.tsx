@@ -347,11 +347,11 @@ export const SkillChart: ApexOptions = {
     labels: {
       colors: "#2C323F",
     },
-    markers: {
-      width: 86,
-      height: 18,
-      radius: 3,
-    },
+    // markers: {
+    //   width: 86,
+    //   height: 18,
+    //   radius: 3,
+    // },
   },
   colors: [secondary, primary, "#51bb25"],
   responsive: [

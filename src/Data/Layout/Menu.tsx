@@ -6,31 +6,31 @@ export const MenuList: MenuItem[] | undefined = [
     lanClass: "lan-1",
     menucontent: "Dashboards,Widgets",
     Items: [
-      {
-        title: "Dashboards",
-        id: 1,
-        icon: "home",
-        type: "sub",
-        lanClass: "lan-3",
-        children: [
-          { path: "/dashboard/default_dashboard", title: "Default", type: "link", lanClass: "lan-4" },
-          { path: "/dashboard/project", title: "Project", type: "link", lanClass: "lan-5" },
-          { path: "/dashboard/ecommerce", title: "Ecommerce", type: "link" },
-          { path: "/dashboard/education", title: "Education", type: "link" },
-        ],
-      },
-      {
-        title: "Widgets",
-        id: 2,
-        icon: "widget",
-        type: "sub",
-        lanClass: "lan-6",
-        active: false,
-        children: [
-          { path: "/widgets/general", title: "General", type: "link" },
-          { path: "/widgets/chart", title: "Chart", type: "link" },
-        ],
-      },
+      // {
+      //   title: "Dashboards",
+      //   id: 1,
+      //   icon: "home",
+      //   type: "sub",
+      //   lanClass: "lan-3",
+      //   children: [
+      //     { path: "/dashboard/default_dashboard", title: "Default", type: "link", lanClass: "lan-4" },
+      //     { path: "/dashboard/project", title: "Project", type: "link", lanClass: "lan-5" },
+      //     { path: "/dashboard/ecommerce", title: "Ecommerce", type: "link" },
+      //     { path: "/dashboard/education", title: "Education", type: "link" },
+      //   ],
+      // },
+      // {
+      //   title: "Widgets",
+      //   id: 2,
+      //   icon: "widget",
+      //   type: "sub",
+      //   lanClass: "lan-6",
+      //   active: false,
+      //   children: [
+      //     { path: "/widgets/general", title: "General", type: "link" },
+      //     { path: "/widgets/chart", title: "Chart", type: "link" },
+      //   ],
+      // },
     ],
   },
   {
@@ -60,17 +60,17 @@ export const MenuList: MenuItem[] | undefined = [
           { path: "/ecommerce/checkout", title: "Checkout", type: "link" },
         ],
       },
-      {
-        title: "Users",
-        icon: "user",
-        type: "sub",
-        active: false,
-        children: [
-          { path: "/users/edit_profile", type: "link", title: "User Edit" },
-        ],
-      },
-      { path: "/app/todo_app", icon: "to-do", type: "link", title: "Todo" },
-      { path: "/app/search_website", icon: "search", type: "link", title: "Search Result" },
+      // {
+      //   title: "Users",
+      //   icon: "user",
+      //   type: "sub",
+      //   active: false,
+      //   children: [
+      //     { path: "/users/edit_profile", type: "link", title: "User Edit" },
+      //   ],
+      // },
+      // { path: "/app/todo_app", icon: "to-do", type: "link", title: "Todo" },
+      // { path: "/app/search_website", icon: "search", type: "link", title: "Search Result" },
     ],
   },
   {
@@ -90,9 +90,9 @@ export const MenuList: MenuItem[] | undefined = [
             children: [
               { path: "/forms/form_controls/validation_form", title: "Form Validation", type: "link" },
               { path: "/forms/form_controls/base_input", title: "Base Inputs", type: "link" },
-              { path: "/forms/form_controls/radio_&_checkbox", title: "Checkbox & Radio", type: "link" },
+              // { path: "/forms/form_controls/radio_&_checkbox", title: "Checkbox & Radio", type: "link" },
               { path: "/forms/form_controls/input_groups", title: "Input Groups", type: "link" },
-              { path: "/forms/form_controls/input_mask", title: "Input Mask", type: "link" },
+              // { path: "/forms/form_controls/input_mask", title: "Input Mask", type: "link" },
               { path: "/forms/form_controls/mega_option", title: "Mega Option", type: "link" },
             ],
           },
@@ -102,16 +102,16 @@ export const MenuList: MenuItem[] | undefined = [
             children: [
               { path: "/forms/form_widget/datepicker", title: "Datepicker", type: "link" },
               { path: "/forms/form_widget/switch", title: "Switch", type: "link" },
-              { path: "/forms/form_widget/typeahead", title: "Typeahead", type: "link" },
+              // { path: "/forms/form_widget/typeahead", title: "Typeahead", type: "link" },
             ],
           },
-          {
-            title: "Form Layout",
-            type: "sub",
-            children: [
-              { path: "/forms/form_layout/two_factor", title: "Two Factor", type: "link" },
-            ],
-          },
+          // {
+          //   title: "Form Layout",
+          //   type: "sub",
+          //   children: [
+          //     { path: "/forms/form_layout/two_factor", title: "Two Factor", type: "link" },
+          //   ],
+          // },
         ],
       },
 
@@ -209,18 +209,18 @@ export const MenuList: MenuItem[] | undefined = [
         id: 25,
         type: "sub",
         children: [
-          {
-            title: "Error Pages",
-            type: "sub",
-            children: [
-              { path: "/others/errors/error400", title: "Error 400", type: "link" },
-              { path: "/others/errors/error401", title: "Error 401", type: "link" },
-              { path: "/others/errors/error403", title: "Error 403", type: "link" },
-              { path: "/others/errors/error404", title: "Error 404", type: "link" },
-              { path: "/others/errors/error500", title: "Error 500", type: "link" },
-              { path: "/others/errors/error503", title: "Error 503", type: "link" },
-            ],
-          },
+          // {
+          //   title: "Error Pages",
+          //   type: "sub",
+          //   children: [
+          //     { path: "/others/errors/error400", title: "Error 400", type: "link" },
+          //     { path: "/others/errors/error401", title: "Error 401", type: "link" },
+          //     { path: "/others/errors/error403", title: "Error 403", type: "link" },
+          //     { path: "/others/errors/error404", title: "Error 404", type: "link" },
+          //     { path: "/others/errors/error500", title: "Error 500", type: "link" },
+          //     { path: "/others/errors/error503", title: "Error 503", type: "link" },
+          //   ],
+          // },
           {
             title: "Authentication",
             type: "sub",

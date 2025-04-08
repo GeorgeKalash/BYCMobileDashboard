@@ -35,7 +35,7 @@ export interface CommonCardHeadingPropsType {
   span2?: string;
 }
 
-export interface CommonButtonsToolTip {
+export interface CommonButtonToolTip {
   toolTipText: string;
   id: string;
 }
