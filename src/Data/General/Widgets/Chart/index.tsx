@@ -1549,6 +1549,7 @@ export const OrderStatusChart:ApexOptions = {
     animations: {
       enabled: true,
       // easing: "linear",
+      
       dynamicAnimation: {
         speed: 1000,
       },
