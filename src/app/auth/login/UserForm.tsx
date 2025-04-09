@@ -48,7 +48,7 @@ export const UserForm = () => {
   }
 
   return (
-    <div>
+    <div style={{ paddingBottom: '150px' }}>
       <div>
         <Link className="logo" href={`/${i18LangStatus}/dashboard/default_dashboard`}>
           <img className="img-fluid for-light" src={imageOne.src} alt="login page" />
