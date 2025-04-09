@@ -54,6 +54,7 @@ export const UserForm = () => {
           <img className="img-fluid for-light" src={imageOne.src} alt="login page" />
           <img className="img-fluid for-dark" src={imageTwo.src} alt="login page" />
         </Link>
+        
       </div>
       <div className="login-main">
         <Formik
