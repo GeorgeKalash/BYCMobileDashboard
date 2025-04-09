@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
-import SHA1 from 'crypto-js/sha1'
+import { SHA1 } from 'crypto-js'
+import jwtDecode from 'jwt-decode'
 
 interface User {
   accountId: string
@@ -11,6 +12,7 @@ interface User {
   employeeId: string
   fullName: string
   dashboardId: string
+  expiresAt: number
   role: string
   accessToken: string
   refreshToken: string
@@ -100,6 +102,7 @@ export const login = createAsyncThunk(
       }
 
       const accessToken = signIn3.data.record.accessToken
+      const decoded: any = jwtDecode(accessToken)
 
       const user: User = {
         accountId: getAC.accountId,
@@ -112,12 +115,14 @@ export const login = createAsyncThunk(
         dashboardId: getUS2.data.record.dashboardId,
         role: 'admin',
         accessToken,
-        refreshToken: signIn3.data.record.refreshToken
+        refreshToken: signIn3.data.record.refreshToken,
+        expiresAt: decoded.exp
       }
 
       window.sessionStorage.setItem('userData', JSON.stringify(user))
       window.localStorage.setItem('languageId', String(user.languageId))
       document.cookie = `access_token=${user.accessToken}; path=/;`
+      window.location.replace('/en/dashboard/default_dashboard')
 
       return user
     } catch (err: any) {
@@ -136,6 +141,7 @@ export const authSlice = createSlice({
       window.localStorage.removeItem('userData')
       window.sessionStorage.removeItem('userData')
       document.cookie = "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;"
+      window.location.replace("/auth/login");
     },
     setLanguageId(state, action: PayloadAction<number>) {
       state.languageId = action.payload

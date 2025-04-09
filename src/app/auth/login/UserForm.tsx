@@ -3,7 +3,6 @@
 import { EmailAddressLogIn, Password, RememberPassword, SignIn, SignInToAccount } from "@/Constant"
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button, FormGroup, Input, Label } from "reactstrap"
 import imageOne from "../../../../public/assets/images/logo/logo.png"
@@ -20,7 +19,6 @@ export const UserForm = () => {
   const centeredToggle = () => setCentered(!centred)
 
   const dispatch = useAppDispatch()
-  const router = useRouter()
 
   const [show, setShow] = useState(false)
 
@@ -40,17 +38,13 @@ export const UserForm = () => {
   })
 
   const onSubmit = async (values: typeof initialValues) => {
-    const resultAction = await dispatch(
+     await dispatch(
       login({
         username: values.email,
         password: values.password,
         onError: () => centeredToggle(),
       })
     )
-
-    if (login.fulfilled.match(resultAction)) {
-      router.push(`/${i18LangStatus}/dashboard/default_dashboard`)
-    }
   }
 
   return (
@@ -111,7 +105,6 @@ export const UserForm = () => {
           )}
         </Formik>
       </div>
-
       <CenteredModal
         isOpen={centred}
         toggle={centeredToggle}

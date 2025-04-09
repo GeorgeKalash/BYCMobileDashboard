@@ -12,8 +12,6 @@ export const Profile = () => {
 
   const LogOutUser = () => {
     dispatch(logout());
-    toast.success("Logout successful");
-    router.push("/auth/login");
   };
   
 
