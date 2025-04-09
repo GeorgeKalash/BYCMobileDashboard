@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { SHA1 } from 'crypto-js'
+import { encryptePWD } from './Encryption'
 import jwtDecode from 'jwt-decode'
 
 interface User {
@@ -36,19 +36,6 @@ const initialState: AuthState = {
   languageId: 1,
   apiUrl: '',
   errorMessage: ''
-}
-
-const encryptePWD = (pwd: string): string => {
-  const encryptedPWD = SHA1(pwd).toString()
-  let shuffledString = ''
-  for (let i = 0; i < encryptedPWD.length; i += 8) {
-    const sub = encryptedPWD.slice(i, i + 8)
-    shuffledString += sub.charAt(6) + sub.charAt(7)
-    shuffledString += sub.charAt(4) + sub.charAt(5)
-    shuffledString += sub.charAt(2) + sub.charAt(3)
-    shuffledString += sub.charAt(0) + sub.charAt(1)
-  }
-  return shuffledString.toUpperCase()
 }
 
 export const fetchAC = createAsyncThunk('auth/fetchAC', async (_, { rejectWithValue }) => {
