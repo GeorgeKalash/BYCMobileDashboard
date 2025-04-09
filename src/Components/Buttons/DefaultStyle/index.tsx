@@ -24,6 +24,7 @@ const DefaultStyleContainer = () => {
           <CommonButtons commonButtonsData={OutlineExtraSmallButtonsData} title={OutlineExtraSmallButtonsHeading} subTitle={OutlineExtraSmallButtonsHeadingData} />
           <CommonButtons commonButtonsData={OutlineDisabledButtonsData} title={DisabledOutlineButtonsHeading} subTitle={DisabledOutlineButtonsHeadingData} />
           <CommonButtons commonButtonsData={GradientButtonsData} title={GradientButtonsHeading} subTitle={GraddienButtonsHeadingData} />
+          
         </Col>
       </Row>
     </Container>
