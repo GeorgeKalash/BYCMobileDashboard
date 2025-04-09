@@ -523,24 +523,24 @@ export const OrderChart: ApexOptions = {
   tooltip: {
     enabled: false,
   },
-  states: {
-    normal: {
-      filter: {
-        type: "none",
-      },
-    },
-    hover: {
-      filter: {
-        type: "none",
-      },
-    },
-    active: {
-      allowMultipleDataPointsSelection: false,
-      filter: {
-        type: "none",
-      },
-    },
-  },
+  // states: {
+  //   normal: {
+  //     filter: {
+  //       type: "none",
+  //     },
+  //   },
+  //   hover: {
+  //     filter: {
+  //       type: "none",
+  //     },
+  //   },
+  //   active: {
+  //     allowMultipleDataPointsSelection: false,
+  //     filter: {
+  //       type: "none",
+  //     },
+  //   },
+  // },
   responsive: [
     {
       breakpoint: 405,

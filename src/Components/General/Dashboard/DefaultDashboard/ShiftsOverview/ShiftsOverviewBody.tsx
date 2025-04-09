@@ -1,14 +1,10 @@
 import { CardBody, Col, Row } from "reactstrap";
-import ReactApexChart from "react-apexcharts";
-import { ShiftsOptionChart, ShiftsOverviewData } from "@/Data/General/Dashboard/DefaultDashboard";
+import { ShiftsOverviewData } from "@/Data/General/Dashboard/DefaultDashboard";
 
 const ShiftsOverviewBody = () => {
   return (
     <CardBody>
       <Row>
-        <Col xs="5">
-          <ReactApexChart className="overview" id="shifts-overview" options={ShiftsOptionChart} series={ShiftsOptionChart.series} height={200} type="donut" />
-        </Col>
         <Col xs="7" className="shifts-overview">
           {ShiftsOverviewData.map((data, index) => (
             <div className="d-flex gap-2" key={index}>
