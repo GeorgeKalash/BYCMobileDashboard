@@ -593,11 +593,11 @@ export const VisitorChartData: ApexOptions = {
     labels: {
       colors: "var(--chart-text-color)",
     },
-    markers: {
-      width: 6,
-      height: 6,
-      radius: 12,
-    },
+    // markers: {
+    //   width: 6,
+    //   height: 6,
+    //   radius: 12,
+    // },
     itemMargin: {
       horizontal: 10,
     },

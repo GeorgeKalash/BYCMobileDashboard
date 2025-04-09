@@ -1,5 +1,5 @@
 import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap'
-import { Address, AddressRequired, CheckMeOut, CheckoutRequired, CityRequired, Country, EmailAddress, EmailRequired, FirstName, FirstNameRequired, LastName, LastNameRequired, Phone, PhoneRequired, PincodeRequired, PlaceOrder, PostalCode, StateCountry, StateRequired, TownCity } from '@/Constant'
+import { AddressRequired, CheckMeOut, CheckoutRequired, CityRequired, EmailAddress, EmailRequired, FirstName, FirstNameRequired, LastName, LastNameRequired, Phone, PhoneRequired, PincodeRequired, PlaceOrder, StateCountry, StateRequired, TownCity } from '@/Constant'
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/Redux/Hooks';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -53,14 +53,14 @@ const CheckoutForm = () => {
           </Col>
         </Row>
         <FormGroup>
-          <Label for="inputState" check>{Country}</Label>
+          <Label for="inputState" check>Country</Label>
           <Input type="select" id="inputState" defaultValue={"Choose..."}>
             <option>Choose...</option>
             <option>...</option>
           </Input>
         </FormGroup>
         <FormGroup>
-          <Label for="inputAddress5" check>{Address}</Label>
+          <Label for="inputAddress5" check>Address</Label>
           <input className="form-control" type="text" {...register("address", { required: true, min: 20, max: 120 })} />
           {errors.address && <span className="txt-danger">{AddressRequired}</span>}
         </FormGroup>
@@ -75,7 +75,7 @@ const CheckoutForm = () => {
           {errors.state && <span className="txt-danger">{StateRequired}</span>}
         </FormGroup>
         <FormGroup>
-          <Label for="inputAddress6" check>{PostalCode}</Label>
+          <Label for="inputAddress6" check>PostalCode</Label>
           <input className="form-control" type="text" {...register("pincode", { pattern: /\d+/ })} />
           {errors.pincode && <span className="txt-danger">{PincodeRequired}</span>}
         </FormGroup>

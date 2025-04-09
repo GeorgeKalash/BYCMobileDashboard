@@ -102,64 +102,64 @@ export const GrowthChart: ApexOptions = {
   },
 };
 
-export const ShiftsOptionChart: ApexOptions = {
-  labels: ["Shoes", "Grocery", "other", "other"],
-  series: [30, 25, 35, 55],
-  chart: {
-    type: "donut",
-    height: 200,
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  legend: {
-    show: false,
-  },
-  stroke: {
-    width: 6,
-  },
-  plotOptions: {
-    pie: {
-      expandOnClick: false,
-      donut: {
-        size: "83%",
-        labels: {
-          show: true,
-          name: {
-            offsetY: 4,
-          },
-          total: {
-            show: true,
-            fontSize: "20px",
-            fontFamily: "Outfit', sans-serif",
-            fontWeight: 600,
-            label: "$ 34,098",
-            formatter: () => "Total Overviewt",
-          },
-        },
-      },
-    },
-  },
-  states: {
-    normal: {
-      filter: {
-        type: "none",
-      },
-    },
-    hover: {
-      filter: {
-        type: "none",
-      },
-    },
-    active: {
-      allowMultipleDataPointsSelection: false,
-      filter: {
-        type: "none",
-      },
-    },
-  },
-  colors: ["#48A3D7", "#D77748", "#C95E9E", "#7A70BA"],
-};
+// export const ShiftsOptionChart: ApexOptions = {
+//   labels: ["Shoes", "Grocery", "other", "other"],
+//   series: [30, 25, 35, 55],
+//   chart: {
+//     type: "donut",
+//     height: 200,
+//   },
+//   dataLabels: {
+//     enabled: false,
+//   },
+//   legend: {
+//     show: false,
+//   },
+//   stroke: {
+//     width: 6,
+//   },
+//   plotOptions: {
+//     pie: {
+//       expandOnClick: false,
+//       donut: {
+//         size: "83%",
+//         labels: {
+//           show: true,
+//           name: {
+//             offsetY: 4,
+//           },
+//           total: {
+//             show: true,
+//             fontSize: "20px",
+//             fontFamily: "Outfit', sans-serif",
+//             fontWeight: 600,
+//             label: "$ 34,098",
+//             formatter: () => "Total Overviewt",
+//           },
+//         },
+//       },
+//     },
+//   },
+//   states: {
+//     normal: {
+//       filter: {
+//         type: "none",
+//       },
+//     },
+//     hover: {
+//       filter: {
+//         type: "none",
+//       },
+//     },
+//     active: {
+//       allowMultipleDataPointsSelection: false,
+//       filter: {
+//         type: "none",
+//       },
+//     },
+//   },
+//   colors: ["#48A3D7", "#D77748", "#C95E9E", "#7A70BA"],
+// };
 
 export const ShiftsOverviewData = [
   {
@@ -668,7 +668,7 @@ export const SalesChartData: ApexOptions = {
           fillColor: primary,
           strokeColor: "#ffffff",
           strokeWidth: 4,
-          radius: 5,
+          // radius: 5,
         },
         label: {
           borderWidth: 1,

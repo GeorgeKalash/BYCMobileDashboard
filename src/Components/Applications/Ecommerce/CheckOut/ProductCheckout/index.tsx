@@ -1,10 +1,8 @@
 import { Col } from "reactstrap";
-import { PlaceOrder, Products, Subtotal, Total } from "@/Constant";
+import {Products, Subtotal, Total } from "@/Constant";
 import CheckoutShipping from "./CheckoutShipping";
 import CheckPayment from "./CheckPayment";
 import { useAppSelector } from "@/Redux/Hooks";
-import { getCartTotal, getallCardTotal } from "@/utils/Ecommerce.service";
-import Link from "next/link";
 
 const ProductCheckout = () => {
   const { i18LangStatus } = useAppSelector((store) => store.langSlice);

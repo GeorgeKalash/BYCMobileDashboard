@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, Form } from "formik";
-import { AgreeCondition, ChooseFiles, City, Description, FirstName, LooksGood, MarkFirstNamePlaceholder, PasswordValidation, PayMethodTitle, SelectThemeTitle, State, SubmitButton, TextAreaPlaceHolder, VISA, Zip } from "@/Constant";
+import { AgreeCondition, ChooseFiles, City, FirstName, LooksGood, MarkFirstNamePlaceholder, PasswordValidation, PayMethodTitle, SelectThemeTitle, State, SubmitButton, TextAreaPlaceHolder, VISA, Zip } from "@/Constant";
 import { Button, Col, FormFeedback, FormGroup, Label, Row } from "reactstrap";
 import { FormValidationsProp } from "@/Types/FormType";
 import { ValidationFormStateList, ValidationRadioList, ValidationStateList } from "@/Data/Form&Table/Form";
@@ -82,7 +82,7 @@ export const FormValidations: React.FC<FormValidationsProp> = ({ errors, submitE
         </Col>
         <Col sm="12">
           <FormGroup>
-            <Label check>{Description}</Label>
+            <Label check>Description</Label>
             <Field as="textarea" name="description" className={`form-control ${submitErrors && `${errors.description ? "is-invalid" : "is-valid"}`}`} placeholder={TextAreaPlaceHolder}></Field>
             <ErrorMessage name="description" className="invalid-feedback" component="span" />
           </FormGroup>

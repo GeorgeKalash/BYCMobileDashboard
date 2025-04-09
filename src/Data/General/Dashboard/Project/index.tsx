@@ -395,7 +395,7 @@ export const ProjectChart: ApexOptions = {
           fillColor: primary,
           strokeColor: "#ffffff",
           strokeWidth: 4,
-          radius: 5,
+          // radius: 5,
         },
         label: {
           borderWidth: 1,
@@ -523,24 +523,24 @@ export const OrderChart: ApexOptions = {
   tooltip: {
     enabled: false,
   },
-  states: {
-    normal: {
-      filter: {
-        type: "none",
-      },
-    },
-    hover: {
-      filter: {
-        type: "none",
-      },
-    },
-    active: {
-      allowMultipleDataPointsSelection: false,
-      filter: {
-        type: "none",
-      },
-    },
-  },
+  // states: {
+  //   normal: {
+  //     filter: {
+  //       type: "none",
+  //     },
+  //   },
+  //   hover: {
+  //     filter: {
+  //       type: "none",
+  //     },
+  //   },
+  //   active: {
+  //     allowMultipleDataPointsSelection: false,
+  //     filter: {
+  //       type: "none",
+  //     },
+  //   },
+  // },
   responsive: [
     {
       breakpoint: 405,

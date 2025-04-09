@@ -19,7 +19,7 @@ export const HtmlColumnData = [
     id: 1,
     cv: (
       <div className="action">
-        <a className="pdf" onClick={handlePDFClick} rel="/assets/images/favicon.png" href="/public/assets/pdf/sample.pdf" target="_blank">
+        <a className="pdf" onClick={handlePDFClick} rel="/assets/images/logo.png" href="/public/assets/pdf/sample.pdf" target="_blank">
           <i className="icofont icofont-file-pdf"> </i>
         </a>
       </div>

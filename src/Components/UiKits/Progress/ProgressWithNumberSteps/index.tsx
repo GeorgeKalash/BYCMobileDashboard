@@ -1,5 +1,4 @@
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
-import { ProgressWithNumberSteps } from "@/Constant";
 import { Col, Card, CardBody, Progress, Button } from "reactstrap";
 import { DynamicProgressWithNumberSteps } from "./DynamicProgressWithNumberSteps";
 import { ProgressNumberData } from "@/Data/Uikits/progress";
@@ -8,7 +7,7 @@ export const ProgressWithNumberStepsCart = () => {
   return (
     <Col xl="6">
       <Card>
-        <CommonCardHeader title={ProgressWithNumberSteps} span={ProgressNumberData} />
+        <CommonCardHeader title='ProgressWithNumberSteps' span={ProgressNumberData} />
         <CardBody className="mb-1">
           <div className="position-relative m-3 progress-number">
             <Progress value="50" className="progress-wrapper" />

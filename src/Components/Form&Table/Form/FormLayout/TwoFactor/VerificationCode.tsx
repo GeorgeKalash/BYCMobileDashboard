@@ -1,4 +1,4 @@
-import { Call, Href, ImagePath, OtpCode, OtpCodeSent, Resend, VerificationCodeHeading, Verify } from "@/Constant";
+import { Call, Href, ImagePath, OtpCode, OtpCodeSent, VerificationCodeHeading, Verify } from "@/Constant";
 import { useState } from "react";
 import { Button, Col, Form, Input, Row } from "reactstrap";
 
@@ -38,7 +38,7 @@ const VerificationCode = () => {
               </Col>
               <div>
                 <span>Not received your code?</span>
-                <span><a href={Href}>{Resend} </a>OR<a href={Href}>{Call}</a></span>
+                <span><a href={Href}>'Resend' </a>OR<a href={Href}>{Call}</a></span>
               </div>
             </Row>
           </Form>

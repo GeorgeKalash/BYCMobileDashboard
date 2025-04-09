@@ -1,5 +1,4 @@
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
-import { MultipleBars } from "@/Constant";
 import { MultipleDta, MultipleList } from "@/Data/Uikits/progress";
 import { Row, Col, Card, Progress, CardBody } from "reactstrap";
 
@@ -7,7 +6,7 @@ export const MultipleBarsCart = () => {
   return (
     <Col xl="6">
       <Card>
-        <CommonCardHeader title={MultipleBars} span={MultipleDta} />
+        <CommonCardHeader title='MultipleBars' span={MultipleDta} />
         <CardBody className="progress-showcase">
           <Row>
             <Col>

@@ -1,6 +1,6 @@
 import { Button, Col, Input, Label, Row } from "reactstrap";
 import { Formik,Form, Field } from "formik";
-import { CheckMeOut, Email, Password, SignIn } from "@/Constant";
+import { CheckMeOut, Password, SignIn } from "@/Constant";
 import { StaticModalToggleProp } from "@/Types/UikitsType";
 
 export const StaticForm:React.FC<StaticModalToggleProp> = ({staticModalToggle}) => {
@@ -10,7 +10,7 @@ export const StaticForm:React.FC<StaticModalToggleProp> = ({staticModalToggle}) 
       <Form>
         <Row className="g-3">
           <Col md="12">
-            <Label check>{Email}</Label>
+            <Label check>Email</Label>
             <Field className="form-control" name="email" type="email" placeholder="Enter Your Email" />
           </Col>
           <Col md="12">

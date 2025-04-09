@@ -1,4 +1,3 @@
-import { Projects } from "@/Constant";
 import { ProjectsTableData } from "@/Data/General/Dashboard/DefaultDashboard";
 import { useMemo, useState } from "react";
 import { Card, CardBody, Col, Table } from "reactstrap";
@@ -23,7 +22,7 @@ const ProjectsTable = () => {
   return (
     <Col xl="7" className="proorder-xl-5 box-col-7 proorder-md-5">
       <Card>
-        <DashboardCommonHeader title={Projects} />
+        <DashboardCommonHeader title='Projects' />
         <CardBody className="pt-0 projects px-0">
           <div className="dataTables_wrapper">
             <div className="table-responsive theme-scrollbar">

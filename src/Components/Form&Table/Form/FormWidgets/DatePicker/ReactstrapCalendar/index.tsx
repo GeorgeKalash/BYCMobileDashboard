@@ -1,4 +1,4 @@
-import { Card, Col, Row } from "reactstrap";
+import { Card, Col } from "reactstrap";
 import { CalendarBootstrap } from "@/Constant";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import { BootstrapCalendarBody } from "./BootstrapCalendarBody";
