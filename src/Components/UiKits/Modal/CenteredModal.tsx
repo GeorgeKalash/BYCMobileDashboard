@@ -1,6 +1,7 @@
 import { Button } from "reactstrap";
 import CommonModal from "./Common/CommonModal";
-import { Close, ImagePath } from "@/Constant";
+import { Close } from "@/Constant";
+import imageOne from "../../../../public/assets/images/gif/danger.gif"
 
 interface CenteredModalProps {
   isOpen: boolean;
@@ -14,14 +15,13 @@ const CenteredModal: React.FC<CenteredModalProps> = ({
   isOpen,
   toggle,
   title = "Something went wrong",
-  message = "Attackers on malicious activity may trick you into doing something dangerous like installing software or revealing your personal informations.",
-  image = `${ImagePath}/gif/danger.gif`,
+  message = "error.",
 }) => {
   return (
     <CommonModal centered isOpen={isOpen} toggle={toggle}>
       <div className="modal-toggle-wrapper">
         <div className="modal-img">
-          <div className="text-center"><img src={image} alt="error" /></div>
+          <div className="text-center"><img src={imageOne.src} alt="error" /></div>
         </div>
         <h4 className="text-center pb-2">{title}</h4>
         <p className="text-center">{message}</p>

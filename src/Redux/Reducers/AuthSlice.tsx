@@ -9,9 +9,7 @@ interface User {
   username: string
   languageId: number
   userType: string
-  employeeId: string
   fullName: string
-  dashboardId: string
   expiresAt: number
   role: string
   accessToken: string
@@ -40,7 +38,7 @@ const initialState: AuthState = {
 
 export const fetchAC = createAsyncThunk('auth/fetchAC', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_AuthURL}/MA.asmx/getAC?_accountName=BYC-deploy`)
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_AuthURL}/MA.asmx/getAC?_accountName=${process.env.NEXT_PUBLIC_ACCOUNT_NAME}`)
     window.localStorage.setItem('apiUrl', response.data.record.api)
     return response.data.record
   } catch (err) {
@@ -97,9 +95,7 @@ export const login = createAsyncThunk(
         username: getUS2.data.record.username,
         languageId: getUS2.data.record.languageId,
         userType: getUS2.data.record.userType,
-        employeeId: getUS2.data.record.employeeId,
         fullName: getUS2.data.record.fullName,
-        dashboardId: getUS2.data.record.dashboardId,
         role: 'admin',
         accessToken,
         refreshToken: signIn3.data.record.refreshToken,

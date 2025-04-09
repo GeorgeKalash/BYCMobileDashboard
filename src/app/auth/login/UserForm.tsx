@@ -6,7 +6,6 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button, FormGroup, Input, Label } from "reactstrap"
 import imageOne from "../../../../public/assets/images/logo/logo.png"
-import imageTwo from "../../../../public/assets/images/logo/logo_dark.png"
 import { fetchAC, login } from "@/Redux/Reducers/AuthSlice"
 import CenteredModal from "@/Components/UiKits/Modal/CenteredModal"
 import { Formik, Form, Field, ErrorMessage } from "formik"
@@ -52,9 +51,8 @@ export const UserForm = () => {
       <div>
         <Link className="logo" href={`/${i18LangStatus}/dashboard/default_dashboard`}>
           <img className="img-fluid for-light" src={imageOne.src} alt="login page" />
-          <img className="img-fluid for-dark" src={imageTwo.src} alt="login page" />
+          <img className="img-fluid for-dark" src={imageOne.src} alt="login page" />
         </Link>
-        
       </div>
       <div className="login-main">
         <Formik
