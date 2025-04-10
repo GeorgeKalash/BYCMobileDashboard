@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
   }
 
   if (isAuthRoute && hasToken) {
-    return NextResponse.redirect(new URL("/en/dashboard/default_dashboard", request.url));
+    return NextResponse.redirect(new URL("/en/pages/sample_page", request.url));
   }
 
   return NextResponse.next();
