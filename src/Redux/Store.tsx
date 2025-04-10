@@ -4,6 +4,7 @@ import StudentWizardSlice from "./Reducers/FormLayout/StudentWizardSlice";
 import TwoFactorSlice from "./Reducers/FormLayout/TwoFactorSlice";
 import VerticalWizardSlice from "./Reducers/FormLayout/VerticalWizardSlice";
 import LanguageSlice from "./Reducers/LanguageSlice";
+import AuthSlice from "./Reducers/AuthSlice";
 import LayoutSlice from "./Reducers/LayoutSlice";
 import ProjectSlice from "./Reducers/ProjectSlice";
 import ToDoSlice from "./Reducers/ToDoSlice";
@@ -14,6 +15,7 @@ import ThemeCustomizerSlice from "./Reducers/ThemeCustomizerSlice";
 
 const Store = configureStore({
   reducer: {
+    authSlice: AuthSlice,
     layout: LayoutSlice,
     twoFactor: TwoFactorSlice,
     numberingWizard: NumberingWizardSlice,

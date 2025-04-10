@@ -684,29 +684,6 @@ export const ProductListTableDataColumn = [
   },
 ];
 
-export const ProductSocialLinks = [
-  {
-    link: "https://www.facebook.com/",
-    text: "facebook",
-  },
-  {
-    link: "https://accounts.google.com/",
-    text: "google-plus",
-  },
-  {
-    link: "https://twitter.com/",
-    text: "twitter",
-  },
-  {
-    link: "https://www.instagram.com/",
-    text: "instagram",
-  },
-  {
-    link: "https://rss.app/",
-    text: "rss",
-  },
-];
-
 export const ProductBrandData = [
   {
     icon: <Truck />,
