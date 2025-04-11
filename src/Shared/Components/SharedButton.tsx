@@ -31,7 +31,7 @@ const SharedButton: React.FC<SharedButtonProps> = ({
 }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipTargetId, setTooltipTargetId] = useState<string>('');
-  const [hover, setHover] = useState(false); // <-- NEW
+  const [hover, setHover] = useState(false); 
 
   useEffect(() => {
     const generatedId = id || `btn-${Math.random().toString(36).substring(2, 9)}`;
