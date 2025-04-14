@@ -23,7 +23,7 @@ export const UserForm = () => {
 
   useEffect(() => {
     dispatch(fetchAC())
-  }, [dispatch])
+  }, [])
 
   const initialValues = {
     email: "",
