@@ -6,11 +6,10 @@ import { RequestProps } from '@/Types/RequestType'
 
 export const getAccessToken = createAsyncThunk<string, void, { state: RootState }>(
   'auth/getAccessToken',
-  async (_, { getState, dispatch }) => {
+  async (_, { dispatch }) => {
 
-    console.log(dispatch(getState).authSlice,'getState')
     const user = JSON.parse(sessionStorage.getItem('userData') || 'null')   
-    console.log(user,'user')
+
     if (!user?.expiresAt) return user?.accessToken || ''
 
     const now = Math.floor(Date.now() / 1000)
@@ -52,7 +51,6 @@ export const getRequest = createAsyncThunk<any, RequestProps, { state: RootState
     const token = await dispatch(getAccessToken()).unwrap()
     const apiUrl = window.localStorage.getItem('apiUrl') || ''
     const url = `${apiUrl}${body.extension}?${body.parameters}`
-console.log(token,'token')
     try {
       const response = await axios.get(url, {
         headers: {
