@@ -143,11 +143,11 @@ export const VariationRadio: React.FC<VariationRadioProps> = ({ data }) => {
       <Card>
         <CommonCardHeader title={VariationRadios} />
         <CardBody>
-          <Row className="g-3">
+          <Row className="g-0">
             {data.map(({ colClass, title, child }, index) => (
               <Col xl="4" className={colClass || ""} key={index}>
-                <div className="card-wrapper border rounded-3 h-100 checkbox-checked">
-                  <h6 className="sub-title">{title}</h6>
+                <div className="card-wrapper border rounded-3 h-100 p-2">
+                  <h6 className="sub-title mb-3">{title}</h6>
                   {child.map(
                     ({
                       id,
@@ -158,9 +158,13 @@ export const VariationRadio: React.FC<VariationRadioProps> = ({ data }) => {
                       defaultChecked,
                       iconColor,
                     }: VariationRadioProp) => (
-                      <div className="payment-wrapper" key={id}>
-                        <div className="payment-first">
-                          <FormGroup className="radio radio-primary" check>
+                      <div
+                        className="payment-wrapper d-flex align-items-center justify-content-between mb-1  rounded-2"
+                        key={id}
+                      >
+                        {/* Left: Radio + Label */}
+                        <div className="d-flex align-items-center ">
+                          <FormGroup className="radio radio-primary mb-1" check>
                             <Input
                               id={`ptm-${id}`}
                               type="radio"
@@ -168,18 +172,27 @@ export const VariationRadio: React.FC<VariationRadioProps> = ({ data }) => {
                               value={`option-${id}`}
                               defaultChecked={defaultChecked}
                             />
-                            <Label className="mb-0" htmlFor={`ptm-${id}`}>
+                            <Label
+                              className="mb-0 ms-2 cursor-pointer"
+                              htmlFor={`ptm-${id}`}
+                            >
                               {labelText}
                             </Label>
                           </FormGroup>
                         </div>
+
+                        {/* Right: Icon or Image */}
                         {(image || icon) && (
-                          <div className="payment-second">
+                          <div
+                            className="d-flex align-items-center justify-content-center"
+                            style={{ width: 32, height: 32 }}
+                          >
                             {image && (
                               <img
-                                className="img-fluid"
                                 src={`${ImagePath}/${image}`}
                                 alt={labelText}
+                                className="img-fluid"
+                                style={{ maxWidth: "100%", maxHeight: "100%" }}
                               />
                             )}
                             {icon && (

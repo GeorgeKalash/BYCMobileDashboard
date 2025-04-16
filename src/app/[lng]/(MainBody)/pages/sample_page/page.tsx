@@ -12,6 +12,7 @@ import {
   VariationRadio,
 } from "@/Shared/Components/SharedRadioButton";
 import { SharedSwitch } from "@/Shared/Components/SharedSwitch";
+import SharedFileUpload from "@/Shared/Components/SharedFileUpload";
 
 const SamplePage = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -296,6 +297,23 @@ const SamplePage = () => {
         />
         <SharedSwitch label="Disabled (Unchecked)" checked={false} disabled />
         <SharedSwitch label="Disabled (Checked)" checked disabled />
+      </div>
+
+      {/* File Uplaoder  Section */}
+
+      <div style={{ padding: "0 10px" }}>
+        <h4>File Uplaoder</h4>
+
+        <SharedFileUpload
+          title={"test Shared File Upload multiple"}
+          multiple={true}
+          body={true}
+        />
+        <SharedFileUpload
+          title={"test Shared File Upload single"}
+          multiple={false}
+          body={true}
+        />
       </div>
     </div>
   );

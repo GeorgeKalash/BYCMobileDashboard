@@ -4,3 +4,4 @@ import React from "react";
 
 const DefaultStyle = () => {
   return <DefaultStyleContainer />;
+};

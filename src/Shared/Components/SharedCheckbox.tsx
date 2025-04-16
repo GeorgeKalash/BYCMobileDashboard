@@ -179,8 +179,8 @@ export const VariationCheckbox: React.FC<VariationCheckboxProps> = ({
         <CardBody>
           <Row className="g-3">
             <Col xl="4" md="5">
-              <div className="card-wrapper border rounded-3 h-100 checkbox-checked">
-                <h6 className="sub-title">{ChooseActivities}</h6>
+              <div className="card-wrapper border rounded-3 h-100 p-3">
+                <h6 className="sub-title mb-3">{ChooseActivities}</h6>
                 {data.map(renderCheckbox)}
               </div>
             </Col>
