@@ -5,6 +5,7 @@ import { ChangeLngType } from "@/Types/LayoutTypes";
 import { useTranslation } from "@/app/i18n/client";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import ConfigDB from "@/Config/ThemeConfig";
 
 const Languages = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -14,9 +15,24 @@ const Languages = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  const changeLng = (item:ChangeLngType) => {
+  const changeLng = (item: ChangeLngType) => {
     dispatch(setLanguage(item.data));
     i18n.changeLanguage(item.language);
+
+    // 👉 RTL/LTR direction handling
+    if (item.data === "sa") {
+      document.body.classList.add("rtl");
+      document.body.classList.remove("ltr", "box-layout");
+      document.documentElement.dir = "rtl";
+      ConfigDB.data.settings.layout_type = "rtl";
+    } else {
+      document.body.classList.add("ltr");
+      document.body.classList.remove("rtl", "box-layout");
+      document.documentElement.dir = "ltr";
+      ConfigDB.data.settings.layout_type = "ltr";
+    }
+
+    // 👉 Update URL language prefix
     const languageCodeRegex = /^\/[a-z]{2}(\/|$)/;
     const updatedPath = pathname.replace(languageCodeRegex, `/${item.data}$1`);
     router.push(updatedPath);
@@ -38,7 +54,13 @@ const Languages = () => {
       <div className="language-dropdown onhover-show-div language-width">
         <ul className="language-list">
           {LanguagesData.map((item, i) => (
-            <li className="p-0" key={i} onClick={() => {changeLng(item)}}>
+            <li
+              className="p-0"
+              key={i}
+              onClick={() => {
+                changeLng(item);
+              }}
+            >
               <a className="text-decoration-none" data-lng={item.data}>
                 <i className={item.logo} /> {item.language}
               </a>
