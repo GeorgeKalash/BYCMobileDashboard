@@ -9,6 +9,8 @@ import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 // import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
 import CustomInput from "../../../../../Shared/Components/CustomInput";
 import CustomSelect from "../../../../../Shared/Components/CustomSelect";
+import { useTranslation } from "@/app/i18n/client";
+import { useAppSelector } from "@/Redux/Hooks";
 
 // ✅ Initial form values
 const initialValues = {
@@ -41,12 +43,14 @@ const validationSchema = Yup.object({
 });
 
 const MobileVerificationForm = () => {
-  const [submitErrors, setSubmitErrors] = useState(true); // ✅ used for validation styling
+  const { i18LangStatus } = useAppSelector((state) => state.langSlice);
+  const { t } = useTranslation(i18LangStatus);
+  const [submitErrors, setSubmitErrors] = useState(true);
 
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={"Update Profile"} />
+        <CommonCardHeader title={t("Update Profile")} />
         <CardBody>
           <Formik
             initialValues={initialValues}
@@ -57,12 +61,12 @@ const MobileVerificationForm = () => {
             }}
           >
             {({ values, setFieldValue }) => (
-              <Form dir="rtl">
+              <Form>
                 <Row className="gy-3">
                   <Col md="4">
                     <CustomSelect
                       name="enabled"
-                      label="التحقق من تطابق الجوال مع بقين؟"
+                      label={t("Check mobile compatibility with BQIN?")}
                       options={[
                         { value: "disabled", label: "غير مفعل" },
                         { value: "enabled", label: "مفعل" },
@@ -75,7 +79,7 @@ const MobileVerificationForm = () => {
                   <Col md="4">
                     <CustomInput
                       name="dailyCheck"
-                      label="عدد مرات التحقق في اليوم"
+                      label={t("Number of checks per day")}
                       type="number"
                       isRequired
                       placeholder="0"
@@ -86,7 +90,7 @@ const MobileVerificationForm = () => {
                   <Col md="4">
                     <CustomInput
                       name="monthlyCheck"
-                      label="عدد مرات التحقق في الشهر"
+                      label={t("Number of checks per month")}
                       type="number"
                       isRequired
                       placeholder="0"
@@ -97,7 +101,7 @@ const MobileVerificationForm = () => {
                   <Col md="6">
                     <CustomInput
                       name="maxCodesPerUser"
-                      label="أقصى عدد لاكواد نفاذ"
+                      label={t("Maximum number of Nafath access codes")}
                       type="number"
                       isRequired
                       placeholder="0"
@@ -107,7 +111,9 @@ const MobileVerificationForm = () => {
 
                   <Col md="6">
                     <FormGroup>
-                      <Label>أقصى عدد للعضويات الجديدة يوميا</Label>
+                      <Label>
+                        {t("Maximum number of new memberships per day")}
+                      </Label>
                       <div className="d-flex gap-2 align-items-center">
                         <Field
                           type="number"
@@ -139,7 +145,7 @@ const MobileVerificationForm = () => {
                 {/* <SharedButton
                   title="حفظ"
                   color="primary"
-                  onClick={() => setSubmitErrors(true)} // ✅ enable error border
+                  onClick={() => setSubmitErrors(true)} 
                 /> */}
               </Form>
             )}
