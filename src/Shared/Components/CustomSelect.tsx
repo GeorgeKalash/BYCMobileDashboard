@@ -18,7 +18,7 @@ interface CustomSelectProps {
   name: string
   label?: string
   options?: OptionType[] | null
-  resourceUrl?: string
+  endpointId?: string
   dataSetId?: number | string
   isRequired?: boolean
   submitErrors?: string
@@ -33,7 +33,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   name,
   label = "",
   options = null,
-  resourceUrl,
+  endpointId,
   dataSetId,
   isRequired = false,
   submitErrors = "",
@@ -52,41 +52,39 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const langId = reduxLangId || parseInt(localStorage.getItem("languageId") || "1", 10)
 
   const loadOptions = useCallback(async () => {
-    let url = dataSetId ? `/api/KVS/getAllKVS` : resourceUrl
+    let url = dataSetId ? `/api/KVS/getAllKVS` : endpointId
     if (!url) return
 
     setIsLoading(true)
-
-      const action = await withRequestTracking(dispatch, () =>
-        dispatch(
-          getMobileRequest({
-            extension: url,
-            parameters: `_dataset=${dataSetId || ""}&_language=${langId}`
-          })
-        )
+    const action = await withRequestTracking(dispatch, () =>
+      dispatch(
+        getMobileRequest({
+          extension: url,
+          parameters: `_dataset=${dataSetId || ""}&_language=${langId}`
+        })
       )
+    )
+    const data = action.payload
 
-      const data = action.payload
-      
-      const mapped = data?.list?.map((item: any) => ({
-        value: item[valueKey],
-        label: item[labelKey]
-      })) || []
+    const mapped = data?.list?.map((item: any) => ({
+      value: item[valueKey],
+      label: item[labelKey]
+    })) || []
 
-      setSelectOptions(mapped)
+    setSelectOptions(mapped)
 
-      if (typeof defaultIndex === "number" && mapped[defaultIndex]) {
-        setFieldValue(name, mapped[defaultIndex].value)
-      }
-      setIsLoading(false)
-    
-  }, [dataSetId, resourceUrl, dispatch, langId, valueKey, labelKey, name, defaultIndex, setFieldValue])
+    if (typeof defaultIndex === "number" && mapped[defaultIndex]) {
+      setFieldValue(name, mapped[defaultIndex].value)
+    }
+    setIsLoading(false)
+  
+  }, [dataSetId, endpointId, dispatch, langId, valueKey, labelKey, name, defaultIndex, setFieldValue])
 
   useEffect(() => {
-    if ((dataSetId || resourceUrl) && selectOptions.length === 0) {
+    if ((dataSetId || endpointId) && selectOptions.length === 0) {
       loadOptions()
     }
-  }, [dataSetId, resourceUrl, selectOptions.length, loadOptions])
+  }, [dataSetId, endpointId, selectOptions.length, loadOptions])
 
   const validationClass =
     submitErrors === "invalid"
@@ -99,7 +97,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     <FormGroup>
       <Label>
         {label} {isRequired && <span className="text-danger">*</span>}
-        {(dataSetId || resourceUrl) && showRefresh && (
+        {(dataSetId || endpointId) && showRefresh && (
           <Button
             type="button"
             color="link"

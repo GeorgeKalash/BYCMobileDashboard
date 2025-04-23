@@ -1,25 +1,56 @@
-import { createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
-import jwtDecode from 'jwt-decode'
-import { RootState } from '../Store'
-import { RequestProps } from '@/Types/RequestType'
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import jwtDecode from 'jwt-decode';
+import { RootState } from '../Store';
+import { RequestProps } from '@/Types/RequestType';
+
+type Method = 'GET' | 'POST';
+
+const makeApiRequest = async (
+  method: Method,
+  url: string,
+  token: string,
+  languageId?: number,
+  body?: any
+) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'multipart/form-data',
+    LanguageId: languageId?.toString() || '1'
+  };
+
+  const config = { headers };
+
+  if (method === 'GET') {
+    return axios.get(url, config);
+  }
+
+  const formData = new FormData();
+  if (body) {
+    formData.append('record', JSON.stringify(body));
+  }
+
+  return axios.post(url, formData, config);
+};
 
 export const getAccessToken = createAsyncThunk<string, void, { state: RootState }>(
   'auth/getAccessToken',
   async (_, { dispatch }) => {
+    const user = JSON.parse(sessionStorage.getItem('userData') || 'null');
 
-    const user = JSON.parse(sessionStorage.getItem('userData') || 'null')   
+    if (!user?.expiresAt) return user?.accessToken || '';
 
-    if (!user?.expiresAt) return user?.accessToken || ''
+    const now = Math.floor(Date.now() / 1000);
+    if (user.expiresAt > now) return user.accessToken;
 
-    const now = Math.floor(Date.now() / 1000)
-    if (user.expiresAt > now) return user.accessToken
-
-    const bodyFormData = new FormData()
+    const bodyFormData = new FormData();
     bodyFormData.append(
       'record',
-      JSON.stringify({ accessToken: user.accessToken, refreshToken: user.refreshToken })
-    )
+      JSON.stringify({
+        accessToken: user.accessToken,
+        refreshToken: user.refreshToken
+      })
+    );
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_AuthURL}MA.asmx/newAT`,
@@ -30,120 +61,87 @@ export const getAccessToken = createAsyncThunk<string, void, { state: RootState 
           'Content-Type': 'multipart/form-data'
         }
       }
-    )
+    );
 
-    const { accessToken, refreshToken } = response.data.record
-    const expiresAt = jwtDecode(accessToken)
+    const { accessToken, refreshToken } = response.data.record;
+    const { exp: expiresAt } = jwtDecode(accessToken) as { exp: number };
 
     dispatch({
       type: 'auth/updateUser',
       payload: { ...user, accessToken, refreshToken, expiresAt }
-    })
+    });
 
-    return accessToken
+    return accessToken;
   }
-)
+);
 
 export const getRequest = createAsyncThunk<any, RequestProps, { state: RootState }>(
   'request/getRequest',
   async (body, { getState, dispatch }) => {
-    const { user } = getState().authSlice
-    const token = await dispatch(getAccessToken()).unwrap()
-    const apiUrl = window.localStorage.getItem('apiUrl') || ''
-    const url = `${apiUrl}${body.extension}?${body.parameters}`
+    const { user } = getState().authSlice;
+    const token = await dispatch(getAccessToken()).unwrap();
+    const apiUrl = window.localStorage.getItem('apiUrl') || '';
+    const url = `${apiUrl}${body.extension}${body.parameters ? `?${body.parameters}` : ''}`;
+
     try {
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-          LanguageId: user?.languageId
-        }
-      })
-      return response.data
-    } catch (error) {
-      if (body.throwError) throw error
-      return error
+      const response = await makeApiRequest('GET', url, token, user?.languageId);
+      return response.data;
+    } catch (error: any) {
+      if (body.throwError) throw error;
+      return error?.response?.data || error.message || 'Unknown error';
     }
   }
-)
+);
+
 export const getMobileRequest = createAsyncThunk<any, RequestProps, { state: RootState }>(
-  'request/getRequest',
+  'request/getMobileRequest',
   async (body, { getState, dispatch }) => {
-    const { user } = getState().authSlice
-    const token = await dispatch(getAccessToken()).unwrap()
-    const url = `https://byc-staging-mobile-api.arguserp.net${body.extension}?${body.parameters}`
-    console.log(url)
+    const { user } = getState().authSlice;
+    const token = await dispatch(getAccessToken()).unwrap();
+    const url = `https://byc-staging-mobile-api.arguserp.net${body.extension}${body.parameters ? `?${body.parameters}` : ''}`;
+
     try {
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-          LanguageId: user?.languageId
-        }
-      })
-      return response.data
-    } catch (error) {
-      if (body.throwError) throw error
-      return error
+      const response = await makeApiRequest('GET', url, token, user?.languageId);
+      return response.data;
+    } catch (error: any) {
+      if (body.throwError) throw error;
+      return error?.response?.data || error.message || 'Unknown error';
     }
   }
-)
+);
 
 export const postRequest = createAsyncThunk<any, RequestProps, { state: RootState }>(
   'request/postRequest',
   async (body, { getState, dispatch }) => {
-    const { user } = getState().authSlice
-    const token = await dispatch(getAccessToken()).unwrap()
-    const apiUrl = window.localStorage.getItem('apiUrl') || ''
-    const url = `${apiUrl}${body.extension}`
-
-    const formData = new FormData()
-    if (body.body) {
-      formData.append('record', JSON.stringify(body.body))
-    }
+    const { user } = getState().authSlice;
+    const token = await dispatch(getAccessToken()).unwrap();
+    const apiUrl = window.localStorage.getItem('apiUrl') || '';
+    const url = `${apiUrl}${body.extension}`;
 
     try {
-      const response = await axios.post(url, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-          LanguageId: user?.languageId
-        }
-      })
-      return response.data
-    } catch (error) {
-      if (body.throwError) throw error
-      return error
+      const response = await makeApiRequest('POST', url, token, user?.languageId, body.body);
+      return response.data;
+    } catch (error: any) {
+      if (body.throwError) throw error;
+      return error?.response?.data || error.message || 'Unknown error';
     }
   }
-)
+);
 
 export const postMobileRequest = createAsyncThunk<any, RequestProps, { state: RootState }>(
-  'request/postRequest',
+  'request/postMobileRequest',
   async (body, { getState, dispatch }) => {
-    const { user } = getState().authSlice
-    const token = await dispatch(getAccessToken()).unwrap()
-    const apiUrl = window.localStorage.getItem('apiUrl') || ''
-    const url = `${apiUrl}${body.extension}`
-
-    const formData = new FormData()
-    if (body.body) {
-      formData.append('record', JSON.stringify(body.body))
-    }
+    const { user } = getState().authSlice;
+    const token = await dispatch(getAccessToken()).unwrap();
+    const apiUrl = window.localStorage.getItem('apiUrl') || '';
+    const url = `${apiUrl}${body.extension}`;
 
     try {
-      const response = await axios.post(url, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-          LanguageId: user?.languageId
-        }
-      })
-      return response.data
-    } catch (error) {
-      if (body.throwError) throw error
-      return error
+      const response = await makeApiRequest('POST', url, token, user?.languageId, body.body);
+      return response.data;
+    } catch (error: any) {
+      if (body.throwError) throw error;
+      return error?.response?.data || error.message || 'Unknown error';
     }
   }
-)
-
+);

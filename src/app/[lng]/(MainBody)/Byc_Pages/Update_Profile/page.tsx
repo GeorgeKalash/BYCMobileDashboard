@@ -78,7 +78,6 @@ const MobileVerificationForm = () => {
                       submitErrors={submitErrors ? "invalid" : ""}
                     />
                   </Col>
-
                   <Col md="4">
                     <CustomInput
                       name="monthlyCheck"
@@ -89,7 +88,6 @@ const MobileVerificationForm = () => {
                       submitErrors={submitErrors ? "invalid" : ""}
                     />
                   </Col>
-
                   <Col md="6">
                     <CustomInput
                       name="maxCodesPerUser"
@@ -100,7 +98,6 @@ const MobileVerificationForm = () => {
                       submitErrors={submitErrors ? "invalid" : ""}
                     />
                   </Col>
-
                   <Col md="6">
                     <FormGroup>
                       <Label>
