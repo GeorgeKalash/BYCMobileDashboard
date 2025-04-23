@@ -19,7 +19,6 @@ const Languages = () => {
     dispatch(setLanguage(item.data));
     i18n.changeLanguage(item.language);
 
-    // 👉 RTL/LTR direction handling
     if (item.data === "sa") {
       document.body.classList.add("rtl");
       document.body.classList.remove("ltr", "box-layout");
@@ -32,7 +31,6 @@ const Languages = () => {
       ConfigDB.data.settings.layout_type = "ltr";
     }
 
-    // 👉 Update URL language prefix
     const languageCodeRegex = /^\/[a-z]{2}(\/|$)/;
     const updatedPath = pathname.replace(languageCodeRegex, `/${item.data}$1`);
     router.push(updatedPath);
