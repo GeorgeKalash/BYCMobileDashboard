@@ -57,7 +57,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
     setIsLoading(true)
 
-      const data = await withRequestTracking(dispatch, () =>
+      const action = await withRequestTracking(dispatch, () =>
         dispatch(
           getMobileRequest({
             extension: url,
@@ -66,6 +66,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         )
       )
 
+      const data = action.payload
+      
       const mapped = data?.list?.map((item: any) => ({
         value: item[valueKey],
         label: item[labelKey]
