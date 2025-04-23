@@ -173,5 +173,13 @@
   "Authentication": "Authentication",
   "Login With Bg Image": "Login With Bg Image",
   "Coming Soon": "Coming Soon",
-  "Pinned":"Pinned"
+  "Pinned": "Pinned",
+
+  "Check mobile compatibility with BQIN?": "Check mobile compatibility with BQIN?",
+  "Number of checks per day": "Number of checks per day",
+  "Number of checks per month": "Number of checks per month",
+  "Maximum number of Nafath access codes": "Maximum number of Nafath access codes",
+  "Maximum number of new memberships per day": "Maximum number of new memberships per day",
+  "Update Profile": "Update Profile",
+  "Ben Yala Exchange": "Ben Yala Exchange"
 }

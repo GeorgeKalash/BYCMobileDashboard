@@ -40,7 +40,7 @@ export const MenuList: MenuItem[] | undefined = [
     menucontent: "BYC Pages to use",
     Items: [
       {
-        title: "BYC",
+        title: "Ben Yala Exchange",
         id: 3,
         icon: "ui-kits",
         type: "sub",
