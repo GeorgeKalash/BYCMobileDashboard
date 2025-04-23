@@ -34,19 +34,13 @@ const SamplePageContainer = () => {
   const [selectedGender, setSelectedGender] = useState("female");
 
   const fetchDocumentType = async () => {
-    try {
-      const result = await withRequestTracking(dispatch, () =>
-        dispatch(getRequest({
-          extension: `${BusinessPartnerRepository.Group.page}`,
-          parameters: '_startAt=0&_pageSize=50&filter='
-        }))
-      )
-
-      console.log(result)
-    } catch (err) {
-      console.error(err)
-      setError('Failed to fetch document type')
-    }
+    const result = await withRequestTracking(dispatch, () =>
+      dispatch(getRequest({
+        extension: `${BusinessPartnerRepository.Group.page}`,
+        parameters: '_startAt=0&_pageSize=50&filter='
+      }))
+    )
+    console.log(result)
   }
 
   useEffect(() => {

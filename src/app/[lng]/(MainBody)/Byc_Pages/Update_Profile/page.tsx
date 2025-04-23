@@ -5,12 +5,10 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { CardBody, Card, Col, Row, FormGroup, Label, Input } from "reactstrap";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
-// import SharedButton from "@/Shared/Components/SharedButton";
-// import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
+import SharedButton from "@/Shared/Components/SharedButton";
 import CustomInput from "../../../../../Shared/Components/CustomInput";
 import CustomSelect from "../../../../../Shared/Components/CustomSelect";
 
-// ✅ Initial form values
 const initialValues = {
   enabled: "disabled",
   dailyCheck: "",
@@ -20,7 +18,6 @@ const initialValues = {
   unlimited: false,
 };
 
-// ✅ Yup validation schema
 const validationSchema = Yup.object({
   enabled: Yup.string().required("هذه الخانة مطلوبة"),
   dailyCheck: Yup.number()
@@ -41,7 +38,7 @@ const validationSchema = Yup.object({
 });
 
 const MobileVerificationForm = () => {
-  const [submitErrors, setSubmitErrors] = useState(true); // ✅ used for validation styling
+  const [submitErrors, setSubmitErrors] = useState(true); 
 
   return (
     <Col xs="12">
@@ -63,15 +60,10 @@ const MobileVerificationForm = () => {
                     <CustomSelect
                       name="enabled"
                       label="التحقق من تطابق الجوال مع بقين؟"
-                      options={[
-                        { value: "disabled", label: "غير مفعل" },
-                        { value: "enabled", label: "مفعل" },
-                      ]}
                       isRequired
-                      submitErrors={submitErrors ? "invalid" : ""}
+                      dataSetId={11}
                     />
                   </Col>
-
                   <Col md="4">
                     <CustomInput
                       name="dailyCheck"
@@ -121,26 +113,14 @@ const MobileVerificationForm = () => {
                           min={0}
                         />
                       </div>
-                      <FormGroup check className="mb-0">
-                        {/* <Label check>
-                          <SharedCheckbox
-                            label="غير محدود"
-                            checked={values.unlimited}
-                            onChange={() =>
-                              setFieldValue("unlimited", !values.unlimited)
-                            }
-                          />
-                        </Label> */}
-                      </FormGroup>
                     </FormGroup>
                   </Col>
                 </Row>
-
-                {/* <SharedButton
+                <SharedButton
                   title="حفظ"
                   color="primary"
                   onClick={() => setSubmitErrors(true)} // ✅ enable error border
-                /> */}
+                />
               </Form>
             )}
           </Formik>

@@ -66,8 +66,59 @@ export const getRequest = createAsyncThunk<any, RequestProps, { state: RootState
     }
   }
 )
+export const getMobileRequest = createAsyncThunk<any, RequestProps, { state: RootState }>(
+  'request/getRequest',
+  async (body, { getState, dispatch }) => {
+    const { user } = getState().authSlice
+    const token = await dispatch(getAccessToken()).unwrap()
+    const url = `https://byc-staging-mobile-api.arguserp.net${body.extension}?${body.parameters}`
+    console.log(url)
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+          LanguageId: user?.languageId
+        }
+      })
+      return response.data
+    } catch (error) {
+      if (body.throwError) throw error
+      return error
+    }
+  }
+)
 
 export const postRequest = createAsyncThunk<any, RequestProps, { state: RootState }>(
+  'request/postRequest',
+  async (body, { getState, dispatch }) => {
+    const { user } = getState().authSlice
+    const token = await dispatch(getAccessToken()).unwrap()
+    const apiUrl = window.localStorage.getItem('apiUrl') || ''
+    const url = `${apiUrl}${body.extension}`
+
+    const formData = new FormData()
+    if (body.body) {
+      formData.append('record', JSON.stringify(body.body))
+    }
+
+    try {
+      const response = await axios.post(url, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+          LanguageId: user?.languageId
+        }
+      })
+      return response.data
+    } catch (error) {
+      if (body.throwError) throw error
+      return error
+    }
+  }
+)
+
+export const postMobileRequest = createAsyncThunk<any, RequestProps, { state: RootState }>(
   'request/postRequest',
   async (body, { getState, dispatch }) => {
     const { user } = getState().authSlice
