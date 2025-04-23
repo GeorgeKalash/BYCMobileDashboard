@@ -6,6 +6,7 @@ import { Card, CardBody, Col, Container, Row } from "reactstrap"
 import { getRequest } from '@/Redux/Reducers/RequestThunks'
 import { useAppDispatch } from '@/Redux/Hooks'
 import { withRequestTracking } from '@/utils/withRequestTracking '
+import { BusinessPartnerRepository } from '@/Repositories/BusinessPartnerRepository'
 
 interface DocumentType {
   id: number
@@ -21,7 +22,7 @@ const SamplePageContainer = () => {
     try {
       const result = await withRequestTracking(dispatch, () =>
         dispatch(getRequest({
-          extension: 'BP.asmx/pageGRP',
+          extension: `${BusinessPartnerRepository.Group.page}`,
           parameters: '_startAt=0&_pageSize=50&filter='
         }))
       )
