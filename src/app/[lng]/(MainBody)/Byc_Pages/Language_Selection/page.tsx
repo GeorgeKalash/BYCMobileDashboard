@@ -76,33 +76,6 @@ const LanguageSelection = () => {
     },
   ];
 
-  const modalContent =
-    modalAction === "edit" ? (
-      <div>
-        <p>{t("You are editing")}:</p>
-        <pre>{JSON.stringify(selectedRow, null, 2)}</pre>
-        <pre>{JSON.stringify(selectedRow, null, 2)}</pre>
-        <pre>{JSON.stringify(selectedRow, null, 2)}</pre>
-        <pre>{JSON.stringify(selectedRow, null, 2)}</pre>
-      </div>
-    ) : (
-      <div>
-        <p>{t("Are you sure you want to delete")}:</p>
-        <pre>{JSON.stringify(selectedRow, null, 2)}</pre>
-      </div>
-    );
-
-  const modalFooter = (
-    <>
-      <Button color="secondary" onClick={handleModalClose}>
-        {t("Cancel")}
-      </Button>
-      <Button color="primary">
-        {modalAction === "edit" ? t("Save Changes") : t("Confirm Delete")}
-      </Button>
-    </>
-  );
-
   return (
     <Col xs="12">
       <Card>
@@ -126,16 +99,41 @@ const LanguageSelection = () => {
       </Card>
 
       <SharedModal
-        visible={modalOpen}
+        visible={modalOpen && modalAction === "edit"}
         onClose={handleModalClose}
-        title={
-          modalAction === "edit" ? t("Edit Language") : t("Delete Language")
+        title={t("Edit Language")}
+        width="600px"
+        height="60vh"
+        footer={
+          <>
+            <Button color="secondary" onClick={handleModalClose}>
+              {t("Cancel")}
+            </Button>
+            <Button color="primary">{t("Save Changes")}</Button>
+          </>
         }
-        footer={modalFooter}
+      >
+        <p>{t("You are editing")}:</p>
+        <pre>{JSON.stringify(selectedRow, null, 2)}</pre>
+      </SharedModal>
+
+      <SharedModal
+        visible={modalOpen && modalAction === "delete"}
+        onClose={handleModalClose}
+        title={t("Delete Language")}
         width="900px"
         height="60vh"
+        footer={
+          <>
+            <Button color="secondary" onClick={handleModalClose}>
+              {t("Cancel")}
+            </Button>
+            <Button color="danger">{t("Confirm Delete")}</Button>
+          </>
+        }
       >
-        {modalContent}
+        <p>{t("Are you sure you want to delete")}:</p>
+        <pre>{JSON.stringify(selectedRow, null, 2)}</pre>
       </SharedModal>
     </Col>
   );

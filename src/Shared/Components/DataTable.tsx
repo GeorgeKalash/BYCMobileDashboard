@@ -147,7 +147,11 @@ const DataTableComponent = ({
           sortServer
           pagination={pagination}
           onSort={(column, direction) => {
-            setSortColumn(column.id);
+            const columnId =
+              typeof column.id === "string"
+                ? column.id
+                : String(column.id ?? "");
+            setSortColumn(columnId);
             setSortDirection(direction);
           }}
           noHeader
