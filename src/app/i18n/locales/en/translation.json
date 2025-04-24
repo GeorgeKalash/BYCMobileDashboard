@@ -181,5 +181,12 @@
   "Maximum number of Nafath access codes": "Maximum number of Nafath access codes",
   "Maximum number of new memberships per day": "Maximum number of new memberships per day",
   "Update Profile": "Update Profile",
-  "Ben Yala Exchange": "Ben Yala Exchange"
+  "Ben Yala Exchange": "Ben Yala Exchange",
+
+  "Translation Name": "Translation Name",
+  "Added On": "Added On",
+  "Active?": "Active?",
+  "Action": "Action",
+  "Languages Page": "Languages Page",
+  "Search Language": "Search Language"
 }
