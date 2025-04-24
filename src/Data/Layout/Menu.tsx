@@ -51,6 +51,11 @@ export const MenuList: MenuItem[] | undefined = [
             type: "link",
             title: "Update Profile",
           },
+          {
+            path: "/Byc_Pages/Language_Selection",
+            type: "link",
+            title: "Language Selection",
+          },
         ],
       },
     ],
