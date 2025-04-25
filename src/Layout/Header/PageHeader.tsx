@@ -7,7 +7,7 @@ export const PageHeader = () => {
   return (
     <Col className="header-wrapper m-0">
       <Row>
-        <Searchbar />
+        {/* <Searchbar /> */}
         <HeaderLogo />
         <HeaderRight/>
       </Row>
