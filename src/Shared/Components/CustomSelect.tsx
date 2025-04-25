@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { Field, ErrorMessage, useFormikContext } from "formik";
+import { Field, useFormikContext } from "formik";
 import { FormGroup, Label, Spinner, Button } from "reactstrap";
 import { useSelector } from "react-redux";
 import { RootState } from "@/Redux/Store";
@@ -21,14 +21,13 @@ interface CustomSelectProps {
   endpointId?: string;
   dataSetId?: number | string;
   isRequired?: boolean;
-  submitErrors?: string;
   showRefresh?: boolean;
   loadingText?: string;
   defaultIndex?: number;
   valueKey?: string;
   labelKey?: string;
-  value?: string | number; 
-  onChange?: (value: string | number) => void; 
+  value?: string | number;
+  onChange?: (value: string | number) => void;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -38,14 +37,13 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   endpointId,
   dataSetId,
   isRequired = false,
-  submitErrors = "",
   showRefresh = true,
   loadingText = "Loading...",
   defaultIndex,
   valueKey = "key",
   labelKey = "value",
   value,
-  onChange
+  onChange,
 }) => {
   const [selectOptions, setSelectOptions] = useState<OptionType[]>(options || []);
   const [isLoading, setIsLoading] = useState(false);
@@ -109,12 +107,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     }
   }, [dataSetId, endpointId, selectOptions.length, loadOptions]);
 
-  const validationClass =
-    submitErrors === "invalid"
-      ? "is-invalid"
-      : submitErrors === "valid"
-      ? "is-valid"
-      : "";
+  const isFieldFilled = values[name] && values[name] !== "";
+
+  const validationClass = isRequired && !isFieldFilled ? "is-invalid" : "";
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value;
@@ -138,8 +133,20 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             🔄
           </Button>
         )}
+        <Button
+          type="button"
+          color="link"
+          size="sm"
+          onClick={() => {
+            setFieldValue(name, "");
+            onChange?.("");
+          }}
+          className="p-0 align-baseline text-danger"
+          title="Clear selection"
+        >
+          ❌
+        </Button>
       </Label>
-
       {isLoading ? (
         <div className="form-control">
           <Spinner size="sm" /> {loadingText}
@@ -150,9 +157,11 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           name={name}
           className={`form-control form-select ${validationClass}`}
           onChange={handleChange}
-          value={values[name]} 
+          value={values[name]}
         >
-          <option value="">Select {label}</option>
+          <option value="" disabled hidden>
+            {"Select..."}
+          </option>
           {selectOptions.map((opt, i) => (
             <option key={i} value={opt.value}>
               {opt.label}
@@ -160,8 +169,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           ))}
         </Field>
       )}
-
-      <ErrorMessage name={name} component="div" className="invalid-feedback" />
     </FormGroup>
   );
 };

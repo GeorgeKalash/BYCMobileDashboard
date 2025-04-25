@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Formik, Form, FormikHelpers } from "formik";
-import * as Yup from "yup";
 import { CardBody, Card, Col, Row } from "reactstrap";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedButton from "@/Shared/Components/SharedButton";
@@ -13,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { getMobileRequest, postMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { showToast } from "@/Shared/Components/showToast";
 
 const initialValues = {
   yakeen_enable_service: "", 
@@ -46,6 +46,7 @@ const MobileVerificationForm = () => {
       ).unwrap()
     );
     setSubmitting(false);
+    showToast("success");
   };
 
   return (
@@ -87,19 +88,18 @@ const MobileVerificationForm = () => {
                 };
                 fetchAndSet();
               }, []);
+
               return (
                 <Form>
                   <Row className="gy-3">
                     <Col md="4">
-                      <CustomSelect
+                     <CustomSelect
                         name="yakeen_enable_service"
                         label={t("Check mobile compatibility with YAKEEN")}
                         dataSetId={11}
-                        defaultIndex={0}
                         valueKey="key"
                         labelKey="value"
-                        value={values.yakeen_enable_service}
-                        onChange={(val) => setFieldValue("yakeen_enable_service", val)}
+                        value={values.yakeen_enable_service} 
                       />
                     </Col>
                     <Col md="4">
@@ -135,7 +135,7 @@ const MobileVerificationForm = () => {
                       />
                     </Col>
                   </Row>
-                  <SharedButton title="حفظ" color="primary" type="submit" />
+                  <SharedButton color="primary"  type="submit" title={t("Submit")}/>
                 </Form>
               );
             }}
