@@ -1,5 +1,4 @@
 "use client";
-import Footer from "@/Layout/Footer/Footer";
 import { SideBar } from "@/Layout/Sidebar/Sidebar";
 import ThemeCustomizer from "@/Layout/ThemeCustomizer";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
@@ -50,7 +49,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="page-body-wrapper">
           <SideBar />
           <div className="page-body">{children}</div>
-          <Footer />
         </div>
       </div>
       <ThemeCustomizer />

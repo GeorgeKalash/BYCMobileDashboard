@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import { Button, Tooltip } from 'reactstrap';
 
@@ -14,7 +15,8 @@ type SharedButtonProps = {
   tooltip?: string;
   onClick?: () => void;
   logo?: string;
-};
+  type?: 'button' | 'submit' | 'reset'; 
+}
 
 const SharedButton: React.FC<SharedButtonProps> = ({
   title,
@@ -28,10 +30,11 @@ const SharedButton: React.FC<SharedButtonProps> = ({
   onClick,
   tooltip,
   logo,
+  type = 'button', 
 }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipTargetId, setTooltipTargetId] = useState<string>('');
-  const [hover, setHover] = useState(false); 
+  const [hover, setHover] = useState(false);
 
   useEffect(() => {
     const generatedId = id || `btn-${Math.random().toString(36).substring(2, 9)}`;
@@ -44,21 +47,22 @@ const SharedButton: React.FC<SharedButtonProps> = ({
     <>
       <Button
         id={tooltipTargetId}
+        type={type} 
         color={color}
         size={size}
         outline={outline}
         disabled={disabled}
         active={active}
         onClick={onClick}
-        onMouseEnter={() => setHover(true)} 
-        onMouseLeave={() => setHover(false)} 
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
         className={`${className} d-flex align-items-center justify-content-center`}
         style={{
           padding: logo ? '6px 10px' : undefined,
           minWidth: logo ? '40px' : undefined,
           height: logo ? '40px' : undefined,
-          filter: hover ? 'brightness(80%)' : undefined, 
-          transition: 'filter 0.2s ease', 
+          filter: hover ? 'brightness(80%)' : undefined,
+          transition: 'filter 0.2s ease',
         }}
       >
         {logo ? (

@@ -33,6 +33,29 @@ export const MenuList: MenuItem[] | undefined = [
       // },
     ],
   },
+
+  {
+    title: "BYC Pages",
+    lanClass: "lan-8",
+    menucontent: "BYC Pages to use",
+    Items: [
+      {
+        title: "Ben Yala Exchange",
+        id: 3,
+        icon: "ui-kits",
+        type: "sub",
+        active: false,
+        children: [
+          {
+            path: "/Byc_Pages/Update_Profile",
+            type: "link",
+            title: "Update Profile",
+          },
+        ],
+      },
+    ],
+  },
+
   {
     title: "Applications",
     lanClass: "lan-8",
@@ -45,7 +68,11 @@ export const MenuList: MenuItem[] | undefined = [
         type: "sub",
         active: false,
         children: [
-          { path: "/project/project_list", type: "link", title: "Project List" },
+          {
+            path: "/project/project_list",
+            type: "link",
+            title: "Project List",
+          },
           { path: "/project/new_project", type: "link", title: "Create New" },
         ],
       },
@@ -56,7 +83,11 @@ export const MenuList: MenuItem[] | undefined = [
         type: "sub",
         active: false,
         children: [
-          { path: "/ecommerce/product_list", title: "Product List", type: "link" },
+          {
+            path: "/ecommerce/product_list",
+            title: "Product List",
+            type: "link",
+          },
           { path: "/ecommerce/checkout", title: "Checkout", type: "link" },
         ],
       },
@@ -88,20 +119,44 @@ export const MenuList: MenuItem[] | undefined = [
             title: "Form Controls",
             type: "sub",
             children: [
-              { path: "/forms/form_controls/validation_form", title: "Form Validation", type: "link" },
-              { path: "/forms/form_controls/base_input", title: "Base Inputs", type: "link" },
+              {
+                path: "/forms/form_controls/validation_form",
+                title: "Form Validation",
+                type: "link",
+              },
+              {
+                path: "/forms/form_controls/base_input",
+                title: "Base Inputs",
+                type: "link",
+              },
               // { path: "/forms/form_controls/radio_&_checkbox", title: "Checkbox & Radio", type: "link" },
-              { path: "/forms/form_controls/input_groups", title: "Input Groups", type: "link" },
+              {
+                path: "/forms/form_controls/input_groups",
+                title: "Input Groups",
+                type: "link",
+              },
               // { path: "/forms/form_controls/input_mask", title: "Input Mask", type: "link" },
-              { path: "/forms/form_controls/mega_option", title: "Mega Option", type: "link" },
+              {
+                path: "/forms/form_controls/mega_option",
+                title: "Mega Option",
+                type: "link",
+              },
             ],
           },
           {
             title: "Form Widget",
             type: "sub",
             children: [
-              { path: "/forms/form_widget/datepicker", title: "Datepicker", type: "link" },
-              { path: "/forms/form_widget/switch", title: "Switch", type: "link" },
+              {
+                path: "/forms/form_widget/datepicker",
+                title: "Datepicker",
+                type: "link",
+              },
+              {
+                path: "/forms/form_widget/switch",
+                title: "Switch",
+                type: "link",
+              },
               // { path: "/forms/form_widget/typeahead", title: "Typeahead", type: "link" },
             ],
           },
@@ -125,10 +180,22 @@ export const MenuList: MenuItem[] | undefined = [
             title: "Data Tables",
             type: "sub",
             children: [
-              { path: "/table/data_table/basic_init", title: "Basic Init", type: "link" },
-              { path: "/table/data_table/advance_init", title: "Advance Init", type: "link" },
+              {
+                path: "/table/data_table/basic_init",
+                title: "Basic Init",
+                type: "link",
+              },
+              {
+                path: "/table/data_table/advance_init",
+                title: "Advance Init",
+                type: "link",
+              },
               { path: "/table/data_table/api", title: "API", type: "link" },
-              { path: "/table/data_table/data_sources", title: "Data Source", type: "link" },
+              {
+                path: "/table/data_table/data_sources",
+                title: "Data Source",
+                type: "link",
+              },
             ],
           },
         ],
@@ -163,7 +230,11 @@ export const MenuList: MenuItem[] | undefined = [
           { path: "/bonus_ui/scrollable", title: "Scrollable", type: "link" },
           { path: "/bonus_ui/toasts", title: "Toasts", type: "link" },
           { path: "/bonus_ui/dropzone", title: "Dropzone", type: "link" },
-          { path: "/bonus_ui/sweetalert_2", title: "SweetAlert2", type: "link" },
+          {
+            path: "/bonus_ui/sweetalert_2",
+            title: "SweetAlert2",
+            type: "link",
+          },
           { path: "/bonus_ui/pagination", title: "Pagination", type: "link" },
           { path: "/bonus_ui/breadcrumb", title: "Breadcrumb", type: "link" },
         ],
@@ -175,7 +246,11 @@ export const MenuList: MenuItem[] | undefined = [
         type: "sub",
         active: false,
         children: [
-          { path: "/buttons/default_style", title: "Default Style", type: "link" }
+          {
+            path: "/buttons/default_style",
+            title: "Default Style",
+            type: "link",
+          },
         ],
       },
 
@@ -225,7 +300,11 @@ export const MenuList: MenuItem[] | undefined = [
             title: "Authentication",
             type: "sub",
             children: [
-              { path: "/others/authentication/loginsimple", title: "Login Simple", type: "link" },
+              {
+                path: "/others/authentication/loginsimple",
+                title: "Login Simple",
+                type: "link",
+              },
             ],
           },
         ],
@@ -244,7 +323,11 @@ export const MenuList: MenuItem[] | undefined = [
         type: "sub",
         active: false,
         children: [
-          { path: "/gallery/gallery_grids", title: "Gallery Grids", type: "link" }
+          {
+            path: "/gallery/gallery_grids",
+            title: "Gallery Grids",
+            type: "link",
+          },
         ],
       },
       {

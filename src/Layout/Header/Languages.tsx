@@ -19,7 +19,7 @@ const Languages = () => {
     dispatch(setLanguage(item.data));
     i18n.changeLanguage(item.language);
 
-    if (item.data === "sa") {
+    if (item.data === "ae") {
       document.body.classList.add("rtl");
       document.body.classList.remove("ltr", "box-layout");
       document.documentElement.dir = "rtl";
