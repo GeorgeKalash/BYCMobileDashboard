@@ -1,32 +1,34 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState, useCallback } from "react"
-import { Field, ErrorMessage, useFormikContext } from "formik"
-import { FormGroup, Label, Spinner, Button } from "reactstrap"
-import { useSelector } from "react-redux"
-import { RootState } from "@/Redux/Store"
-import { useAppDispatch } from "@/Redux/Hooks"
-import { withRequestTracking } from "@/utils/withRequestTracking "
-import { getMobileRequest } from "@/Redux/Reducers/RequestThunks"
+import React, { useEffect, useState, useCallback } from "react";
+import { Field, ErrorMessage, useFormikContext } from "formik";
+import { FormGroup, Label, Spinner, Button } from "reactstrap";
+import { useSelector } from "react-redux";
+import { RootState } from "@/Redux/Store";
+import { useAppDispatch } from "@/Redux/Hooks";
+import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
+import { withRequestTracking } from "@/utils/withRequestTracking ";
 
 type OptionType = {
-  value: string | number
-  label: string
-}
+  value: string | number;
+  label: string;
+};
 
 interface CustomSelectProps {
-  name: string
-  label?: string
-  options?: OptionType[] | null
-  endpointId?: string
-  dataSetId?: number | string
-  isRequired?: boolean
-  submitErrors?: string
-  showRefresh?: boolean
-  loadingText?: string
-  defaultIndex?: number
-  valueKey?: string
-  labelKey?: string
+  name: string;
+  label?: string;
+  options?: OptionType[] | null;
+  endpointId?: string;
+  dataSetId?: number | string;
+  isRequired?: boolean;
+  submitErrors?: string;
+  showRefresh?: boolean;
+  loadingText?: string;
+  defaultIndex?: number;
+  valueKey?: string;
+  labelKey?: string;
+  value?: string | number; 
+  onChange?: (value: string | number) => void; 
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -40,58 +42,85 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   showRefresh = true,
   loadingText = "Loading...",
   defaultIndex,
-  valueKey = "code",
-  labelKey = "name"
+  valueKey = "key",
+  labelKey = "value",
+  value,
+  onChange
 }) => {
-  const [selectOptions, setSelectOptions] = useState<OptionType[]>(options || [])
-  const [isLoading, setIsLoading] = useState(false)
-  const { setFieldValue } = useFormikContext<any>()
-  const dispatch = useAppDispatch()
+  const [selectOptions, setSelectOptions] = useState<OptionType[]>(options || []);
+  const [isLoading, setIsLoading] = useState(false);
+  const { setFieldValue, values } = useFormikContext<any>();
+  const dispatch = useAppDispatch();
 
-  const reduxLangId = useSelector((state: RootState) => state.authSlice.languageId)
-  const langId = reduxLangId || parseInt(localStorage.getItem("languageId") || "1", 10)
+  const reduxLangId = useSelector((state: RootState) => state.authSlice.languageId);
+  const langId = reduxLangId || parseInt(localStorage.getItem("languageId") || "1", 10);
 
   const loadOptions = useCallback(async () => {
-    let url = dataSetId ? `/api/KVS/getAllKVS` : endpointId
-    if (!url) return
+    let url = dataSetId ? `/api/KVS/getAllKVS` : endpointId;
+    if (!url) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
     const action = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
           extension: url,
-          parameters: `_dataset=${dataSetId || ""}&_language=${langId}`
+          parameters: `_dataset=${dataSetId || ""}&_language=${langId}`,
         })
       )
-    )
-    const data = action.payload
+    );
 
-    const mapped = data?.list?.map((item: any) => ({
-      value: item[valueKey],
-      label: item[labelKey]
-    })) || []
+    const data = action.payload?.data;
 
-    setSelectOptions(mapped)
+    const mapped =
+      data?.map((item: any) => ({
+        value: item[valueKey],
+        label: item[labelKey],
+      })) || [];
 
-    if (typeof defaultIndex === "number" && mapped[defaultIndex]) {
-      setFieldValue(name, mapped[defaultIndex].value)
+    setSelectOptions(mapped);
+
+    if (typeof value !== "undefined") {
+      setFieldValue(name, value);
+      onChange?.(value);
+    } else if (typeof defaultIndex === "number" && mapped[defaultIndex]) {
+      const initialValue = mapped[defaultIndex].value;
+      setFieldValue(name, initialValue);
+      onChange?.(initialValue);
     }
-    setIsLoading(false)
-  
-  }, [dataSetId, endpointId, dispatch, langId, valueKey, labelKey, name, defaultIndex, setFieldValue])
+
+    setIsLoading(false);
+  }, [
+    dataSetId,
+    endpointId,
+    dispatch,
+    langId,
+    valueKey,
+    labelKey,
+    name,
+    defaultIndex,
+    setFieldValue,
+    value,
+    onChange
+  ]);
 
   useEffect(() => {
     if ((dataSetId || endpointId) && selectOptions.length === 0) {
-      loadOptions()
+      loadOptions();
     }
-  }, [dataSetId, endpointId, selectOptions.length, loadOptions])
+  }, [dataSetId, endpointId, selectOptions.length, loadOptions]);
 
   const validationClass =
     submitErrors === "invalid"
       ? "is-invalid"
       : submitErrors === "valid"
       ? "is-valid"
-      : ""
+      : "";
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newValue = e.target.value;
+    setFieldValue(name, newValue);
+    onChange?.(newValue);
+  };
 
   return (
     <FormGroup>
@@ -120,6 +149,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           as="select"
           name={name}
           className={`form-control form-select ${validationClass}`}
+          onChange={handleChange}
+          value={values[name]} 
         >
           <option value="">Select {label}</option>
           {selectOptions.map((opt, i) => (
@@ -132,7 +163,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
       <ErrorMessage name={name} component="div" className="invalid-feedback" />
     </FormGroup>
-  )
-}
+  );
+};
 
-export default CustomSelect
+export default CustomSelect;

@@ -133,8 +133,7 @@ export const postMobileRequest = createAsyncThunk<any, RequestProps, { state: Ro
   async (body, { getState, dispatch }) => {
     const { user } = getState().authSlice;
     const token = await dispatch(getAccessToken()).unwrap();
-    const apiUrl = window.localStorage.getItem('apiUrl') || '';
-    const url = `${apiUrl}${body.extension}`;
+    const url = `https://byc-staging-mobile-api.arguserp.net${body.extension}`;
 
     try {
       const response = await makeApiRequest('POST', url, token, user?.languageId, body.body);
