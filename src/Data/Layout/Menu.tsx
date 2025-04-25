@@ -56,6 +56,11 @@ export const MenuList: MenuItem[] | undefined = [
             type: "link",
             title: "Language Selection",
           },
+          {
+            path: "/Byc_Pages/Notification",
+            type: "link",
+            title: "Notification Selection",
+          },
         ],
       },
     ],
