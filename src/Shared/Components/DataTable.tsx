@@ -14,6 +14,7 @@ const DataTableComponent = ({
   direction = "ltr",
   pagination = true,
   showActions = false,
+  Search = false,
   showEdit = true,
   showDelete = true,
   onEdit,
@@ -30,6 +31,7 @@ const DataTableComponent = ({
   showActions?: boolean;
   showEdit?: boolean;
   showDelete?: boolean;
+  Search?:boolean;
   onEdit?: (row: any) => void;
   onDelete?: (row: any) => void;
 }) => {
@@ -116,7 +118,7 @@ const DataTableComponent = ({
 
   return (
     <>
-      <div
+     {Search && <div
         className="dataTables_filter d-flex justify-content-end align-items-center mb-3"
         style={{ maxWidth: "250px", marginLeft: "auto" }}
       >
@@ -127,7 +129,7 @@ const DataTableComponent = ({
           onChange={(e) => setFilterText(e.target.value)}
           style={{ width: "150px" }}
         />
-      </div>
+      </div>}
       <div
         className="theme-scrollbar border rounded shadow-sm"
         style={{

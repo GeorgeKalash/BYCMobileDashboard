@@ -11,7 +11,8 @@ const makeApiRequest = async (
   url: string,
   token: string,
   languageId?: number,
-  body?: any
+  body?: any,
+  rawBody: boolean = false
 ) => {
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -24,13 +25,15 @@ const makeApiRequest = async (
   if (method === 'GET') {
     return axios.get(url, config);
   }
-
-  const formData = new FormData();
-  if (body) {
+  if (rawBody) {
+    headers['Content-Type'] = 'application/json';
+    return axios.post(url, JSON.stringify(body), { headers });
+  } else {
+    const formData = new FormData();
     formData.append('record', JSON.stringify(body));
+    headers['Content-Type'] = 'multipart/form-data';
+    return axios.post(url, formData, { headers });
   }
-
-  return axios.post(url, formData, config);
 };
 
 export const getAccessToken = createAsyncThunk<string, void, { state: RootState }>(
@@ -110,7 +113,7 @@ export const getMobileRequest = createAsyncThunk<any, RequestProps, { state: Roo
   }
 );
 
-export const postRequest = createAsyncThunk<any, RequestProps, { state: RootState }>(
+export const postRequest = createAsyncThunk<any, RequestProps & { rawBody?: boolean }, { state: RootState }>(
   'request/postRequest',
   async (body, { getState, dispatch }) => {
     const { user } = getState().authSlice;
@@ -119,7 +122,7 @@ export const postRequest = createAsyncThunk<any, RequestProps, { state: RootStat
     const url = `${apiUrl}${body.extension}`;
 
     try {
-      const response = await makeApiRequest('POST', url, token, user?.languageId, body.body);
+      const response = await makeApiRequest('POST', url, token, user?.languageId, body.body, body.rawBody);
       return response.data;
     } catch (error: any) {
       if (body.throwError) throw error;
@@ -128,7 +131,7 @@ export const postRequest = createAsyncThunk<any, RequestProps, { state: RootStat
   }
 );
 
-export const postMobileRequest = createAsyncThunk<any, RequestProps, { state: RootState }>(
+export const postMobileRequest = createAsyncThunk<any, RequestProps & { rawBody?: boolean }, { state: RootState }>(
   'request/postMobileRequest',
   async (body, { getState, dispatch }) => {
     const { user } = getState().authSlice;
@@ -136,7 +139,7 @@ export const postMobileRequest = createAsyncThunk<any, RequestProps, { state: Ro
     const url = `https://byc-staging-mobile-api.arguserp.net${body.extension}`;
 
     try {
-      const response = await makeApiRequest('POST', url, token, user?.languageId, body.body);
+      const response = await makeApiRequest('POST', url, token, user?.languageId, body.body, body.rawBody);
       return response.data;
     } catch (error: any) {
       if (body.throwError) throw error;
