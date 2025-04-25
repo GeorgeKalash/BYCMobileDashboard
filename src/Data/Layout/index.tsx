@@ -5,7 +5,7 @@ export const LanguagesData = [
     language: "English",
   },
   {
-    data: "sa",
+    data: "ae",
     logo: "flag-icon flag-icon-sa",
     language: "لعربية",
   },
