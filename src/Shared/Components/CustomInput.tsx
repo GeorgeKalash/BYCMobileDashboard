@@ -10,6 +10,7 @@ const CustomInput = ({
   isRequired = false,
   placeholder = "",
   submitErrors = "",
+  readOnly = false,
 }) => {
   const validationClass = submitErrors
     ? "is-invalid"
@@ -27,6 +28,7 @@ const CustomInput = ({
         type={type}
         className={`form-control ${validationClass}`}
         placeholder={placeholder}
+        readOnly={readOnly}
       />
       <ErrorMessage name={name} component="div" className="invalid-feedback" />
     </FormGroup>

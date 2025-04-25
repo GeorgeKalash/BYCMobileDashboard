@@ -10,32 +10,36 @@ import { useTranslation } from "@/app/i18n/client";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
+import ActivateLanguage from "./Form/ActivateLanguage";
 
 const LanguageSelection = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
-  const [data, setData] = useState([])
+  const [data, setData] = useState([]);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<"edit" | "delete" | null>(
     null
   );
-    const dispatch = useAppDispatch()
-  
-    const fetchData = async () => {
-      const result = await withRequestTracking(dispatch, () =>
-        dispatch(getMobileRequest({
-          extension: `${SystemMobileRepository.Languages.get}`,
-          parameters: ''
-        }))
-      )
-      setData(result.payload.data)
-    }
-  
-    useEffect(() => {
-      fetchData()
-    }, [])
+  const dispatch = useAppDispatch();
 
+  const [formData, setFormData] = useState<any>(null);
+
+  const fetchData = async () => {
+    const result = await withRequestTracking(dispatch, () =>
+      dispatch(
+        getMobileRequest({
+          extension: `${SystemMobileRepository.Languages.get}`,
+          parameters: "",
+        })
+      )
+    );
+    setData(result.payload.data);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleModalOpen = (row: any, action: "edit" | "delete") => {
     setSelectedRow(row);
@@ -69,7 +73,10 @@ const LanguageSelection = () => {
       id: "activeStatus",
     },
   ];
-
+  const handleSubmit = () => {
+    console.log("Selected Values:", formData);
+    handleModalClose();
+  };
   return (
     <Col xs="12">
       <Card>
@@ -93,13 +100,15 @@ const LanguageSelection = () => {
       <SharedModal
         visible={modalOpen && modalAction === "edit"}
         onClose={handleModalClose}
-        title={t("Edit Language")}
+        title={t("Languages Page")}
         width="600px"
         height="60vh"
-        onSubmit={handleModalClose}
+        onSubmit={handleSubmit}
       >
-        <p>{t("You are editing")}:</p>
-        <pre>{JSON.stringify(selectedRow, null, 2)}</pre>
+        <ActivateLanguage
+          rowData={selectedRow}
+          onFormChange={(values) => setFormData(values)}
+        />
       </SharedModal>
     </Col>
   );
