@@ -1,4 +1,3 @@
-
 export const LanguagesData = [
   {
     data: "en",
@@ -7,8 +6,7 @@ export const LanguagesData = [
   },
   {
     data: "ae",
-    logo: "flag-icon flag-icon-ae",
+    logo: "flag-icon flag-icon-sa",
     language: "لعربية",
-  }
+  },
 ];
-
