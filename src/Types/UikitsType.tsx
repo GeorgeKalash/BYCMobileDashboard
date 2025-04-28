@@ -10,6 +10,8 @@ export interface CommonCardHeaderProp {
   headClass?: string;
   icon?:JSX.Element
   tagClass?: string;
+  onAdd?: () => void;  
+  children?: React.ReactNode;
 }
 
 export interface GridCommonCardFooterType {

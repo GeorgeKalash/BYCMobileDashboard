@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
-import ActivateLanguage from "../Language_Selection/Form/ActivateLanguage";
+import ActivateLanguageForm from "./Form/ActivateLanguageForm";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { FormikProps } from "formik";
 
@@ -98,13 +98,10 @@ const LanguageSelection = () => {
             title="language_table"
             data={data}
             columns={columns}
-            localStorageKey="language_table"
             highlightOnHover
             pagination
             showActions
-            showDelete={false}
             onEdit={(row) => handleModalOpen(row, "edit")}
-            onDelete={(row) => handleModalOpen(row, "delete")}
           />
         </CardBody>
       </Card>
@@ -116,7 +113,7 @@ const LanguageSelection = () => {
         height="60vh"
         onSubmit={handleSubmit} 
       >
-        <ActivateLanguage
+        <ActivateLanguageForm
           rowData={selectedRow}
           formikRef={formikRef}
           onSuccessSubmit={handleModalClose} 
