@@ -105,7 +105,7 @@ export const login = createAsyncThunk(
       window.sessionStorage.setItem('userData', JSON.stringify(user))
       window.localStorage.setItem('languageId', String(user.languageId))
       document.cookie = `access_token=${user.accessToken}; path=/;`
-      window.location.replace('/en/pages/sample_page')
+      window.location.replace('/en/Byc_Pages/Defaults')
 
       return user
     } catch (err: any) {

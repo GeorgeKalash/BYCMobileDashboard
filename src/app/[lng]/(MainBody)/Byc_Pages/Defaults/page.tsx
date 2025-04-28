@@ -52,7 +52,7 @@ const MobileVerificationForm = () => {
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Update Profile")} />
+        <CommonCardHeader title={t("Defaults")} />
         <CardBody>
           <Formik
             initialValues={initialValues}

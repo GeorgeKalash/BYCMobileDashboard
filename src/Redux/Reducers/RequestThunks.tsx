@@ -119,7 +119,8 @@ export const postRequest = createAsyncThunk<any, RequestProps & { rawBody?: bool
     const { user } = getState().authSlice;
     const token = await dispatch(getAccessToken()).unwrap();
     const apiUrl = window.localStorage.getItem('apiUrl') || '';
-    const url = `${apiUrl}${body.extension}`;
+    
+    const url = `${apiUrl}${body.extension}${body.parameters ? `?${body.parameters}` : ''}`;
 
     try {
       const response = await makeApiRequest('POST', url, token, user?.languageId, body.body, body.rawBody);
@@ -136,7 +137,7 @@ export const postMobileRequest = createAsyncThunk<any, RequestProps & { rawBody?
   async (body, { getState, dispatch }) => {
     const { user } = getState().authSlice;
     const token = await dispatch(getAccessToken()).unwrap();
-    const url = `https://byc-staging-mobile-api.arguserp.net${body.extension}`;
+    const url = `https://byc-staging-mobile-api.arguserp.net${body.extension}${body.parameters ? `?${body.parameters}` : ''}`;
 
     try {
       const response = await makeApiRequest('POST', url, token, user?.languageId, body.body, body.rawBody);
