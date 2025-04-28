@@ -18,7 +18,7 @@ const CustomInput = ({
   const validationClass = meta.touched
     ? meta.error || isEmpty
       ? "is-invalid" 
-      : "is-valid"   
+      : ""   
     : ""; 
 
   return (
