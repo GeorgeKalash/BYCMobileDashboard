@@ -19,7 +19,7 @@ const Notification = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
-
+  const formikRef = useRef<FormikProps<any>>(null);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<"edit" | "delete" | null>(
@@ -130,7 +130,6 @@ const Notification = () => {
             highlightOnHover
             pagination
             showActions
-            showDelete={false}
             onEdit={handleEdit}
           />
         </CardBody>
@@ -143,11 +142,15 @@ const Notification = () => {
         width="900px"
         height="60vh"
         onSubmit={() => {
-          // handle creation here
-          handleCreateClose();
+          if (formikRef.current) {
+            formikRef.current.submitForm();
+          }
         }}
       >
-        <MessageView rowData={MessageCreate} />
+        <MessageCreate
+          formikRef={formikRef}
+          onSuccessSubmit={handleCreateClose}
+        />
       </SharedModal>
 
       <SharedModal
