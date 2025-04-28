@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { KeyboardEvent } from "react";
 import { Formik, Form, FormikHelpers, FormikProps } from "formik";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
@@ -23,7 +23,7 @@ const TextControlForm = ({
   formikRef?: React.Ref<FormikProps<any>>;
   onSuccessSubmit?: () => void;
   modalAction: "add" | "edit" | null;
-  langId: 1 | 2 | null,
+  langId: 1 | 2 | null;
 }) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
@@ -52,7 +52,7 @@ const TextControlForm = ({
     await withRequestTracking(dispatch, () =>
       dispatch(
         postMobileRequest({
-          extension: SystemMobileRepository.Languages.updateKeyValuePairs, 
+          extension: SystemMobileRepository.Languages.updateKeyValuePairs,
           parameters: `_languageId=${langId}`,
           body: transformedData,
           rawBody: true,
@@ -67,6 +67,16 @@ const TextControlForm = ({
     }
   };
 
+  const handleKeyDown = (
+    event: KeyboardEvent<HTMLFormElement>,
+    submitForm: () => void
+  ) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      submitForm();
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -74,25 +84,25 @@ const TextControlForm = ({
       onSubmit={handleSubmit}
       innerRef={formikRef}
     >
-      <Form>
-        <Row>
-          <Col>
-            <CustomInput
-              name="key"
-              label={t("Key")}
-              placeholder={t("Enter Key")}
-              readOnly={modalAction === "edit"}
-              submitErrors={"true"}
-            />
-            <CustomInput
-              name="value"
-              label={t("Value")}
-              placeholder={t("Enter value")}
-              submitErrors={"true"}
-            />
-          </Col>
-        </Row>
-      </Form>
+      {({ submitForm }) => (
+        <Form onKeyDown={(e) => handleKeyDown(e, submitForm)}>
+          <Row>
+            <Col>
+              <CustomInput
+                name="key"
+                label={t("Key")}
+                placeholder={t("Enter Key")}
+                readOnly={modalAction === "edit"}
+              />
+              <CustomInput
+                name="value"
+                label={t("Value")}
+                placeholder={t("Enter value")}
+              />
+            </Col>
+          </Row>
+        </Form>
+      )}
     </Formik>
   );
 };

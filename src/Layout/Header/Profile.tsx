@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ImagePath, Logout } from "@/Constant";
+import { Logout } from "@/Constant";
 import { useAppDispatch } from "@/Redux/Hooks";
 import { logout } from "@/Redux/Reducers/AuthSlice";
 import { LogOut } from "react-feather";
@@ -30,7 +30,6 @@ export const Profile = () => {
   return (
     <li className="profile-nav onhover-dropdown px-0 py-0">
       <div className="d-flex profile-media align-items-center">
-        <img className="img-30" src={`${ImagePath}/dashboard/profile.png`} alt="Profile" />
         <div className="flex-grow-1">
           <span>{name}</span>
           <p className="mb-0 font-outfit">
