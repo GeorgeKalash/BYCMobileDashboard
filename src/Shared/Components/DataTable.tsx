@@ -1,12 +1,11 @@
-"use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Label, Input } from "reactstrap";
+
 const DataTableComponent = ({
   title,
   data,
   columns,
-  localStorageKey = "genericDataTable",
   defaultSortColumn = "field",
   highlightOnHover = false,
   direction = "ltr",
@@ -19,7 +18,6 @@ const DataTableComponent = ({
   title?: string;
   data: any[];
   columns: any[];
-  localStorageKey?: string;
   defaultSortColumn?: string;
   highlightOnHover?: boolean;
   direction?: "ltr" | "rtl";
@@ -30,30 +28,12 @@ const DataTableComponent = ({
   onDelete?: (row: any) => void;
 }) => {
   const pageSize = 50;
+
   const [filterText, setFilterText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState(defaultSortColumn);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  useEffect(() => {
-    const storedFilter = localStorage.getItem(`${localStorageKey}Filter`);
-    const storedPage = localStorage.getItem(`${localStorageKey}Page`);
-    const storedSort = localStorage.getItem(`${localStorageKey}Sort`);
-    if (storedFilter) setFilterText(storedFilter);
-    if (storedPage) setCurrentPage(Number(storedPage));
-    if (storedSort) {
-      const { column, direction } = JSON.parse(storedSort);
-      setSortColumn(column);
-      setSortDirection(direction);
-    }
-  }, [localStorageKey]);
-  useEffect(() => {
-    localStorage.setItem(`${localStorageKey}Filter`, filterText);
-    localStorage.setItem(`${localStorageKey}Page`, currentPage.toString());
-    localStorage.setItem(
-      `${localStorageKey}Sort`,
-      JSON.stringify({ column: sortColumn, direction: sortDirection })
-    );
-  }, [filterText, currentPage, sortColumn, sortDirection, localStorageKey]);
+
   const filteredItems = useMemo(
     () =>
       data.filter((item) =>
@@ -72,11 +52,14 @@ const DataTableComponent = ({
       return sortDirection === "asc" ? result : -result;
     });
   }, [filteredItems, sortColumn, sortDirection]);
+
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return sortedData.slice(start, start + pageSize);
   }, [sortedData, currentPage]);
+
   const totalPages = Math.ceil(sortedData.length / pageSize);
+
   const actionColumn = {
     name: "Actions",
     cell: (row: any) => (
@@ -85,7 +68,7 @@ const DataTableComponent = ({
           <i
             className="fa fa-edit text-primary cursor-pointer"
             style={{ fontSize: "20px" }}
-            onClick={() => onEdit?.(row)}
+            onClick={() => onEdit(row)}
             title="Edit"
           />
         )}
@@ -93,7 +76,7 @@ const DataTableComponent = ({
           <i
             className="fa fa-trash text-danger cursor-pointer"
             style={{ fontSize: "20px" }}
-            onClick={() => onDelete?.(row)}
+            onClick={() => onDelete(row)}
             title="Delete"
           />
         )}
@@ -104,10 +87,12 @@ const DataTableComponent = ({
     button: true,
     id: "actions",
   };
+
   const finalColumns = useMemo(
     () => (showActions ? [...columns, actionColumn] : columns),
     [columns, showActions, onEdit, onDelete]
   );
+
   return (
     <>
       {Search && (
@@ -124,10 +109,11 @@ const DataTableComponent = ({
           />
         </div>
       )}
+
       <div
         className="theme-scrollbar border rounded shadow-sm"
         style={{
-          maxHeight: "70vh",
+          maxHeight: '68vh',
           overflowY: "auto",
         }}
       >
@@ -136,6 +122,7 @@ const DataTableComponent = ({
           data={paginatedData}
           fixedHeader
           striped
+          fixedHeaderScrollHeight="67vh" 
           highlightOnHover={highlightOnHover}
           persistTableHead
           sortServer
@@ -152,6 +139,7 @@ const DataTableComponent = ({
           className="theme-scrollbar"
         />
       </div>
+
       {pagination && (
         <div className="d-flex justify-content-between align-items-center gap-2 mt-3 flex-wrap">
           <span className="text-muted ms-2">
@@ -180,4 +168,5 @@ const DataTableComponent = ({
     </>
   );
 };
+
 export default DataTableComponent;

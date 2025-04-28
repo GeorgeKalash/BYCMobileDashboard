@@ -1,7 +1,4 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from "react";
-import { Field, useFormikContext } from "formik";
 import { FormGroup, Label, Spinner, Button } from "reactstrap";
 import { useSelector } from "react-redux";
 import { RootState } from "@/Redux/Store";
@@ -26,8 +23,8 @@ interface CustomSelectProps {
   defaultIndex?: number;
   valueKey?: string;
   labelKey?: string;
-  value?: string | number;
-  onChange?: (value: string | number) => void;
+  value?: string | number | null | undefined;
+  onChange?: (value: string | number | null) => void;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -47,14 +44,16 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 }) => {
   const [selectOptions, setSelectOptions] = useState<OptionType[]>(options || []);
   const [isLoading, setIsLoading] = useState(false);
-  const { setFieldValue, values } = useFormikContext<any>();
-  const dispatch = useAppDispatch();
+  const [localValue, setLocalValue] = useState<string | number | "">(
+    value ?? ""
+  );
 
+  const dispatch = useAppDispatch();
   const reduxLangId = useSelector((state: RootState) => state.authSlice.languageId);
   const langId = reduxLangId || parseInt(localStorage.getItem("languageId") || "1", 10);
 
   const loadOptions = useCallback(async () => {
-    let url = dataSetId ? `/api/KVS/getAllKVS` : endpointId;
+    const url = dataSetId ? `/api/KVS/getAllKVS` : endpointId;
     if (!url) return;
 
     setIsLoading(true);
@@ -62,44 +61,33 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       dispatch(
         getMobileRequest({
           extension: url,
-          parameters: `_dataset=${dataSetId || ""}&_language=${langId}`,
+          parameters: dataSetId ? `_dataset=${dataSetId}&_language=${langId}` : '',
         })
       )
     );
 
-    const data = action.payload?.data;
+    const data = action.payload?.data ?? [];
 
-    const mapped =
-      data?.map((item: any) => ({
-        value: item[valueKey],
-        label: item[labelKey],
-      })) || [];
+    const mapped: OptionType[] = data.map((item: any) => ({
+      value: item[valueKey],
+      label: item[labelKey],
+    }));
 
     setSelectOptions(mapped);
 
-    if (typeof value !== "undefined") {
-      setFieldValue(name, value);
+    if (typeof value !== "undefined" && value !== null) {
+      setLocalValue(value);
       onChange?.(value);
     } else if (typeof defaultIndex === "number" && mapped[defaultIndex]) {
       const initialValue = mapped[defaultIndex].value;
-      setFieldValue(name, initialValue);
+      setLocalValue(initialValue);
       onChange?.(initialValue);
+    } else {
+      setLocalValue("");
     }
 
     setIsLoading(false);
-  }, [
-    dataSetId,
-    endpointId,
-    dispatch,
-    langId,
-    valueKey,
-    labelKey,
-    name,
-    defaultIndex,
-    setFieldValue,
-    value,
-    onChange
-  ]);
+  }, [dataSetId, endpointId, dispatch, langId, valueKey, labelKey, defaultIndex, value, onChange]);
 
   useEffect(() => {
     if ((dataSetId || endpointId) && selectOptions.length === 0) {
@@ -107,57 +95,61 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     }
   }, [dataSetId, endpointId, selectOptions.length, loadOptions]);
 
-  const isFieldFilled = values[name] && values[name] !== "";
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newValue = e.target.value;
+    const finalValue = newValue === "" ? null : newValue; // empty means null
+    setLocalValue(newValue);
+    onChange?.(finalValue);
+  };
+
+  const clearSelection = () => {
+    setLocalValue("");
+    onChange?.(null);
+  };
+
+  const isFieldFilled = localValue !== "";
 
   const validationClass = isRequired && !isFieldFilled ? "is-invalid" : "";
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newValue = e.target.value;
-    setFieldValue(name, newValue);
-    onChange?.(newValue);
-  };
-
   return (
     <FormGroup>
-      <Label>
-        {label} {isRequired && <span className="text-danger">*</span>}
-        {(dataSetId || endpointId) && showRefresh && (
+      {label && (
+        <Label>
+          {label} {isRequired && <span className="text-danger">*</span>}
+          {(dataSetId || endpointId) && showRefresh && (
+            <Button
+              type="button"
+              color="link"
+              size="sm"
+              onClick={loadOptions}
+              className="ms-2 p-0 align-baseline"
+              title="Refresh options"
+            >
+              🔄
+            </Button>
+          )}
           <Button
             type="button"
             color="link"
             size="sm"
-            onClick={loadOptions}
-            className="ms-2 p-0 align-baseline"
-            title="Refresh options"
+            onClick={clearSelection}
+            className="p-0 align-baseline text-danger"
+            title="Clear selection"
           >
-            🔄
+            ❌
           </Button>
-        )}
-        <Button
-          type="button"
-          color="link"
-          size="sm"
-          onClick={() => {
-            setFieldValue(name, "");
-            onChange?.("");
-          }}
-          className="p-0 align-baseline text-danger"
-          title="Clear selection"
-        >
-          ❌
-        </Button>
-      </Label>
+        </Label>
+      )}
       {isLoading ? (
         <div className="form-control">
           <Spinner size="sm" /> {loadingText}
         </div>
       ) : (
-        <Field
-          as="select"
+        <select
           name={name}
           className={`form-control form-select ${validationClass}`}
+          value={localValue}
           onChange={handleChange}
-          value={values[name]}
         >
           <option value="" disabled hidden>
             {"Select..."}
@@ -167,7 +159,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               {opt.label}
             </option>
           ))}
-        </Field>
+        </select>
       )}
     </FormGroup>
   );

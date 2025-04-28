@@ -55,14 +55,14 @@ const MobileVerificationForm = () => {
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Update Profile")} />
+        <CommonCardHeader title={t("Defaults")} />
         <CardBody>
           <Formik
             initialValues={initialValues}
             onSubmit={handleSubmit}
             enableReinitialize
           >
-            {({ values, setFieldValue, setValues }) => {
+           {({ values, setValues }) => {
               useEffect(() => {
                 const fetchAndSet = async () => {
                   const result = await withRequestTracking(dispatch, () =>
@@ -105,7 +105,7 @@ const MobileVerificationForm = () => {
                         dataSetId={11}
                         valueKey="key"
                         labelKey="value"
-                        value={values.yakeen_enable_service}
+                        value={Number(values.yakeen_enable_service)} 
                       />
                     </Col>
                     <Col md="4">

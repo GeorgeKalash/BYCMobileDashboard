@@ -47,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <div className={`page-wrapper ${layout}`} id="pageWrapper">
         <Header />
         <div className="page-body-wrapper">
-          <SideBar />
+        <SideBar />
           <div className="page-body">{children}</div>
         </div>
       </div>
