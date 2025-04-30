@@ -54,17 +54,17 @@ export const MenuList: MenuItem[] | undefined = [
           {
             path: "/Byc_Pages/Language_Selection",
             type: "link",
-            title: "Language Selection",
-          },
-          {
-            path: "/Byc_Pages/Notification",
-            type: "link",
-            title: "Notification Selection",
+            title: "Languages Page",
           },
           {
             path: "/Byc_Pages/Text_Control",
             type: "link",
             title: "Text Control",
+          },
+          {
+            path: "/Byc_Pages/Notification",
+            type: "link",
+            title: "Notifications",
           },
         ],
       },

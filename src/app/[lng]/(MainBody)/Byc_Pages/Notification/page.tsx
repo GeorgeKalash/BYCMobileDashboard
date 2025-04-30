@@ -1,51 +1,47 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { CardBody, Card, Col } from "reactstrap";
+import { Card, CardBody, Col } from "reactstrap";
 import DataTable from "../../../../../Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
+import SharedModal from "../../../../../Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
-import SharedModal from "@/Shared/Components/SharedModal";
-import MessageView from "./Form/MessageView";
-import MessageCreate from "./Form/MessageCreate";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
-import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
-
 import { FormikProps } from "formik";
-import SharedButton from "@/Shared/Components/SharedButton";
+import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
+import NotificationForm from "./Form/NotificationForm";
+
 const Notification = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
-  const formikRef = useRef<FormikProps<any>>(null);
+
+  const [data, setData] = useState<{ key: string; value: string }[]>([]);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"edit" | "delete" | null>(
-    null
-  );
+  const [modalAction, setModalAction] = useState<"add" | "edit" | null>(null);
+  const formikRef = useRef<FormikProps<any>>(null);
 
-  const [data, setData] = useState<any[]>([]);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const handleCreate = () => {
-    setCreateModalOpen(true);
-  };
-  const handleCreateClose = () => {
-    setCreateModalOpen(false);
-  };
   const fetchData = async () => {
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
-          extension: `${NotificationMobileRepository.Notification.get}`,
+          extension: `${NotificationMobileRepository.Notification.getAll}`,
           parameters: "",
         })
       )
     );
 
-    if (result?.payload?.data && Array.isArray(result.payload.data)) {
-      setData(result.payload.data);
+    const keyValuePairs = result?.payload?.data?.keyValuePairs;
+
+    if (keyValuePairs && typeof keyValuePairs === "object") {
+      const transformed = Object.entries(keyValuePairs).map(([key, value]) => ({
+        key,
+        value: String(value ?? ""),
+      }));
+      setData(transformed);
     } else {
       setData([]);
     }
@@ -54,27 +50,6 @@ const Notification = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  // useEffect(() => {
-  //   const mockMessages = [
-  //     {
-  //       id: 1,
-  //       message_en: "System update will occur at midnight.",
-  //       message_ar: "سيتم تحديث النظام عند منتصف الليل.",
-  //     },
-  //     {
-  //       id: 2,
-  //       message_en: "New features have been released!",
-  //       message_ar: "تم إصدار ميزات جديدة!",
-  //     },
-  //     {
-  //       id: 3,
-  //       message_en: "Reminder: Maintenance on Friday.",
-  //       message_ar: "تذكير: صيانة يوم الجمعة.",
-  //     },
-  //   ];
-  //   setData(mockMessages);
-  // }, []);
 
   const columns = [
     {
@@ -93,7 +68,8 @@ const Notification = () => {
       sortable: true,
     },
   ];
-  const handleModalOpen = (row: any, action: "edit" | "delete") => {
+
+  const handleModalOpen = (row: any, action: "edit") => {
     setSelectedRow(row);
     setModalAction(action);
     setModalOpen(true);
@@ -103,65 +79,51 @@ const Notification = () => {
     setModalOpen(false);
     setSelectedRow(null);
     setModalAction(null);
+    fetchData();
   };
 
-  const handleSubmit = () => {};
-
-  const handleEdit = (row: any) => {
-    handleModalOpen(row, "edit");
+  const handleSubmit = () => {
+    if (formikRef.current) {
+      formikRef.current.submitForm();
+    }
   };
+
+  const onAdd = () => {
+    setSelectedRow(null);
+    setModalAction("add");
+    setModalOpen(true);
+  };
+
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Languages Page")} />
+        <CommonCardHeader title={t("Notifications")} onAdd={onAdd}/>
         <CardBody>
-          <Col className="d-flex justify-content-end">
-            <SharedButton
-              title={t("Create New Message")}
-              onClick={handleCreate}
-              className="mb-3"
-            />
-          </Col>
           <DataTable
             title={t("New Message")}
             data={data}
             columns={columns}
-            localStorageKey="notifications_table"
             highlightOnHover
             pagination
-            showActions
-            onEdit={handleEdit}
+            showActions={true}
+            onEdit={(row) => handleModalOpen(row, "edit")}
           />
         </CardBody>
       </Card>
-
       <SharedModal
-        visible={createModalOpen}
-        onClose={handleCreateClose}
-        title={t("Create New Message")}
-        width="900px"
-        height="60vh"
-        onSubmit={() => {
-          if (formikRef.current) {
-            formikRef.current.submitForm();
-          }
-        }}
-      >
-        <MessageCreate
-          formikRef={formikRef}
-          onSuccessSubmit={handleCreateClose}
-        />
-      </SharedModal>
-
-      <SharedModal
-        visible={modalOpen && modalAction === "edit"}
+        visible={modalOpen}
         onClose={handleModalClose}
-        title={t("Edit Message")}
+        title={modalAction === "add" ? t("Add Notification") : t("Edit Notification")}
         width="600px"
         height="60vh"
         onSubmit={handleSubmit}
       >
-        <MessageView rowData={selectedRow} />
+        <NotificationForm
+          rowData={selectedRow}
+          formikRef={formikRef}
+          modalAction={modalAction}
+          onSuccessSubmit={handleModalClose}
+        />
       </SharedModal>
     </Col>
   );

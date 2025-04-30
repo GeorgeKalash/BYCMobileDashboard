@@ -8,6 +8,7 @@ import SharedButton from "@/Shared/Components/SharedButton";
 import CustomInput from "../../../../../Shared/Components/CustomInput";
 import CustomSelect from "../../../../../Shared/Components/CustomSelect";
 import { useTranslation } from "@/app/i18n/client";
+import * as Yup from "yup";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import {
   getMobileRequest,
@@ -24,6 +25,18 @@ const initialValues = {
   yakeen_user_daily_request: "",
   daily_user_new_request: "",
 };
+
+const validationSchema = Yup.object({
+  yakeen_enable_service: Yup.string().required("Required"),
+  yakeen_daily_request_count: Yup.number()
+    .min(0, "Must be at least 0"),
+  yakeen_monthly_request_count: Yup.number()
+    .min(0, "Must be at least 0"),
+  yakeen_user_daily_request: Yup.number()
+    .min(0, "Must be at least 0"),
+  daily_user_new_request: Yup.number()
+    .min(0, "Must be at least 0"),
+});
 
 const MobileVerificationForm = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -60,6 +73,7 @@ const MobileVerificationForm = () => {
           <Formik
             initialValues={initialValues}
             onSubmit={handleSubmit}
+            validationSchema={validationSchema}
             enableReinitialize
           >
            {({ values, setValues }) => {
@@ -114,6 +128,7 @@ const MobileVerificationForm = () => {
                         label={t("Number of YAKEEN checks per day")}
                         type="number"
                         placeholder="0"
+                        min={0}
                       />
                     </Col>
                     <Col md="4">
@@ -122,6 +137,7 @@ const MobileVerificationForm = () => {
                         label={t("Number of YAKEEN checks per month")}
                         type="number"
                         placeholder="0"
+                        min={0}
                       />
                     </Col>
                     <Col md="6">
@@ -130,6 +146,7 @@ const MobileVerificationForm = () => {
                         label={t("Maximum number of Nafath access codes")}
                         type="number"
                         placeholder="0"
+                        min={0}
                       />
                     </Col>
                     <Col md="6">
@@ -138,6 +155,7 @@ const MobileVerificationForm = () => {
                         label={t("Maximum number of new memberships per day")}
                         type="number"
                         placeholder="0"
+                        min={0}
                       />
                     </Col>
                   </Row>

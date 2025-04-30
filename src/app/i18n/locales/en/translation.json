@@ -188,5 +188,10 @@
   "Action": "Action",
   "Languages Page": "Languages Page",
   "Search Language": "Search Language",
-  "Defaults": "Defaults"
+  "Defaults": "Defaults",
+  "Text Control": "Text Control",
+  "Add Text": "Add Text",
+  "Edit Text": "Edit Text",
+  "Key": "Key",
+  "Value": "Value"
 }
