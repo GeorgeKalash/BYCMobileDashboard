@@ -1,15 +1,25 @@
-"use client";
 import React from "react";
 import { Field, ErrorMessage, useField } from "formik";
 import { FormGroup, Label } from "reactstrap";
 
-const CustomInput = ({
-  name = "",
+type CustomInputProps = {
+  name: string;
+  label?: string;
+  type?: string;
+  isRequired?: boolean;
+  placeholder?: string;
+  readOnly?: boolean;
+  min?: number | string; 
+};
+
+const CustomInput: React.FC<CustomInputProps> = ({
+  name,
   label = "",
   type = "text",
   isRequired = false,
   placeholder = "",
   readOnly = false,
+  min,
 }) => {
   const [field, meta] = useField(name);
 
@@ -17,9 +27,9 @@ const CustomInput = ({
 
   const validationClass = meta.touched
     ? meta.error || isEmpty
-      ? "is-invalid" 
-      : ""   
-    : ""; 
+      ? "is-invalid"
+      : ""
+    : "";
 
   return (
     <FormGroup>
@@ -32,7 +42,8 @@ const CustomInput = ({
         className={`form-control ${validationClass}`}
         placeholder={placeholder}
         readOnly={readOnly}
-        {...field} 
+        min={min}
+        {...field}
       />
       <ErrorMessage name={name} component="div" className="invalid-feedback" />
     </FormGroup>

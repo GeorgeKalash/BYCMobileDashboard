@@ -8,19 +8,35 @@ import SharedButton from "@/Shared/Components/SharedButton";
 import CustomInput from "../../../../../Shared/Components/CustomInput";
 import CustomSelect from "../../../../../Shared/Components/CustomSelect";
 import { useTranslation } from "@/app/i18n/client";
+import * as Yup from "yup";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
-import { getMobileRequest, postMobileRequest } from "@/Redux/Reducers/RequestThunks";
+import {
+  getMobileRequest,
+  postMobileRequest,
+} from "@/Redux/Reducers/RequestThunks";
 import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { showToast } from "@/Shared/Components/showToast";
 
 const initialValues = {
-  yakeen_enable_service: "", 
+  yakeen_enable_service: "",
   yakeen_daily_request_count: "",
   yakeen_monthly_request_count: "",
   yakeen_user_daily_request: "",
   daily_user_new_request: "",
 };
+
+const validationSchema = Yup.object({
+  yakeen_enable_service: Yup.string().required("Required"),
+  yakeen_daily_request_count: Yup.number()
+    .min(0, "Must be at least 0"),
+  yakeen_monthly_request_count: Yup.number()
+    .min(0, "Must be at least 0"),
+  yakeen_user_daily_request: Yup.number()
+    .min(0, "Must be at least 0"),
+  daily_user_new_request: Yup.number()
+    .min(0, "Must be at least 0"),
+});
 
 const MobileVerificationForm = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -57,6 +73,7 @@ const MobileVerificationForm = () => {
           <Formik
             initialValues={initialValues}
             onSubmit={handleSubmit}
+            validationSchema={validationSchema}
             enableReinitialize
           >
            {({ values, setValues }) => {
@@ -74,11 +91,14 @@ const MobileVerificationForm = () => {
                   if (result.status === 1 && Array.isArray(result.data)) {
                     const dataObj: Partial<typeof initialValues> = {};
 
-                    result.data.forEach((item: { key: string; value: string }) => {
-                      if (item.key in initialValues) {
-                        dataObj[item.key as keyof typeof initialValues] = item.value;
+                    result.data.forEach(
+                      (item: { key: string; value: string }) => {
+                        if (item.key in initialValues) {
+                          dataObj[item.key as keyof typeof initialValues] =
+                            item.value;
+                        }
                       }
-                    });
+                    );
 
                     setValues({
                       ...initialValues,
@@ -93,7 +113,7 @@ const MobileVerificationForm = () => {
                 <Form>
                   <Row className="gy-3">
                     <Col md="4">
-                     <CustomSelect
+                      <CustomSelect
                         name="yakeen_enable_service"
                         label={t("Check mobile compatibility with YAKEEN")}
                         dataSetId={11}
@@ -105,17 +125,19 @@ const MobileVerificationForm = () => {
                     <Col md="4">
                       <CustomInput
                         name="yakeen_daily_request_count"
-                        label={t("Number of checks per day")}
+                        label={t("Number of YAKEEN checks per day")}
                         type="number"
                         placeholder="0"
+                        min={0}
                       />
                     </Col>
                     <Col md="4">
                       <CustomInput
                         name="yakeen_monthly_request_count"
-                        label={t("Number of checks per month")}
+                        label={t("Number of YAKEEN checks per month")}
                         type="number"
                         placeholder="0"
+                        min={0}
                       />
                     </Col>
                     <Col md="6">
@@ -124,18 +146,24 @@ const MobileVerificationForm = () => {
                         label={t("Maximum number of Nafath access codes")}
                         type="number"
                         placeholder="0"
+                        min={0}
                       />
                     </Col>
                     <Col md="6">
                       <CustomInput
                         name="daily_user_new_request"
-                        label={t("Maximum number of Nafath access codes")}
+                        label={t("Maximum number of new memberships per day")}
                         type="number"
                         placeholder="0"
+                        min={0}
                       />
                     </Col>
                   </Row>
-                  <SharedButton color="primary"  type="submit" title={t("Submit")}/>
+                  <SharedButton
+                    color="primary"
+                    type="submit"
+                    title={t("Submit")}
+                  />
                 </Form>
               );
             }}

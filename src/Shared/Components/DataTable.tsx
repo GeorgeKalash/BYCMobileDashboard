@@ -44,7 +44,6 @@ const DataTableComponent = ({
       ),
     [data, filterText]
   );
-
   const sortedData = useMemo(() => {
     return [...filteredItems].sort((a, b) => {
       const aVal = a[sortColumn]?.toString() ?? "";
