@@ -10,6 +10,7 @@ import { fetchAC, login } from "@/Redux/Reducers/AuthSlice"
 import CenteredModal from "@/Components/UiKits/Modal/CenteredModal"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
+import SharedButton from "@/Shared/Components/SharedButton"
 
 export const UserForm = () => {
   const { i18LangStatus } = useAppSelector((store) => store.langSlice)
@@ -72,6 +73,8 @@ export const UserForm = () => {
                   as={Input}
                   placeholder="Enter email"
                 />
+
+
                 <ErrorMessage name="email" component="div" className="text-danger" />
               </FormGroup>
               <FormGroup>
@@ -95,9 +98,7 @@ export const UserForm = () => {
                   <Label className="text-muted" htmlFor="checkbox1">{RememberPassword}</Label>
                 </div>
                 <div className="text-end mt-3">
-                  <Button color="primary" block className="w-100" type="submit" disabled={loading}>
-                    {loading ? "Signing In..." : SignIn}
-                  </Button>
+                  <SharedButton color="primary" className="w-100" type="submit" title={loading ? "Signing In..." : SignIn}></SharedButton>
                 </div>
               </FormGroup>
             </Form>

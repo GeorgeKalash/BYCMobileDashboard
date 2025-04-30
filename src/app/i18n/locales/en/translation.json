@@ -175,8 +175,8 @@
   "Coming Soon": "Coming Soon",
   "Pinned": "Pinned",
   "Check mobile compatibility with YAKEEN": "Check mobile compatibility with YAKEEN",
-  "Number of checks per day": "Number of checks per day",
-  "Number of checks per month": "Number of checks per month",
+  "Number of YAKEEN checks per day": "Number of YAKEEN checks per day",
+  "Number of YAKEEN checks per month": "Number of YAKEEN checks per month",
   "Maximum number of Nafath access codes": "Maximum number of Nafath access codes",
   "Maximum number of new memberships per day": "Maximum number of new memberships per day",
   "Update Profile": "Update Profile",
@@ -187,5 +187,11 @@
   "Inactive": "Inactive",
   "Action": "Action",
   "Languages Page": "Languages Page",
-  "Search Language": "Search Language"
+  "Search Language": "Search Language",
+  "Defaults": "Defaults",
+  "Text Control": "Text Control",
+  "Add Text": "Add Text",
+  "Edit Text": "Edit Text",
+  "Key": "Key",
+  "Value": "Value"
 }

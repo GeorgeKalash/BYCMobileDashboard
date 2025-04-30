@@ -8,35 +8,40 @@ import SharedModal from "../../../../../Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
-import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
-import ActivateLanguageForm from "./Form/ActivateLanguageForm";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { FormikProps } from "formik";
+import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
+import NotificationForm from "./Form/NotificationForm";
 
-const LanguageSelection = () => {
+const Notification = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<{ key: string; value: string }[]>([]);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"edit" | "delete" | null>(null);
-
-  const formikRef = useRef<FormikProps<any>>(null); 
+  const [modalAction, setModalAction] = useState<"add" | "edit" | null>(null);
+  const formikRef = useRef<FormikProps<any>>(null);
 
   const fetchData = async () => {
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
-          extension: `${SystemMobileRepository.Languages.get}`,
+          extension: `${NotificationMobileRepository.Notification.getAll}`,
           parameters: "",
         })
       )
     );
 
-    if (result?.payload?.data && Array.isArray(result.payload.data)) {
-      setData(result.payload.data);
+    const keyValuePairs = result?.payload?.data?.keyValuePairs;
+
+    if (keyValuePairs && typeof keyValuePairs === "object") {
+      const transformed = Object.entries(keyValuePairs).map(([key, value]) => ({
+        key,
+        value: String(value ?? ""),
+      }));
+      setData(transformed);
     } else {
       setData([]);
     }
@@ -46,7 +51,25 @@ const LanguageSelection = () => {
     fetchData();
   }, []);
 
-  const handleModalOpen = (row: any, action: "edit" | "delete") => {
+  const columns = [
+    {
+      name: t("ID"),
+      selector: (row: any) => row.id,
+      sortable: true,
+    },
+    {
+      name: t("Message In English"),
+      selector: (row: any) => row.message_en || "-",
+      sortable: true,
+    },
+    {
+      name: t("Message In Arabic"),
+      selector: (row: any) => row.message_ar || "-",
+      sortable: true,
+    },
+  ];
+
+  const handleModalOpen = (row: any, action: "edit") => {
     setSelectedRow(row);
     setModalAction(action);
     setModalOpen(true);
@@ -65,62 +88,45 @@ const LanguageSelection = () => {
     }
   };
 
-  const columns = [
-    {
-      name: t("Translation Name"),
-      selector: (row: any) => row.name || "-",
-      sortable: true,
-      id: "name",
-    },
-    {
-      name: t("Active"),
-      cell: (row: any) => (
-        <span
-          style={{
-            color: row.isInactive ? "red" : "green",
-            fontWeight: "bold",
-          }}
-        >
-          {row.isInactive ? t("Inactive") : t("Active")}
-        </span>
-      ),
-      sortable: true,
-      id: "activeStatus",
-    },
-  ];
+  const onAdd = () => {
+    setSelectedRow(null);
+    setModalAction("add");
+    setModalOpen(true);
+  };
 
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Languages Page")} />
+        <CommonCardHeader title={t("Notifications")} onAdd={onAdd}/>
         <CardBody>
           <DataTable
-            title="language_table"
+            title={t("New Message")}
             data={data}
             columns={columns}
             highlightOnHover
             pagination
-            showActions
+            showActions={true}
             onEdit={(row) => handleModalOpen(row, "edit")}
           />
         </CardBody>
       </Card>
       <SharedModal
-        visible={modalOpen && modalAction === "edit"}
+        visible={modalOpen}
         onClose={handleModalClose}
-        title={t("Languages Page")}
+        title={modalAction === "add" ? t("Add Notification") : t("Edit Notification")}
         width="600px"
         height="60vh"
-        onSubmit={handleSubmit} 
+        onSubmit={handleSubmit}
       >
-        <ActivateLanguageForm
+        <NotificationForm
           rowData={selectedRow}
           formikRef={formikRef}
-          onSuccessSubmit={handleModalClose} 
+          modalAction={modalAction}
+          onSuccessSubmit={handleModalClose}
         />
       </SharedModal>
     </Col>
   );
 };
 
-export default LanguageSelection;
+export default Notification;

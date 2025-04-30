@@ -14,7 +14,7 @@ import * as Yup from "yup";
 import { showToast } from "@/Shared/Components/showToast";
 import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
 
-const ActivateLanguage = ({
+const ActivateLanguageForm = ({
   rowData,
   formikRef,
   onSuccessSubmit,
@@ -43,13 +43,13 @@ const ActivateLanguage = ({
     { setSubmitting }: FormikHelpers<typeof initialValues>
   ) => {
 
-    const transformedData = [
+    const transformedData = 
       {
         languageId: rowData.languageId,
         name: String(rowData.name),
         isInactive: values.isInactive, 
-      },
-    ];
+      }
+    ;
 
     await withRequestTracking(dispatch, () =>
       dispatch(
@@ -101,4 +101,4 @@ const ActivateLanguage = ({
   );
 };
 
-export default ActivateLanguage;
+export default ActivateLanguageForm;
