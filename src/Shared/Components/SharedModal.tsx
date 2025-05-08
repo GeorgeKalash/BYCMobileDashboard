@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 interface SharedModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit?: () => void;
   title: string;
   children: ReactNode;
   width?: string;
@@ -27,6 +27,7 @@ const SharedModal: React.FC<SharedModalProps> = ({
 }) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
+
   return (
     <Modal
       isOpen={visible}
@@ -40,8 +41,14 @@ const SharedModal: React.FC<SharedModalProps> = ({
       <ModalBody style={{ maxHeight: height, overflowY: "auto" }}>
         {children}
       </ModalBody>
-      <ModalFooter> 
-        <SharedButton color="primary" onClick={onSubmit} title={t("Submit")}></SharedButton>
+      <ModalFooter>
+        {typeof onSubmit === "function" && (
+          <SharedButton
+            color="primary"
+            onClick={onSubmit}
+            title={t("Submit")}
+          />
+        )}
       </ModalFooter>
     </Modal>
   );
