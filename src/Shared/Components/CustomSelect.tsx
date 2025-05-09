@@ -25,6 +25,7 @@ interface CustomSelectProps {
   labelKey?: string;
   value?: string | number | null | undefined;
   onChange?: (value: string | number | null) => void;
+  readOnly?: boolean;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -41,12 +42,11 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   labelKey = "value",
   value,
   onChange,
+  readOnly = false,
 }) => {
   const [selectOptions, setSelectOptions] = useState<OptionType[]>(options || []);
   const [isLoading, setIsLoading] = useState(false);
-  const [localValue, setLocalValue] = useState<string | number | "">(
-    value ?? ""
-  );
+  const [localValue, setLocalValue] = useState<string | number | "">(value ?? "");
 
   const dispatch = useAppDispatch();
   const reduxLangId = useSelector((state: RootState) => state.authSlice.languageId);
@@ -67,7 +67,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     );
 
     const data = action.payload?.data ?? [];
-
     const mapped: OptionType[] = data.map((item: any) => ({
       value: item[valueKey],
       label: item[labelKey],
@@ -97,7 +96,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value;
-    const finalValue = newValue === "" ? null : newValue; // empty means null
+    const finalValue = newValue === "" ? null : newValue;
     setLocalValue(newValue);
     onChange?.(finalValue);
   };
@@ -108,7 +107,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   };
 
   const isFieldFilled = localValue !== "";
-
   const validationClass = isRequired && !isFieldFilled ? "is-invalid" : "";
 
   return (
@@ -116,7 +114,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       {label && (
         <Label>
           {label} {isRequired && <span className="text-danger">*</span>}
-          {(dataSetId || endpointId) && showRefresh && (
+          {!readOnly && (dataSetId || endpointId) && showRefresh && (
             <Button
               type="button"
               color="link"
@@ -128,16 +126,18 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               🔄
             </Button>
           )}
-          <Button
-            type="button"
-            color="link"
-            size="sm"
-            onClick={clearSelection}
-            className="p-0 align-baseline text-danger"
-            title="Clear selection"
-          >
-            ❌
-          </Button>
+          {!readOnly && (
+            <Button
+              type="button"
+              color="link"
+              size="sm"
+              onClick={clearSelection}
+              className="p-0 align-baseline text-danger"
+              title="Clear selection"
+            >
+              ❌
+            </Button>
+          )}
         </Label>
       )}
       {isLoading ? (
@@ -150,6 +150,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           className={`form-control form-select ${validationClass}`}
           value={localValue}
           onChange={handleChange}
+          disabled={readOnly}
         >
           <option value="" disabled hidden>
             {"Select..."}

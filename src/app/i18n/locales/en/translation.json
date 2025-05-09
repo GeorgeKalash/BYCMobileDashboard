@@ -193,5 +193,16 @@
   "Add Text": "Add Text",
   "Edit Text": "Edit Text",
   "Key": "Key",
-  "Value": "Value"
+  "Value": "Value",
+  "accountId": "Account Id",
+  "clientId": "Client Id",
+  "eventType": "Event Type",
+  "recordId": "Record Id",
+  "token": "Token",
+  "requestBody": "Request Body",
+  "userId": "User Id",
+  "requestType": "Request Type",
+  "url": "Url",
+  "clockStamp": "Clock Stamp",
+  "curl": "Curl"
 }

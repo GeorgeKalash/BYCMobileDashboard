@@ -130,6 +130,7 @@ const TextControl = () => {
             columns={columns}
             highlightOnHover
             pagination
+            Search={true}
             showActions={true}
             onEdit={(row) => handleModalOpen(row, "edit")}
           />

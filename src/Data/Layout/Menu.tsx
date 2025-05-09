@@ -1,38 +1,38 @@
 import { MenuItem } from "@/Types/LayoutTypes";
 
 export const MenuList: MenuItem[] | undefined = [
-  {
-    title: "General",
-    lanClass: "lan-1",
-    menucontent: "Dashboards,Widgets",
-    Items: [
-      // {
-      //   title: "Dashboards",
-      //   id: 1,
-      //   icon: "home",
-      //   type: "sub",
-      //   lanClass: "lan-3",
-      //   children: [
-      //     { path: "/dashboard/default_dashboard", title: "Default", type: "link", lanClass: "lan-4" },
-      //     { path: "/dashboard/project", title: "Project", type: "link", lanClass: "lan-5" },
-      //     { path: "/dashboard/ecommerce", title: "Ecommerce", type: "link" },
-      //     { path: "/dashboard/education", title: "Education", type: "link" },
-      //   ],
-      // },
-      // {
-      //   title: "Widgets",
-      //   id: 2,
-      //   icon: "widget",
-      //   type: "sub",
-      //   lanClass: "lan-6",
-      //   active: false,
-      //   children: [
-      //     { path: "/widgets/general", title: "General", type: "link" },
-      //     { path: "/widgets/chart", title: "Chart", type: "link" },
-      //   ],
-      // },
-    ],
-  },
+  // {
+  //   title: "General",
+  //   lanClass: "lan-1",
+  //   menucontent: "Dashboards,Widgets",
+  //   Items: [
+  //     {
+  //       title: "Dashboards",
+  //       id: 1,
+  //       icon: "home",
+  //       type: "sub",
+  //       lanClass: "lan-3",
+  //       children: [
+  //         { path: "/dashboard/default_dashboard", title: "Default", type: "link", lanClass: "lan-4" },
+  //         { path: "/dashboard/project", title: "Project", type: "link", lanClass: "lan-5" },
+  //         { path: "/dashboard/ecommerce", title: "Ecommerce", type: "link" },
+  //         { path: "/dashboard/education", title: "Education", type: "link" },
+  //       ],
+  //     },
+  //     {
+  //       title: "Widgets",
+  //       id: 2,
+  //       icon: "widget",
+  //       type: "sub",
+  //       lanClass: "lan-6",
+  //       active: false,
+  //       children: [
+  //         { path: "/widgets/general", title: "General", type: "link" },
+  //         { path: "/widgets/chart", title: "Chart", type: "link" },
+  //       ],
+  //     },
+  //   ],
+  // },
 
   {
     title: "BYC Pages",
@@ -65,6 +65,11 @@ export const MenuList: MenuItem[] | undefined = [
             path: "/Byc_Pages/Notification",
             type: "link",
             title: "Notifications",
+          },
+          {
+            path: "/Byc_Pages/Requests",
+            type: "link",
+            title: "Requests",
           },
         ],
       },
