@@ -97,7 +97,7 @@ const Notification_Type = () => {
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Notifications")} onAdd={onAdd} />
+        <CommonCardHeader title={t("Notification Type")} onAdd={onAdd} />
         <CardBody>
           <DataTable
             title={t("New Message")}
