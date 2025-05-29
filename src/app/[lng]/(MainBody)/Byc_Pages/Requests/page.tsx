@@ -19,7 +19,6 @@ const Requests = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
-
   const [data, setData] = useState<{ key: string; value: string }[]>([]);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -50,7 +49,7 @@ const Requests = () => {
     fetchData();
   }, [eventType, pageCount]);
 
-  const handleModalOpen = (row: any, action: "edit") => {
+  const handleModalOpen = (row: any) => {
     setSelectedRow(row);
     setModalOpen(true);
   };
@@ -143,10 +142,10 @@ const Requests = () => {
             data={data}
             columns={columns}
             pagination
-            Search={true}
+            Search={false}
             serverPagination={true}
             showActions={true}
-            onEdit={(row) => handleModalOpen(row, "edit")}
+            onEdit={(row) => handleModalOpen(row)}
             onPageChange={handlePageChange}
             totalRows={totalRows}
             pageSize={pageSize}

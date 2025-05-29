@@ -132,6 +132,7 @@ const TextControl = () => {
             pagination
             Search={true}
             showActions={true}
+            searchableColumns={["key", "value"]}
             onEdit={(row) => handleModalOpen(row, "edit")}
           />
         </CardBody>

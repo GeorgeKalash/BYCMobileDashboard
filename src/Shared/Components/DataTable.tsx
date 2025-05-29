@@ -16,8 +16,9 @@ const DataTableComponent = ({
   onDelete,
   serverPagination = false,
   totalRows,
-  onPageChange,
   pageSize = 50,
+  onPageChange,
+  searchableColumns,
 }: {
   title?: string;
   data: any[];
@@ -32,25 +33,29 @@ const DataTableComponent = ({
   onDelete?: (row: any) => void;
   serverPagination?: boolean;
   totalRows?: number;
-  pageSize?:number;
+  pageSize?: number;
   onPageChange?: (count: number) => void;
+  searchableColumns?: string[];
 }) => {
-
   const [filterText, setFilterText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState(defaultSortColumn);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  const filteredItems = useMemo(
-    () =>
-      data.filter((item) =>
-        Object.values(item)
-          .join(" ")
-          .toLowerCase()
-          .includes(filterText.toLowerCase())
-      ),
-    [data, filterText]
-  );
+  const filteredItems = useMemo(() => {
+    if (!filterText) return data;
+
+    return data.filter((item) => {
+      const valuesToSearch = searchableColumns?.length
+        ? searchableColumns.map((col) => item[col])
+        : Object.values(item);
+
+      return valuesToSearch
+        .join(" ")
+        .toLowerCase()
+        .includes(filterText.toLowerCase());
+    });
+  }, [data, filterText, searchableColumns]);
 
   const sortedData = useMemo(() => {
     return [...filteredItems].sort((a, b) => {
@@ -208,7 +213,7 @@ const DataTableComponent = ({
             <button
               onClick={() => handlePageChange(currentPage * pageSize, true)}
               className="btn btn-outline-primary btn-sm rounded-pill shadow-sm px-3"
-              disabled={currentPage===totalPages}
+              disabled={currentPage === totalPages}
             >
               Next <i className="fa fa-chevron-right ms-1" />
             </button>

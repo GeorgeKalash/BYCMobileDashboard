@@ -4,7 +4,7 @@ import { EmailAddressLogIn, Password, RememberPassword, SignIn, SignInToAccount 
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks"
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Button, FormGroup, Input, Label } from "reactstrap"
+import { FormGroup, Input, Label } from "reactstrap"
 import imageOne from "../../../../public/assets/images/logo/logo.png"
 import { fetchAC, login } from "@/Redux/Reducers/AuthSlice"
 import CenteredModal from "@/Components/UiKits/Modal/CenteredModal"
@@ -73,8 +73,6 @@ export const UserForm = () => {
                   as={Input}
                   placeholder="Enter email"
                 />
-
-
                 <ErrorMessage name="email" component="div" className="text-danger" />
               </FormGroup>
               <FormGroup>
