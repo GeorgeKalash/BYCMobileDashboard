@@ -2,31 +2,22 @@
 
 import React, { KeyboardEvent } from "react";
 import { Formik, Form, FormikHelpers, FormikProps } from "formik";
-import { Col, Row, Card, CardBody, CardTitle } from "reactstrap";
+import { Col, Row, Card, CardBody } from "reactstrap";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
-import { postMobileRequest } from "@/Redux/Reducers/RequestThunks";
-import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
+import {
+  postMobileRequest,
+  getMobileRequest,
+} from "@/Redux/Reducers/RequestThunks";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
 import * as Yup from "yup";
 import { showToast } from "@/Shared/Components/showToast";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 
 interface NotificationRowData {
-  title_en?: string;
-  message_en?: string;
-  title_ar?: string;
-  message_ar?: string;
-}
-
-interface NotificationPayloadItem {
-  clientId: number;
-  seqNo: number;
-  languageId: number;
-  date: string;
-  title: string;
-  body: string;
-  isRead: boolean;
+  key?: number;
+  value?: string;
 }
 
 interface NotificationFormProps {
@@ -49,69 +40,73 @@ const NotificationTypeForm: React.FC<NotificationFormProps> = ({
   if (!rowData && modalAction === "edit") return null;
 
   const initialValues = {
-    title_en: rowData?.title_en || "",
-    title_ar: rowData?.title_ar || "",
-    message_en: rowData?.message_en || "",
-    message_ar: rowData?.message_ar || "",
+    value: rowData?.value || "",
   };
 
   const validationSchema = Yup.object().shape({
-    title_en: Yup.string().required(t("required")),
-    message_en: Yup.string().required(t("required")),
-    title_ar: Yup.string().required(t("required")),
-    message_ar: Yup.string().required(t("required")),
+    value: Yup.string().required(t("required")),
   });
 
   const handleSubmit = async (
     values: typeof initialValues,
     { setSubmitting }: FormikHelpers<typeof initialValues>
   ) => {
-    const payload: NotificationPayloadItem[] = [];
-    const currentDate = new Date().toISOString();
+    setSubmitting(true);
 
-    if (values.title_en.trim() || values.message_en.trim()) {
-      payload.push({
-        clientId: 0,
-        seqNo: 0,
-        languageId: 1,
-        date: currentDate,
-        title: values.title_en.trim(),
-        body: values.message_en.trim(),
-        isRead: false,
-      });
-    }
+    const trimmedValue = values.value.trim();
 
-    if (values.title_ar.trim() || values.message_ar.trim()) {
-      payload.push({
-        clientId: 0,
-        seqNo: 0,
-        languageId: 2,
-        date: currentDate,
-        title: values.title_ar.trim(),
-        body: values.message_ar.trim(),
-        isRead: false,
-      });
-    }
+    try {
+      if (modalAction === "edit") {
+        await withRequestTracking(dispatch, () =>
+          dispatch(
+            postMobileRequest({
+              extension: NotificationAlertRepository.NotificationTypes.update,
+              body: {
+                key: rowData?.key,
+                value: trimmedValue,
+              },
+              rawBody: true,
+            })
+          ).unwrap()
+        );
+      } else {
+        const result = await withRequestTracking(dispatch, () =>
+          dispatch(
+            getMobileRequest({
+              extension: NotificationAlertRepository.NotificationTypes.getAll,
+              parameters: "",
+            })
+          )
+        );
 
-    if (payload.length === 0) {
-      showToast("error", t("Please fill in at least one language section."));
+        const existing = Array.isArray(result?.payload?.data)
+          ? result.payload.data
+          : [];
+
+        const newKey =
+          Math.max(0, ...existing.map((item: any) => item.key ?? 0)) + 1;
+
+        const updatedPack = [...existing, { key: newKey, value: trimmedValue }];
+
+        await withRequestTracking(dispatch, () =>
+          dispatch(
+            postMobileRequest({
+              extension: NotificationAlertRepository.NotificationTypes.set,
+              body: updatedPack,
+              rawBody: true,
+            })
+          ).unwrap()
+        );
+      }
+
+      showToast("success", t("Saved successfully"));
+      onSuccessSubmit?.();
+    } catch (error) {
+      console.error(error);
+      showToast("error", t("Failed to save"));
+    } finally {
       setSubmitting(false);
-      return;
     }
-
-    await withRequestTracking(dispatch, () =>
-      dispatch(
-        postMobileRequest({
-          extension: NotificationMobileRepository.Notification.createPack,
-          body: payload,
-          rawBody: true,
-        })
-      ).unwrap()
-    );
-
-    setSubmitting(false);
-    showToast("success");
-    onSuccessSubmit?.();
   };
 
   const handleKeyDown = (
@@ -124,8 +119,6 @@ const NotificationTypeForm: React.FC<NotificationFormProps> = ({
     }
   };
 
-  const isReadOnly = modalAction === "edit";
-
   return (
     <Formik
       initialValues={initialValues}
@@ -136,49 +129,23 @@ const NotificationTypeForm: React.FC<NotificationFormProps> = ({
       {({ submitForm }) => (
         <Form onKeyDown={(e) => handleKeyDown(e, submitForm)}>
           <Row className="gy-4">
-            <Col md="6">
+            <Col>
               <Card className="h-100">
                 <CardBody>
-                  <CardTitle tag="h5" className="mb-4">
-                    {t("English Section")}
-                  </CardTitle>
+                  {modalAction === "edit" && (
+                    <CustomInput
+                      name="key"
+                      label={t("ID")}
+                      type="text"
+                      placeholder={String(rowData?.key ?? "")}
+                      readOnly
+                    />
+                  )}
                   <CustomInput
-                    name="title_en"
-                    label={t("Title (English)")}
+                    name="value"
+                    label={t("Notification Type")}
                     type="text"
-                    placeholder={t("Enter the title in English")}
-                    readOnly={isReadOnly}
-                  />
-                  <CustomInput
-                    name="message_en"
-                    label={t("Message (English)")}
-                    type="text"
-                    placeholder={t("Enter the message in English")}
-                    readOnly={isReadOnly}
-                  />
-                </CardBody>
-              </Card>
-            </Col>
-
-            <Col md="6">
-              <Card className="h-100">
-                <CardBody>
-                  <CardTitle tag="h5" className="mb-4">
-                    {t("Arabic Section")}
-                  </CardTitle>
-                  <CustomInput
-                    name="title_ar"
-                    label={t("Title (Arabic)")}
-                    type="text"
-                    placeholder={t("أدخل العنوان باللغة العربية")}
-                    readOnly={isReadOnly}
-                  />
-                  <CustomInput
-                    name="message_ar"
-                    label={t("Message (Arabic)")}
-                    type="text"
-                    placeholder={t("أدخل الرسالة باللغة العربية")}
-                    readOnly={isReadOnly}
+                    placeholder={t("Enter Notification Type")}
                   />
                 </CardBody>
               </Card>

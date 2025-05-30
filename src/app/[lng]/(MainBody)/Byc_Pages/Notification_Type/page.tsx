@@ -10,8 +10,9 @@ import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
-import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
-import NotificationForm from "./Form/NotificationTypeForm";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+
+import NotificationTypeForm from "./Form/NotificationTypeForm";
 
 const Notification_Type = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -28,18 +29,18 @@ const Notification_Type = () => {
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
-          extension: `${NotificationMobileRepository.Notification.getAll}`,
+          extension: `${NotificationAlertRepository.NotificationTypes.getAll}`,
           parameters: "",
         })
       )
     );
 
-    const keyValuePairs = result?.payload?.data?.keyValuePairs;
+    const keyValuePairs = result?.payload?.data;
 
-    if (keyValuePairs && typeof keyValuePairs === "object") {
-      const transformed = Object.entries(keyValuePairs).map(([key, value]) => ({
-        key,
-        value: String(value ?? ""),
+    if (Array.isArray(keyValuePairs)) {
+      const transformed = keyValuePairs.map((item: any) => ({
+        key: item.key,
+        value: item.value,
       }));
       setData(transformed);
     } else {
@@ -54,17 +55,12 @@ const Notification_Type = () => {
   const columns = [
     {
       name: t("ID"),
-      selector: (row: any) => row.id,
+      selector: (row: any) => row.key,
       sortable: true,
     },
     {
-      name: t("Message In English"),
-      selector: (row: any) => row.message_en || "-",
-      sortable: true,
-    },
-    {
-      name: t("Message In Arabic"),
-      selector: (row: any) => row.message_ar || "-",
+      name: t("Type"),
+      selector: (row: any) => row.value || "-",
       sortable: true,
     },
   ];
@@ -114,13 +110,15 @@ const Notification_Type = () => {
         visible={modalOpen}
         onClose={handleModalClose}
         title={
-          modalAction === "add" ? t("Add Notification") : t("Edit Notification")
+          modalAction === "add"
+            ? t("Add Notification Type")
+            : t("Edit Notification Type")
         }
         width="600px"
         height="60vh"
         onSubmit={handleSubmit}
       >
-        <NotificationForm
+        <NotificationTypeForm
           rowData={selectedRow}
           formikRef={formikRef}
           modalAction={modalAction}
