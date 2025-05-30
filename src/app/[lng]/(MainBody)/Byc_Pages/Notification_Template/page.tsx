@@ -10,10 +10,11 @@ import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
-import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+
 import NotificationTemplateForm from "./Form/NotificationTemplateForm";
 
-const NotificationTemplate = () => {
+const NotificationTemplatePage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
@@ -21,55 +22,75 @@ const NotificationTemplate = () => {
   const [data, setData] = useState<{ key: string; value: string }[]>([]);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"add" | "edit" | null>(null);
+  const [modalAction, setModalAction] = useState<
+    "add" | "edit" | "delete" | null
+  >(null);
   const formikRef = useRef<FormikProps<any>>(null);
 
-  const fetchData = async () => {
+  const [fromDate, setFromDate] = useState("05-20-2025");
+  const [toDate, setToDate] = useState("06-20-2025");
+
+  const [pageSize] = useState(5);
+  const [pageCount, setPageCount] = useState(1);
+  const [totalRows, setTotalRows] = useState(0);
+
+  const fetchData = async (page = pageCount) => {
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
-          extension: `${NotificationMobileRepository.Notification.getAll}`,
-          parameters: "",
+          extension: NotificationAlertRepository.NotificationTemplate.getAll,
+          parameters: `_fromDate=${fromDate}&_toDate=${toDate}&_startAt=${page}&_pageSize=${pageSize}`,
         })
       )
     );
 
-    const keyValuePairs = result?.payload?.data?.keyValuePairs;
+    const list = result?.payload?.data?.list;
+    const total = result?.payload?.data?.count;
 
-    if (keyValuePairs && typeof keyValuePairs === "object") {
-      const transformed = Object.entries(keyValuePairs).map(([key, value]) => ({
-        key,
-        value: String(value ?? ""),
-      }));
-      setData(transformed);
-    } else {
-      setData([]);
+    setData(Array.isArray(list) ? list : []);
+    if (typeof total === "number") {
+      setTotalRows(total);
     }
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [pageCount]);
 
   const columns = [
     {
       name: t("ID"),
-      selector: (row: any) => row.id,
+      selector: (row: any) => row.recordId,
       sortable: true,
     },
     {
-      name: t("Message In English"),
-      selector: (row: any) => row.message_en || "-",
+      name: t("Date"),
+      selector: (row: any) => new Date(row.date).toLocaleString(),
       sortable: true,
     },
     {
-      name: t("Message In Arabic"),
-      selector: (row: any) => row.message_ar || "-",
+      name: t("Title"),
+      selector: (row: any) => row.title,
+      sortable: true,
+    },
+    {
+      name: t("Description"),
+      selector: (row: any) => row.description,
+      sortable: true,
+    },
+    {
+      name: t("Type"),
+      selector: (row: any) => row.type,
+      sortable: true,
+    },
+    {
+      name: t("Push Notification"),
+      selector: (row: any) => (row.isPushNotification ? t("Yes") : t("No")),
       sortable: true,
     },
   ];
 
-  const handleModalOpen = (row: any, action: "edit") => {
+  const handleModalOpen = (row: any, action: "edit" | "delete") => {
     setSelectedRow(row);
     setModalAction(action);
     setModalOpen(true);
@@ -94,10 +115,15 @@ const NotificationTemplate = () => {
     setModalOpen(true);
   };
 
+  const handlePageChange = (startAt: number) => {
+    const newPage = Math.ceil(startAt / pageSize);
+    setPageCount(newPage);
+  };
+
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Notifications Template")} onAdd={onAdd} />
+        <CommonCardHeader title={t("Notification Template")} onAdd={onAdd} />
         <CardBody>
           <DataTable
             title={t("New Message")}
@@ -105,8 +131,13 @@ const NotificationTemplate = () => {
             columns={columns}
             highlightOnHover
             pagination
+            serverPagination={true}
+            totalRows={totalRows}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
             showActions={true}
             onEdit={(row) => handleModalOpen(row, "edit")}
+            onDelete={(row) => handleModalOpen(row, "delete")}
           />
         </CardBody>
       </Card>
@@ -114,7 +145,11 @@ const NotificationTemplate = () => {
         visible={modalOpen}
         onClose={handleModalClose}
         title={
-          modalAction === "add" ? t("Add Notification") : t("Edit Notification")
+          modalAction === "add"
+            ? t("Add Notification Template")
+            : modalAction === "edit"
+            ? t("Edit Notification Template")
+            : t("Delete Notification Template")
         }
         width="600px"
         height="60vh"
@@ -131,4 +166,4 @@ const NotificationTemplate = () => {
   );
 };
 
-export default NotificationTemplate;
+export default NotificationTemplatePage;

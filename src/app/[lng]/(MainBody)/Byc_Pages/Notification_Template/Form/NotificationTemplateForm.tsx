@@ -1,187 +1,155 @@
 "use client";
 
-import React, { KeyboardEvent } from "react";
-import { Formik, Form, FormikHelpers, FormikProps } from "formik";
-import { Col, Row, Card, CardBody, CardTitle } from "reactstrap";
+import React from "react";
+import { Formik, Form, FormikProps } from "formik";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
-import { postMobileRequest } from "@/Redux/Reducers/RequestThunks";
-import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
+import CustomTextarea from "@/Shared/Components/CustomTextarea";
+import { Col, Row } from "reactstrap";
+import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
 import * as Yup from "yup";
-import { showToast } from "@/Shared/Components/showToast";
+import {
+  postMobileRequest,
+  putMobileRequest,
+  deleteMobileRequest,
+} from "@/Redux/Reducers/RequestThunks";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { showToast } from "@/Shared/Components/showToast";
+import CustomSelect from "@/Shared/Components/CustomSelect";
 
-interface NotificationRowData {
-  title_en?: string;
-  message_en?: string;
-  title_ar?: string;
-  message_ar?: string;
-}
-
-interface NotificationPayloadItem {
-  clientId: number;
-  seqNo: number;
-  languageId: number;
-  date: string;
-  title: string;
-  body: string;
-  isRead: boolean;
-}
-
-interface NotificationFormProps {
-  rowData: NotificationRowData | null;
-  formikRef?: React.Ref<FormikProps<any>>;
-  onSuccessSubmit?: () => void;
-  modalAction: "add" | "edit" | null;
-}
-
-const NotificationTemplateForm: React.FC<NotificationFormProps> = ({
+const NotificationTemplateForm = ({
   rowData,
   formikRef,
-  onSuccessSubmit,
   modalAction,
+  onSuccessSubmit,
+}: {
+  rowData: any;
+  formikRef?: React.Ref<FormikProps<any>>;
+  modalAction: "add" | "edit" | "delete" | null;
+  onSuccessSubmit?: () => void;
 }) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
 
-  if (!rowData && modalAction === "edit") return null;
+  const readOnly = modalAction === "delete";
 
   const initialValues = {
-    title_en: rowData?.title_en || "",
-    title_ar: rowData?.title_ar || "",
-    message_en: rowData?.message_en || "",
-    message_ar: rowData?.message_ar || "",
+    recordId: rowData?.recordId?.toString() || "",
+    date: rowData?.date || new Date().toISOString(),
+    title: rowData?.title || "",
+    description: rowData?.description || "",
+    type: rowData?.type,
+    isPushNotification: !!rowData?.isPushNotification,
   };
 
   const validationSchema = Yup.object().shape({
-    title_en: Yup.string().required(t("required")),
-    message_en: Yup.string().required(t("required")),
-    title_ar: Yup.string().required(t("required")),
-    message_ar: Yup.string().required(t("required")),
+    title: Yup.string().required(t("required")),
+    description: Yup.string().required(t("required")),
+    type: Yup.string().required(t("required")),
   });
 
-  const handleSubmit = async (
-    values: typeof initialValues,
-    { setSubmitting }: FormikHelpers<typeof initialValues>
-  ) => {
-    const payload: NotificationPayloadItem[] = [];
-    const currentDate = new Date().toISOString();
+  const handleSubmit = async (values: typeof initialValues) => {
+    try {
+      const payload = {
+        ...values,
+        recordId: rowData?.recordId,
+      };
 
-    if (values.title_en.trim() || values.message_en.trim()) {
-      payload.push({
-        clientId: 0,
-        seqNo: 0,
-        languageId: 1,
-        date: currentDate,
-        title: values.title_en.trim(),
-        body: values.message_en.trim(),
-        isRead: false,
-      });
-    }
+      if (modalAction === "delete") {
+        await withRequestTracking(dispatch, () =>
+          dispatch(
+            deleteMobileRequest({
+              extension: `${NotificationAlertRepository.NotificationTemplate.delete}?_recordId=${rowData?.recordId}`,
+              rawBody: false,
+            })
+          ).unwrap()
+        );
+      } else if (modalAction === "edit") {
+        await withRequestTracking(dispatch, () =>
+          dispatch(
+            putMobileRequest({
+              extension:
+                NotificationAlertRepository.NotificationTemplate.update,
+              body: payload,
+              rawBody: true,
+            })
+          ).unwrap()
+        );
+      } else {
+        await withRequestTracking(dispatch, () =>
+          dispatch(
+            postMobileRequest({
+              extension: NotificationAlertRepository.NotificationTemplate.set,
+              body: payload,
+              rawBody: true,
+            })
+          ).unwrap()
+        );
+      }
 
-    if (values.title_ar.trim() || values.message_ar.trim()) {
-      payload.push({
-        clientId: 0,
-        seqNo: 0,
-        languageId: 2,
-        date: currentDate,
-        title: values.title_ar.trim(),
-        body: values.message_ar.trim(),
-        isRead: false,
-      });
-    }
-
-    if (payload.length === 0) {
-      showToast("error", t("Please fill in at least one language section."));
-      setSubmitting(false);
-      return;
-    }
-
-    await withRequestTracking(dispatch, () =>
-      dispatch(
-        postMobileRequest({
-          extension: NotificationMobileRepository.Notification.createPack,
-          body: payload,
-          rawBody: true,
-        })
-      ).unwrap()
-    );
-
-    setSubmitting(false);
-    showToast("success");
-    onSuccessSubmit?.();
-  };
-
-  const handleKeyDown = (
-    event: KeyboardEvent<HTMLFormElement>,
-    submitForm: () => void
-  ) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      submitForm();
+      showToast("success", t("Saved successfully"));
+      onSuccessSubmit?.();
+    } catch (error) {
+      console.error(error);
+      showToast("error", t("Failed to save"));
     }
   };
-
-  const isReadOnly = modalAction === "edit";
 
   return (
     <Formik
       initialValues={initialValues}
+      enableReinitialize
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
       innerRef={formikRef}
     >
-      {({ submitForm }) => (
-        <Form onKeyDown={(e) => handleKeyDown(e, submitForm)}>
-          <Row className="gy-4">
-            <Col md="6">
-              <Card className="h-100">
-                <CardBody>
-                  <CardTitle tag="h5" className="mb-4">
-                    {t("English Section")}
-                  </CardTitle>
-                  <CustomInput
-                    name="title_en"
-                    label={t("Title (English)")}
-                    type="text"
-                    placeholder={t("Enter the title in English")}
-                    readOnly={isReadOnly}
-                  />
-                  <CustomInput
-                    name="message_en"
-                    label={t("Message (English)")}
-                    type="text"
-                    placeholder={t("Enter the message in English")}
-                    readOnly={isReadOnly}
-                  />
-                </CardBody>
-              </Card>
+      {({ values, setFieldValue }) => (
+        <Form>
+          <Row>
+            <Col md={6}>
+              {modalAction === "edit" && (
+                <CustomInput name="recordId" label={t("ID")} readOnly />
+              )}
+              <CustomInput name="date" label={t("Date")} readOnly />
+              <CustomSelect
+                name="type"
+                label={t("Type")}
+                value={values.type}
+                onChange={(val) => setFieldValue("type", val)}
+                readOnly={readOnly}
+                isRequired
+                endpointId={
+                  NotificationAlertRepository.NotificationTypes.getAll
+                }
+                valueKey="key"
+                labelKey="value"
+              />
             </Col>
 
-            <Col md="6">
-              <Card className="h-100">
-                <CardBody>
-                  <CardTitle tag="h5" className="mb-4">
-                    {t("Arabic Section")}
-                  </CardTitle>
-                  <CustomInput
-                    name="title_ar"
-                    label={t("Title (Arabic)")}
-                    type="text"
-                    placeholder={t("أدخل العنوان باللغة العربية")}
-                    readOnly={isReadOnly}
-                  />
-                  <CustomInput
-                    name="message_ar"
-                    label={t("Message (Arabic)")}
-                    type="text"
-                    placeholder={t("أدخل الرسالة باللغة العربية")}
-                    readOnly={isReadOnly}
-                  />
-                </CardBody>
-              </Card>
+            <Col md={6}>
+              <CustomInput
+                name="title"
+                label={t("Title")}
+                readOnly={readOnly}
+              />
+              <CustomTextarea
+                name="description"
+                label={t("Description")}
+                readOnly={readOnly}
+                rows={5}
+              />
+              <SharedCheckbox
+                name="isPushNotification"
+                label={t("Push Notification")}
+                checked={values.isPushNotification}
+                onChange={(checked) =>
+                  setFieldValue("isPushNotification", checked)
+                }
+                disabled={readOnly}
+              />
             </Col>
           </Row>
         </Form>
