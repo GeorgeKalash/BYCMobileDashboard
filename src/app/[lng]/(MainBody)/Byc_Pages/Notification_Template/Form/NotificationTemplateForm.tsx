@@ -109,11 +109,13 @@ const NotificationTemplateForm = ({
       {({ values, setFieldValue }) => (
         <Form>
           <Row>
-            <Col md={6}>
-              {modalAction === "edit" && (
-                <CustomInput name="recordId" label={t("ID")} readOnly />
-              )}
-              <CustomInput name="date" label={t("Date")} readOnly />
+            <Col md={12} className="mb-3">
+              <CustomInput
+                name="title"
+                label={t("Title")}
+                readOnly={readOnly}
+              />
+
               <CustomSelect
                 name="type"
                 label={t("Type")}
@@ -128,19 +130,7 @@ const NotificationTemplateForm = ({
                 labelKey="value"
               />
             </Col>
-
-            <Col md={6}>
-              <CustomInput
-                name="title"
-                label={t("Title")}
-                readOnly={readOnly}
-              />
-              <CustomTextarea
-                name="description"
-                label={t("Description")}
-                readOnly={readOnly}
-                rows={5}
-              />
+            <Col md={6} className="mb-3">
               <SharedCheckbox
                 name="isPushNotification"
                 label={t("Push Notification")}
@@ -149,6 +139,14 @@ const NotificationTemplateForm = ({
                   setFieldValue("isPushNotification", checked)
                 }
                 disabled={readOnly}
+              />
+            </Col>
+            <Col md={12} className="mb-3">
+              <CustomTextarea
+                name="description"
+                label={t("Description")}
+                readOnly={readOnly}
+                rows={5}
               />
             </Col>
           </Row>

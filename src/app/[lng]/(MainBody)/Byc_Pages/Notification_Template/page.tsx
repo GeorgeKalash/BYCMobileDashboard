@@ -11,6 +11,7 @@ import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+import formatDate from "@/utils/DateFormatter";
 
 import NotificationTemplateForm from "./Form/NotificationTemplateForm";
 
@@ -30,8 +31,8 @@ const NotificationTemplatePage = () => {
   const [fromDate, setFromDate] = useState("05-20-2025");
   const [toDate, setToDate] = useState("06-20-2025");
 
-  const [pageSize] = useState(5);
-  const [pageCount, setPageCount] = useState(1);
+  const [pageSize] = useState(50);
+  const [pageCount, setPageCount] = useState(0);
   const [totalRows, setTotalRows] = useState(0);
 
   const fetchData = async (page = pageCount) => {
@@ -59,16 +60,6 @@ const NotificationTemplatePage = () => {
 
   const columns = [
     {
-      name: t("ID"),
-      selector: (row: any) => row.recordId,
-      sortable: true,
-    },
-    {
-      name: t("Date"),
-      selector: (row: any) => new Date(row.date).toLocaleString(),
-      sortable: true,
-    },
-    {
       name: t("Title"),
       selector: (row: any) => row.title,
       sortable: true,
@@ -79,8 +70,14 @@ const NotificationTemplatePage = () => {
       sortable: true,
     },
     {
+      name: t("Date"),
+      selector: (row: any) =>
+        row.date ? formatDate(row.date, "dd/MM/yyyy") : "",
+      sortable: true,
+    },
+    {
       name: t("Type"),
-      selector: (row: any) => row.type,
+      selector: (row: any) => row.typeName,
       sortable: true,
     },
     {
