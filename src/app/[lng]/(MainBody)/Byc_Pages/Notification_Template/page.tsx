@@ -34,13 +34,14 @@ const NotificationTemplatePage = () => {
   const [pageSize] = useState(50);
   const [pageCount, setPageCount] = useState(0);
   const [totalRows, setTotalRows] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchData = async (page = pageCount) => {
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
           extension: NotificationAlertRepository.NotificationTemplate.getAll,
-          parameters: `_fromDate=${fromDate}&_toDate=${toDate}&_startAt=${page}&_pageSize=${pageSize}`,
+          parameters: `_fromDate=${fromDate}&_toDate=${toDate}&_startAt=${page}&_pageSize=${pageSize}&_title=${searchTerm}&_description=${searchTerm}`,
         })
       )
     );
@@ -53,6 +54,17 @@ const NotificationTemplatePage = () => {
       setTotalRows(total);
     }
   };
+  useEffect(() => {
+    fetchData();
+  }, [pageCount]);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchData(0);
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
 
   useEffect(() => {
     fetchData();
@@ -135,6 +147,10 @@ const NotificationTemplatePage = () => {
             showActions={true}
             onEdit={(row) => handleModalOpen(row, "edit")}
             onDelete={(row) => handleModalOpen(row, "delete")}
+            Search={true}
+            searchType="server"
+            searchableColumns={["title", "description"]}
+            onSearchChange={(val) => setSearchTerm(val)}
           />
         </CardBody>
       </Card>
