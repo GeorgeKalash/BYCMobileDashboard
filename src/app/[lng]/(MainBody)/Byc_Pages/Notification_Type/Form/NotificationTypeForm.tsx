@@ -132,15 +132,6 @@ const NotificationTypeForm: React.FC<NotificationFormProps> = ({
             <Col>
               <Card className="h-100">
                 <CardBody>
-                  {modalAction === "edit" && (
-                    <CustomInput
-                      name="key"
-                      label={t("ID")}
-                      type="text"
-                      placeholder={String(rowData?.key ?? "")}
-                      readOnly
-                    />
-                  )}
                   <CustomInput
                     name="value"
                     label={t("Notification Type")}

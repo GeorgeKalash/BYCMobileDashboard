@@ -54,11 +54,6 @@ const Notification_Type = () => {
 
   const columns = [
     {
-      name: t("ID"),
-      selector: (row: any) => row.key,
-      sortable: true,
-    },
-    {
       name: t("Type"),
       selector: (row: any) => row.value || "-",
       sortable: true,
@@ -103,6 +98,8 @@ const Notification_Type = () => {
             pagination
             showActions={true}
             onEdit={(row) => handleModalOpen(row, "edit")}
+            Search={true}
+            searchableColumns={["value"]}
           />
         </CardBody>
       </Card>
