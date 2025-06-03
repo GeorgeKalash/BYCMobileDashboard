@@ -14,6 +14,11 @@ const DataTableComponent = ({
   Search = false,
   onEdit,
   onDelete,
+  serverPagination = false,
+  totalRows,
+  pageSize = 50,
+  onPageChange,
+  searchableColumns,
 }: {
   title?: string;
   data: any[];
@@ -26,24 +31,32 @@ const DataTableComponent = ({
   Search?: boolean;
   onEdit?: (row: any) => void;
   onDelete?: (row: any) => void;
+  serverPagination?: boolean;
+  totalRows?: number;
+  pageSize?: number;
+  onPageChange?: (count: number) => void;
+  searchableColumns?: string[];
 }) => {
-  const pageSize = 50;
-
   const [filterText, setFilterText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState(defaultSortColumn);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  const filteredItems = useMemo(
-    () =>
-      data.filter((item) =>
-        Object.values(item)
-          .join(" ")
-          .toLowerCase()
-          .includes(filterText.toLowerCase())
-      ),
-    [data, filterText]
-  );
+  const filteredItems = useMemo(() => {
+    if (!filterText) return data;
+
+    return data.filter((item) => {
+      const valuesToSearch = searchableColumns?.length
+        ? searchableColumns.map((col) => item[col])
+        : Object.values(item);
+
+      return valuesToSearch
+        .join(" ")
+        .toLowerCase()
+        .includes(filterText.toLowerCase());
+    });
+  }, [data, filterText, searchableColumns]);
+
   const sortedData = useMemo(() => {
     return [...filteredItems].sort((a, b) => {
       const aVal = a[sortColumn]?.toString() ?? "";
@@ -54,11 +67,16 @@ const DataTableComponent = ({
   }, [filteredItems, sortColumn, sortDirection]);
 
   const paginatedData = useMemo(() => {
+    if (serverPagination) return data;
     const start = (currentPage - 1) * pageSize;
     return sortedData.slice(start, start + pageSize);
-  }, [sortedData, currentPage]);
+  }, [data, sortedData, currentPage, serverPagination]);
 
-  const totalPages = Math.ceil(sortedData.length / pageSize);
+  const totalPages = useMemo(() => {
+    return serverPagination
+      ? Math.ceil((totalRows ?? 0) / pageSize)
+      : Math.ceil(sortedData.length / pageSize);
+  }, [serverPagination, totalRows, sortedData]);
 
   const actionColumn = {
     name: "Actions",
@@ -86,12 +104,44 @@ const DataTableComponent = ({
     allowOverflow: true,
     button: true,
     id: "actions",
+    width: "100px",
   };
 
-  const finalColumns = useMemo(
-    () => (showActions ? [...columns, actionColumn] : columns),
-    [columns, showActions, onEdit, onDelete]
-  );
+  const finalColumns = useMemo(() => {
+    const styledColumns = columns.map((col) => {
+      return {
+        ...col,
+        grow: 1,
+        wrap: true,
+        cell: col.cell
+          ? col.cell
+          : (row: any) => {
+              const val = col.selector ? col.selector(row) : "";
+              const text = typeof val === "string" ? val : String(val ?? "");
+              return (
+                <span title={text}>
+                  {text.length > 70 ? text.slice(0, 70) + "..." : text}
+                </span>
+              );
+            },
+      };
+    });
+    return showActions ? [...styledColumns, actionColumn] : styledColumns;
+  }, [columns, showActions, onEdit, onDelete]);
+
+  const handlePageChange = (newPage: number, next: boolean) => {
+    if (serverPagination && onPageChange) {
+      if (next) {
+        onPageChange(newPage + 1);
+        setCurrentPage(currentPage + 1);
+      } else {
+        onPageChange(newPage - pageSize + 1);
+        setCurrentPage(currentPage - 1);
+      }
+    } else {
+      setCurrentPage((p) => (next ? Math.min(p + 1, totalPages) : Math.max(p - 1, 1)));
+    }
+  };
 
   return (
     <>
@@ -113,7 +163,7 @@ const DataTableComponent = ({
       <div
         className="theme-scrollbar border rounded shadow-sm"
         style={{
-          maxHeight: '68vh',
+          maxHeight: Search ? "60vh" : "68vh",
           overflowY: "auto",
         }}
       >
@@ -122,7 +172,7 @@ const DataTableComponent = ({
           data={paginatedData}
           fixedHeader
           striped
-          fixedHeaderScrollHeight="67vh" 
+          fixedHeaderScrollHeight="67vh"
           highlightOnHover={highlightOnHover}
           persistTableHead
           sortServer
@@ -135,8 +185,15 @@ const DataTableComponent = ({
             setSortColumn(columnId);
             setSortDirection(direction);
           }}
-          noHeader
           className="theme-scrollbar"
+          customStyles={{
+            table: {
+              style: {
+                tableLayout: "auto",
+                width: "100%",
+              },
+            },
+          }}
         />
       </div>
 
@@ -147,18 +204,16 @@ const DataTableComponent = ({
           </span>
           <div className="d-flex gap-2 me-2">
             <button
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              onClick={() => handlePageChange((currentPage - 1) * pageSize, false)}
               className="btn btn-outline-primary btn-sm rounded-pill shadow-sm px-3"
               disabled={currentPage === 1}
             >
               <i className="fa fa-chevron-left me-1" /> Prev
             </button>
             <button
-              onClick={() =>
-                setCurrentPage((p) => (p < totalPages ? p + 1 : p))
-              }
+              onClick={() => handlePageChange(currentPage * pageSize, true)}
               className="btn btn-outline-primary btn-sm rounded-pill shadow-sm px-3"
-              disabled={currentPage >= totalPages}
+              disabled={currentPage === totalPages}
             >
               Next <i className="fa fa-chevron-right ms-1" />
             </button>
