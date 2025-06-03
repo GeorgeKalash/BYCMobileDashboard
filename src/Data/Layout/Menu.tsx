@@ -7,6 +7,12 @@ export const MenuList: MenuItem[] | undefined = [
     menucontent: "BYC Pages to use",
     Items: [
       {
+        path: "/Byc_Pages/Home_Page",
+        type: "link",
+        title: "Home Page",
+        icon: "ui-kits",
+      },
+      {
         path: "/Byc_Pages/Defaults",
         type: "link",
         title: "Defaults",
