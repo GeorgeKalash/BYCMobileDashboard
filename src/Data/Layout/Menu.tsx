@@ -30,6 +30,13 @@ export const MenuList: MenuItem[] | undefined = [
         title: "Notifications",
         icon: "ui-kits",
       },
+
+      {
+        path: "/Byc_Pages/Notification_Alert",
+        type: "link",
+        title: "Notification Alert",
+        icon: "ui-kits",
+      },
       {
         path: "/Byc_Pages/Requests",
         type: "link",
