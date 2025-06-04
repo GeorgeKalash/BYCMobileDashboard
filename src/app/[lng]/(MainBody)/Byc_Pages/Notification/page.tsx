@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Card, CardBody, Col } from "reactstrap";
+import { Card, CardBody, Col, Row } from "reactstrap";
 import DataTable from "../../../../../Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedModal from "../../../../../Shared/Components/SharedModal";
@@ -12,59 +12,99 @@ import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
 import NotificationForm from "./Form/NotificationForm";
+import formatDate from "@/utils/DateFormatter";
+// import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 
 const Notification = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
 
-  const [data, setData] = useState<{ key: string; value: string }[]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<"add" | "edit" | null>(null);
   const formikRef = useRef<FormikProps<any>>(null);
 
-  const fetchData = async () => {
+  const [fromDate, setFromDate] = useState("01-01-2025");
+  const [toDate, setToDate] = useState("01-01-2026");
+
+  const [pageSize] = useState(100);
+  const [pageCount, setPageCount] = useState(0);
+  const [totalRows, setTotalRows] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const fetchData = async (page = pageCount) => {
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
           extension: `${NotificationMobileRepository.Notification.getAll}`,
-          parameters: "",
+          parameters: `_fromDate=${fromDate}&_toDate=${toDate}&_startAt=${page}&_pageSize=${pageSize}&_title=${searchTerm}&_body=${searchTerm}`,
         })
       )
     );
 
-    const keyValuePairs = result?.payload?.data?.keyValuePairs;
+    const list = result?.payload?.data?.list;
+    const total = result?.payload?.data?.count;
 
-    if (keyValuePairs && typeof keyValuePairs === "object") {
-      const transformed = Object.entries(keyValuePairs).map(([key, value]) => ({
-        key,
-        value: String(value ?? ""),
-      }));
-      setData(transformed);
-    } else {
-      setData([]);
+    setData(Array.isArray(list) ? list : []);
+    if (typeof total === "number") {
+      setTotalRows(total);
     }
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [pageCount]);
+
+  useEffect(() => {
+    fetchData(0);
+  }, [fromDate, toDate]);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchData(0);
+    }, 500);
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
 
   const columns = [
     {
-      name: t("ID"),
-      selector: (row: any) => row.id,
+      name: t("Client Name"),
+      selector: (row: any) => row.clientName || "-",
       sortable: true,
     },
     {
-      name: t("Message In English"),
-      selector: (row: any) => row.message_en || "-",
+      name: t("Client ID"),
+      selector: (row: any) => row.clientId || "-",
       sortable: true,
     },
     {
-      name: t("Message In Arabic"),
-      selector: (row: any) => row.message_ar || "-",
+      name: t("Client Number"),
+      selector: (row: any) => row.ClientNb || "-",
+      sortable: true,
+    },
+    {
+      name: t("Template Name"),
+      selector: (row: any) => row.templateName || "-",
+      sortable: true,
+    },
+
+    {
+      name: t("Language"),
+      selector: (row: any) => row.languageName || "-",
+      sortable: true,
+    },
+    {
+      name: t("Date"),
+      selector: (row: any) =>
+        row.date ? formatDate(row.date, "dd/MM/yyyy") : "-",
+      sortable: true,
+    },
+
+    {
+      name: t("Is Read"),
+      selector: (row: any) => (row.isRead ? t("Yes") : t("No")),
       sortable: true,
     },
   ];
@@ -94,29 +134,60 @@ const Notification = () => {
     setModalOpen(true);
   };
 
+  const handlePageChange = (startAt: number) => {
+    const newPage = Math.ceil(startAt / pageSize);
+    setPageCount(newPage);
+  };
+
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Notifications")} onAdd={onAdd}/>
+        <CommonCardHeader title={t("Notifications")}>
+          {/* <Row className="w-100">
+            <Col>
+              <CustomDatePicker
+                name="fromDate"
+                label={t("From Date")}
+                value={fromDate}
+                onChange={(val) => val && setFromDate(val)}
+              />
+            </Col>
+            <Col>
+              <CustomDatePicker
+                name="toDate"
+                label={t("To Date")}
+                value={toDate}
+                onChange={(val) => val && setToDate(val)}
+              />
+            </Col>
+          </Row> */}
+        </CommonCardHeader>
         <CardBody>
           <DataTable
-            title={t("New Message")}
+            title={t("Notifications")}
             data={data}
             columns={columns}
             highlightOnHover
             pagination
-            showActions={true}
+            serverPagination
+            totalRows={totalRows}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
+            showActions
             onEdit={(row) => handleModalOpen(row, "edit")}
+            Search={true}
+            // searchType="server"
+            // onSearchChange={(val) => setSearchTerm(val)}
+            searchableColumns={["title", "body"]}
           />
         </CardBody>
       </Card>
       <SharedModal
         visible={modalOpen}
         onClose={handleModalClose}
-        title={modalAction === "add" ? t("Add Notification") : t("Edit Notification")}
+        title={t(" Notification")}
         width="600px"
         height="60vh"
-        onSubmit={handleSubmit}
       >
         <NotificationForm
           rowData={selectedRow}
