@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Card, CardBody, Col } from "reactstrap";
+import { Card, CardBody, Col, Row } from "reactstrap";
 import DataTable from "../../../../../Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedModal from "../../../../../Shared/Components/SharedModal";
@@ -12,6 +12,7 @@ import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
 import formatDate from "@/utils/DateFormatter";
+import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 
 import NotificationTemplateForm from "./Form/NotificationTemplateForm";
 
@@ -57,6 +58,9 @@ const NotificationTemplatePage = () => {
   useEffect(() => {
     fetchData();
   }, [pageCount]);
+  useEffect(() => {
+    fetchData(0);
+  }, [fromDate, toDate]);
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -73,14 +77,10 @@ const NotificationTemplatePage = () => {
   const columns = [
     {
       name: t("Title"),
-      selector: (row: any) => row.title,
+      selector: (row: any) => row.name,
       sortable: true,
     },
-    {
-      name: t("Description"),
-      selector: (row: any) => row.description,
-      sortable: true,
-    },
+
     {
       name: t("Date"),
       selector: (row: any) =>
@@ -132,7 +132,30 @@ const NotificationTemplatePage = () => {
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Notification Template")} onAdd={onAdd} />
+        <CommonCardHeader title={t("Notification Template")} onAdd={onAdd}>
+          <Row className="w-100">
+            <Col>
+              <CustomDatePicker
+                name="fromDate"
+                label={t("From Date")}
+                value={fromDate}
+                onChange={(val) => {
+                  if (val) setFromDate(val);
+                }}
+              />
+            </Col>
+            <Col>
+              <CustomDatePicker
+                name="toDate"
+                label={t("To Date")}
+                value={toDate}
+                onChange={(val) => {
+                  if (val) setToDate(val);
+                }}
+              />
+            </Col>
+          </Row>
+        </CommonCardHeader>
         <CardBody>
           <DataTable
             title={t("New Message")}
@@ -164,8 +187,8 @@ const NotificationTemplatePage = () => {
             ? t("Edit Notification Template")
             : t("Delete Notification Template")
         }
-        width="600px"
-        height="60vh"
+        width="80vw"
+        height="70vh"
         onSubmit={handleSubmit}
       >
         <NotificationTemplateForm

@@ -11,6 +11,8 @@ export const NotificationAlertRepository = {
 
     update: service + "NotificationTemplate/update",
     set: service + "NotificationTemplate/create",
+    setPack: service + "NotificationTemplate/createPack",
+    getPack: service + "NotificationTemplate/getPack",
     delete: service + "NotificationTemplate/delete",
   },
 };

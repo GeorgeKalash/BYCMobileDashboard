@@ -1,61 +1,135 @@
 "use client";
 
-import React from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form, FormikProps } from "formik";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
-import CustomInput from "@/Shared/Components/CustomInput";
-import CustomTextarea from "@/Shared/Components/CustomTextarea";
-import { Col, Row } from "reactstrap";
-import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
-import * as Yup from "yup";
 import {
   postMobileRequest,
   putMobileRequest,
   deleteMobileRequest,
+  getMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { showToast } from "@/Shared/Components/showToast";
+
+import CustomInput from "@/Shared/Components/CustomInput";
+import CustomTextarea from "@/Shared/Components/CustomTextarea";
 import CustomSelect from "@/Shared/Components/CustomSelect";
+import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
+
+import { Row, Col, Card, CardHeader, CardBody } from "reactstrap";
+import * as Yup from "yup";
+
+interface NotificationTemplateFormProps {
+  rowData: any;
+  formikRef?: React.Ref<FormikProps<any>>;
+  modalAction: "add" | "edit" | "delete" | null;
+  onSuccessSubmit?: () => void;
+}
 
 const NotificationTemplateForm = ({
   rowData,
   formikRef,
   modalAction,
   onSuccessSubmit,
-}: {
-  rowData: any;
-  formikRef?: React.Ref<FormikProps<any>>;
-  modalAction: "add" | "edit" | "delete" | null;
-  onSuccessSubmit?: () => void;
-}) => {
+}: NotificationTemplateFormProps) => {
+  const dispatch = useAppDispatch();
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
-  const dispatch = useAppDispatch();
 
-  const readOnly = modalAction === "delete";
+  const [templateData, setTemplateData] = useState<any>(null);
+  const isReadOnly = modalAction === "delete";
+
+  // Fetch template data for editing or deleting
+  useEffect(() => {
+    const fetchTemplate = async () => {
+      if (
+        (modalAction === "edit" || modalAction === "delete") &&
+        rowData?.recordId
+      ) {
+        try {
+          const response = await withRequestTracking(dispatch, () =>
+            dispatch(
+              getMobileRequest({
+                extension: `${NotificationAlertRepository.NotificationTemplate.getPack}?_recordId=${rowData.recordId}`,
+              })
+            )
+          );
+
+          if (response?.payload?.data) {
+            setTemplateData(response.payload.data);
+          }
+        } catch (error) {
+          console.error("Error fetching template data:", error);
+        }
+      } else if (modalAction === "add") {
+        setTemplateData(null);
+      }
+    };
+
+    fetchTemplate();
+  }, [dispatch, modalAction, rowData]);
+
+  const getLanguageField = (
+    field: "title" | "description",
+    langId: number
+  ): string =>
+    templateData?.languages?.find((lang: any) => lang.languageId === langId)?.[
+      field
+    ] ?? "";
 
   const initialValues = {
-    recordId: rowData?.recordId?.toString() || "",
-    date: rowData?.date || new Date().toISOString(),
-    title: rowData?.title || "",
-    description: rowData?.description || "",
-    type: rowData?.type,
-    isPushNotification: !!rowData?.isPushNotification,
+    recordId: templateData?.header?.recordId?.toString() || "",
+    date: templateData?.header?.date || new Date().toISOString(),
+    name: templateData?.header?.name || "",
+    title: getLanguageField("title", 1),
+    title2: getLanguageField("title", 2),
+    description: getLanguageField("description", 1),
+    description2: getLanguageField("description", 2),
+    type: rowData?.type ?? templateData?.header?.type ?? "",
+    isPushNotification: !!templateData?.header?.isPushNotification,
   };
 
-  const validationSchema = Yup.object().shape({
-    title: Yup.string().required(t("required")),
-    description: Yup.string().required(t("required")),
-    type: Yup.string().required(t("required")),
-  });
+  const validationSchema =
+    modalAction === "delete"
+      ? null
+      : Yup.object().shape({
+          name: Yup.string().required(t("required")),
+          title: Yup.string().required(t("required")),
+          title2: Yup.string().required(t("required")),
+          description: Yup.string().required(t("required")),
+          description2: Yup.string().required(t("required")),
+          type: Yup.string().required(t("required")),
+        });
 
   const handleSubmit = async (values: typeof initialValues) => {
     try {
+      const timestamp = new Date().toISOString();
+
       const payload = {
-        ...values,
-        recordId: rowData?.recordId,
+        header: {
+          recordId: rowData?.recordId || 0,
+          date: values.date || timestamp,
+          name: values.name,
+          type: parseInt(values.type, 10),
+          isPushNotification: values.isPushNotification,
+        },
+        languages: [
+          {
+            templateId: rowData?.recordId || 0,
+            languageId: 1,
+            title: values.title,
+            description: values.description,
+          },
+          {
+            templateId: rowData?.recordId || 0,
+            languageId: 2,
+            title: values.title2,
+            description: values.description2,
+          },
+        ],
       };
 
       if (modalAction === "delete") {
@@ -67,22 +141,12 @@ const NotificationTemplateForm = ({
             })
           ).unwrap()
         );
-      } else if (modalAction === "edit") {
-        await withRequestTracking(dispatch, () =>
-          dispatch(
-            putMobileRequest({
-              extension:
-                NotificationAlertRepository.NotificationTemplate.update,
-              body: payload,
-              rawBody: true,
-            })
-          ).unwrap()
-        );
       } else {
         await withRequestTracking(dispatch, () =>
           dispatch(
             postMobileRequest({
-              extension: NotificationAlertRepository.NotificationTemplate.set,
+              extension:
+                NotificationAlertRepository.NotificationTemplate.setPack,
               body: payload,
               rawBody: true,
             })
@@ -93,7 +157,7 @@ const NotificationTemplateForm = ({
       showToast("success", t("Saved successfully"));
       onSuccessSubmit?.();
     } catch (error) {
-      console.error(error);
+      console.error("Submission error:", error);
       showToast("error", t("Failed to save"));
     }
   };
@@ -109,19 +173,29 @@ const NotificationTemplateForm = ({
       {({ values, setFieldValue }) => (
         <Form>
           <Row>
-            <Col md={12} className="mb-3">
+            <Col md={6} className="mb-2">
               <CustomInput
-                name="title"
-                label={t("Title")}
-                readOnly={readOnly}
+                name="name"
+                label={t("Template Name")}
+                readOnly={isReadOnly}
               />
-
+              <SharedCheckbox
+                name="isPushNotification"
+                label={t("Push Notification")}
+                checked={values.isPushNotification}
+                onChange={(checked) =>
+                  setFieldValue("isPushNotification", checked)
+                }
+                disabled={isReadOnly}
+              />
+            </Col>
+            <Col md={6} className="mb-2">
               <CustomSelect
                 name="type"
                 label={t("Type")}
                 value={values.type}
                 onChange={(val) => setFieldValue("type", val)}
-                readOnly={readOnly}
+                readOnly={isReadOnly}
                 isRequired
                 endpointId={
                   NotificationAlertRepository.NotificationTypes.getAll
@@ -130,26 +204,45 @@ const NotificationTemplateForm = ({
                 labelKey="value"
               />
             </Col>
-            <Col md={6} className="mb-3">
-              <SharedCheckbox
-                name="isPushNotification"
-                label={t("Push Notification")}
-                checked={values.isPushNotification}
-                onChange={(checked) =>
-                  setFieldValue("isPushNotification", checked)
-                }
-                disabled={readOnly}
-              />
-            </Col>
-            <Col md={12} className="mb-3">
-              <CustomTextarea
-                name="description"
-                label={t("Description")}
-                readOnly={readOnly}
-                rows={5}
-              />
-            </Col>
           </Row>
+
+          <Card className="shadow-sm mt-4 border">
+            <CardHeader className="p-3 fw-bold border-bottom">
+              {t("Content")}
+            </CardHeader>
+            <CardBody>
+              <Row>
+                <Col md={6} className="mb-3">
+                  <CustomInput
+                    name="title"
+                    label={t("Title (English)")}
+                    readOnly={isReadOnly}
+                  />
+                  <CustomTextarea
+                    name="description"
+                    label={t("Message (English)")}
+                    readOnly={isReadOnly}
+                    rows={5}
+                  />
+                </Col>
+                <Col md={6} className="mb-3">
+                  <CustomInput
+                    name="title2"
+                    label={t("Title (Arabic)")}
+                    readOnly={isReadOnly}
+                    ar
+                  />
+                  <CustomTextarea
+                    name="description2"
+                    label={t("Message (Arabic)")}
+                    readOnly={isReadOnly}
+                    rows={5}
+                    ar
+                  />
+                </Col>
+              </Row>
+            </CardBody>
+          </Card>
         </Form>
       )}
     </Formik>
