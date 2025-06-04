@@ -1,19 +1,16 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Card, CardBody, Col, Row, Button, Form, FormGroup } from "reactstrap";
-import DataTable from "../../../../../Shared/Components/DataTable";
+import { Card, CardBody, Col, Row, Form } from "reactstrap";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedModal from "../../../../../Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
-import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
-import { FormikProps, Formik } from "formik";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
-import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
+import { Formik, FormikProps } from "formik";
 import NotificationForm from "./Form/NotificationForm";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomSelect from "@/Shared/Components/CustomSelect";
+import SharedButton from "@/Shared/Components/SharedButton";
 
 const Notification_Alert = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -21,41 +18,22 @@ const Notification_Alert = () => {
   const dispatch = useAppDispatch();
 
   const [data, setData] = useState<{ key: string; value: string }[]>([]);
-  const [selectedRow, setSelectedRow] = useState<any>(null);
+  const [selectedRow, setSelectedRow] = useState<any>({
+    idNumber: "123456789",
+    fullName: "John Doe",
+    mobile: "0555555555",
+    nationality: "1",
+    sponsors: ["2"],
+  }); // Example fallback data to prevent errors
+
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<"add" | "edit" | null>(null);
   const formikRef = useRef<FormikProps<any>>(null);
-
-  const [nationalities, setNationalities] = useState<any[]>([]);
-  const [sponsors, setSponsors] = useState<any[]>([]);
-
-  const fetchData = async () => {
-    const result = await withRequestTracking(dispatch, () =>
-      dispatch(
-        getMobileRequest({
-          extension: `${NotificationMobileRepository.Notification.getAll}`,
-          parameters: "",
-        })
-      )
-    );
-
-    const keyValuePairs = result?.payload?.data?.keyValuePairs;
-    if (keyValuePairs && typeof keyValuePairs === "object") {
-      const transformed = Object.entries(keyValuePairs).map(([key, value]) => ({
-        key,
-        value: String(value ?? ""),
-      }));
-      setData(transformed);
-    } else {
-      setData([]);
-    }
-  };
 
   const handleModalClose = () => {
     setModalOpen(false);
     setSelectedRow(null);
     setModalAction(null);
-    fetchData();
   };
 
   const handleSubmit = () => {
@@ -64,47 +42,34 @@ const Notification_Alert = () => {
     }
   };
 
-  const onAdd = () => {
-    setSelectedRow(null);
-    setModalAction("add");
-    setModalOpen(true);
-  };
-
-  const handleFilterSubmit = (values: any) => {
-    console.log("🔍 Filter Values:", values);
-    // You can apply API filtering logic here
-  };
-
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Create Notification")} />
+        <CommonCardHeader title={t("View Notification")} />
         <CardBody>
           <Formik
             initialValues={{
-              idNumber: "",
-              fullName: "",
-              birthDateFrom: "",
-              birthDateTo: "",
-              mobile: "",
-              nationality: "",
-              sponsors: [],
+              idNumber: selectedRow?.idNumber || "",
+              fullName: selectedRow?.fullName || "",
+              mobile: selectedRow?.mobile || "",
+              nationality: selectedRow?.nationality || "",
+              sponsors: selectedRow?.sponsors || [],
             }}
-            onSubmit={handleFilterSubmit}
+            enableReinitialize
+            onSubmit={() => {}}
           >
-            {({ handleSubmit }) => (
-              <Form onSubmit={handleSubmit}>
+            {() => (
+              <Form>
                 <Row>
                   <Col md="4">
-                    <CustomInput name="idNumber" label="ID Number" />
+                    <CustomInput name="idNumber" label="ID Number" readOnly />
                   </Col>
                   <Col md="4">
-                    <CustomInput name="fullName" label="Full Name" />
+                    <CustomInput name="fullName" label="Full Name" readOnly />
                   </Col>
                   <Col md="4">
-                    <CustomInput name="mobile" label="Mobile Number" />
+                    <CustomInput name="mobile" label="Mobile Number" readOnly />
                   </Col>
-
                   <Col md="4">
                     <CustomSelect
                       name="nationality"
@@ -127,6 +92,18 @@ const Notification_Alert = () => {
               </Form>
             )}
           </Formik>
+          <div className="d-flex justify-content-end mb-3">
+            <SharedButton
+              title={t("Create Notification")}
+              color="primary"
+              size="sm"
+              onClick={() => {
+                setSelectedRow(null);
+                setModalAction("add");
+                setModalOpen(true);
+              }}
+            />
+          </div>
         </CardBody>
       </Card>
 
