@@ -172,77 +172,89 @@ const NotificationTemplateForm = ({
     >
       {({ values, setFieldValue }) => (
         <Form>
-          <Row>
-            <Col md={6} className="mb-2">
-              <CustomInput
-                name="name"
-                label={t("Template Name")}
-                readOnly={isReadOnly}
-              />
-              <SharedCheckbox
-                name="isPushNotification"
-                label={t("Push Notification")}
-                checked={values.isPushNotification}
-                onChange={(checked) =>
-                  setFieldValue("isPushNotification", checked)
-                }
-                disabled={isReadOnly}
-              />
-            </Col>
-            <Col md={6} className="mb-2">
-              <CustomSelect
-                name="type"
-                label={t("Type")}
-                value={values.type}
-                onChange={(val) => setFieldValue("type", val)}
-                readOnly={isReadOnly}
-                isRequired
-                endpointId={
-                  NotificationAlertRepository.NotificationTypes.getAll
-                }
-                valueKey="key"
-                labelKey="value"
-              />
-            </Col>
-          </Row>
-
-          <Card className="shadow-sm mt-4 border">
-            <CardHeader className="p-3 fw-bold border-bottom">
-              {t("Content")}
-            </CardHeader>
-            <CardBody>
+          {modalAction === "delete" ? (
+            <Card className="shadow-sm border">
+              <CardBody className="text-center">
+                <h5 className="mb-3">
+                  {t("Are you sure you want to delete this template?")}
+                </h5>
+              </CardBody>
+            </Card>
+          ) : (
+            <>
               <Row>
-                <Col md={6} className="mb-3">
+                <Col md={6} className="mb-2">
                   <CustomInput
-                    name="title"
-                    label={t("Title (English)")}
+                    name="name"
+                    label={t("Template Name")}
                     readOnly={isReadOnly}
                   />
-                  <CustomTextarea
-                    name="description"
-                    label={t("Message (English)")}
-                    readOnly={isReadOnly}
-                    rows={5}
+                  <SharedCheckbox
+                    name="isPushNotification"
+                    label={t("Push Notification")}
+                    checked={values.isPushNotification}
+                    onChange={(checked) =>
+                      setFieldValue("isPushNotification", checked)
+                    }
+                    disabled={isReadOnly}
                   />
                 </Col>
-                <Col md={6} className="mb-3">
-                  <CustomInput
-                    name="title2"
-                    label={t("Title (Arabic)")}
+                <Col md={6} className="mb-2">
+                  <CustomSelect
+                    name="type"
+                    label={t("Type")}
+                    value={values.type}
+                    onChange={(val) => setFieldValue("type", val)}
                     readOnly={isReadOnly}
-                    ar
-                  />
-                  <CustomTextarea
-                    name="description2"
-                    label={t("Message (Arabic)")}
-                    readOnly={isReadOnly}
-                    rows={5}
-                    ar
+                    isRequired
+                    endpointId={
+                      NotificationAlertRepository.NotificationTypes.getAll
+                    }
+                    valueKey="key"
+                    labelKey="value"
                   />
                 </Col>
               </Row>
-            </CardBody>
-          </Card>
+
+              <Card className="shadow-sm mt-4 border">
+                <CardHeader className="p-3 fw-bold border-bottom">
+                  {t("Content")}
+                </CardHeader>
+                <CardBody>
+                  <Row>
+                    <Col md={6} className="mb-3">
+                      <CustomInput
+                        name="title"
+                        label={t("Title (English)")}
+                        readOnly={isReadOnly}
+                      />
+                      <CustomTextarea
+                        name="description"
+                        label={t("Message (English)")}
+                        readOnly={isReadOnly}
+                        rows={5}
+                      />
+                    </Col>
+                    <Col md={6} className="mb-3">
+                      <CustomInput
+                        name="title2"
+                        label={t("Title (Arabic)")}
+                        readOnly={isReadOnly}
+                        ar
+                      />
+                      <CustomTextarea
+                        name="description2"
+                        label={t("Message (Arabic)")}
+                        readOnly={isReadOnly}
+                        rows={5}
+                        ar
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+            </>
+          )}
         </Form>
       )}
     </Formik>

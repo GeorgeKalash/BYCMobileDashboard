@@ -187,7 +187,7 @@ const NotificationTemplatePage = () => {
             ? t("Edit Notification Template")
             : t("Delete Notification Template")
         }
-        width="80vw"
+        width={modalAction === "delete" ? "" : "80vw"}
         height="70vh"
         onSubmit={handleSubmit}
       >
