@@ -1,6 +1,9 @@
 import React, { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Label, Input } from "reactstrap";
+import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { useTranslation } from "@/app/i18n/client";
+import { useAppSelector } from "@/Redux/Hooks";
 
 const DataTableComponent = ({
   title,
@@ -45,6 +48,8 @@ const DataTableComponent = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState(defaultSortColumn);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [rowToDelete, setRowToDelete] = useState<any>(null);
 
   const filteredItems = useMemo(() => {
     if (searchType === "server") return data;
@@ -82,6 +87,9 @@ const DataTableComponent = ({
       ? Math.ceil((totalRows ?? 0) / pageSize)
       : Math.ceil(sortedData.length / pageSize);
   }, [serverPagination, totalRows, sortedData]);
+  const { i18LangStatus } = useAppSelector((state) => state.langSlice);
+
+  const { t } = useTranslation(i18LangStatus);
 
   const actionColumn = {
     name: "Actions",
@@ -99,7 +107,10 @@ const DataTableComponent = ({
           <i
             className="fa fa-trash text-danger cursor-pointer"
             style={{ fontSize: "20px" }}
-            onClick={() => onDelete(row)}
+            onClick={() => {
+              setRowToDelete(row);
+              setShowDeleteConfirm(true);
+            }}
             title="Delete"
           />
         )}
@@ -149,7 +160,8 @@ const DataTableComponent = ({
       );
     }
   };
-
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleteError, setDeleteError] = useState(false);
   return (
     <>
       {Search && (
@@ -210,6 +222,66 @@ const DataTableComponent = ({
           }}
         />
       </div>
+
+      <Modal
+        isOpen={showDeleteConfirm}
+        toggle={() => {
+          setShowDeleteConfirm(false);
+          setRowToDelete(null);
+          setDeleteConfirmText("");
+          setDeleteError(false);
+        }}
+        centered
+      >
+        <ModalHeader toggle={() => setShowDeleteConfirm(false)}>
+          {t("Are you sure you want to delete")}{" "}
+          <strong>{rowToDelete?.name || rowToDelete?.title || ""}</strong>?
+        </ModalHeader>
+        <ModalBody>
+          <p>
+            {t("This action is permanent. Please type")}{" "}
+            <strong>"delete"</strong> {t("below to confirm:")}
+          </p>
+          <Input
+            type="text"
+            placeholder='Type "delete" to confirm'
+            value={deleteConfirmText}
+            onChange={(e) => {
+              setDeleteConfirmText(e.target.value);
+              if (deleteError) setDeleteError(false);
+            }}
+            invalid={deleteError}
+          />
+          {deleteError && (
+            <small className="text-danger">
+              {t('You must type "delete" to confirm.')}
+            </small>
+          )}
+        </ModalBody>
+        <ModalFooter className="d-flex justify-content-end">
+          <i
+            className={`fa fa-trash ${
+              deleteConfirmText.trim().toLowerCase() === "delete"
+                ? "text-danger"
+                : "text-secondary"
+            }`}
+            style={{ fontSize: "24px", cursor: "pointer", transition: "0.2s" }}
+            title={t("Delete")}
+            onClick={() => {
+              if (deleteConfirmText.trim().toLowerCase() === "delete") {
+                if (onDelete && rowToDelete) {
+                  onDelete(rowToDelete);
+                }
+                setShowDeleteConfirm(false);
+                setRowToDelete(null);
+                setDeleteConfirmText("");
+              } else {
+                setDeleteError(true);
+              }
+            }}
+          />
+        </ModalFooter>
+      </Modal>
 
       {pagination && (
         <div className="d-flex justify-content-between align-items-center gap-2 mt-3 flex-wrap">

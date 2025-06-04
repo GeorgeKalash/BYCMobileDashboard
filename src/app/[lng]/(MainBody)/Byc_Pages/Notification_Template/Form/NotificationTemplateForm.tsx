@@ -25,7 +25,7 @@ import * as Yup from "yup";
 interface NotificationTemplateFormProps {
   rowData: any;
   formikRef?: React.Ref<FormikProps<any>>;
-  modalAction: "add" | "edit" | "delete" | null;
+  modalAction: "add" | "edit" | null;
   onSuccessSubmit?: () => void;
 }
 
@@ -40,15 +40,11 @@ const NotificationTemplateForm = ({
   const { t } = useTranslation(i18LangStatus);
 
   const [templateData, setTemplateData] = useState<any>(null);
-  const isReadOnly = modalAction === "delete";
 
   // Fetch template data for editing or deleting
   useEffect(() => {
     const fetchTemplate = async () => {
-      if (
-        (modalAction === "edit" || modalAction === "delete") &&
-        rowData?.recordId
-      ) {
+      if (modalAction === "edit" && rowData?.recordId) {
         try {
           const response = await withRequestTracking(dispatch, () =>
             dispatch(
@@ -92,18 +88,14 @@ const NotificationTemplateForm = ({
     isPushNotification: !!templateData?.header?.isPushNotification,
   };
 
-  const validationSchema =
-    modalAction === "delete"
-      ? null
-      : Yup.object().shape({
-          name: Yup.string().required(t("required")),
-          title: Yup.string().required(t("required")),
-          title2: Yup.string().required(t("required")),
-          description: Yup.string().required(t("required")),
-          description2: Yup.string().required(t("required")),
-          type: Yup.string().required(t("required")),
-        });
-
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required(t("required")),
+    title: Yup.string().required(t("required")),
+    title2: Yup.string().required(t("required")),
+    description: Yup.string().required(t("required")),
+    description2: Yup.string().required(t("required")),
+    type: Yup.string().required(t("required")),
+  });
   const handleSubmit = async (values: typeof initialValues) => {
     try {
       const timestamp = new Date().toISOString();
@@ -132,27 +124,15 @@ const NotificationTemplateForm = ({
         ],
       };
 
-      if (modalAction === "delete") {
-        await withRequestTracking(dispatch, () =>
-          dispatch(
-            deleteMobileRequest({
-              extension: `${NotificationAlertRepository.NotificationTemplate.delete}?_recordId=${rowData?.recordId}`,
-              rawBody: false,
-            })
-          ).unwrap()
-        );
-      } else {
-        await withRequestTracking(dispatch, () =>
-          dispatch(
-            postMobileRequest({
-              extension:
-                NotificationAlertRepository.NotificationTemplate.setPack,
-              body: payload,
-              rawBody: true,
-            })
-          ).unwrap()
-        );
-      }
+      await withRequestTracking(dispatch, () =>
+        dispatch(
+          postMobileRequest({
+            extension: NotificationAlertRepository.NotificationTemplate.setPack,
+            body: payload,
+            rawBody: true,
+          })
+        ).unwrap()
+      );
 
       showToast("success", t("Saved successfully"));
       onSuccessSubmit?.();
@@ -172,89 +152,62 @@ const NotificationTemplateForm = ({
     >
       {({ values, setFieldValue }) => (
         <Form>
-          {modalAction === "delete" ? (
-            <Card className="shadow-sm border">
-              <CardBody className="text-center">
-                <h5 className="mb-3">
-                  {t("Are you sure you want to delete this template?")}
-                </h5>
+          <>
+            <Row>
+              <Col md={6} className="mb-2">
+                <CustomInput name="name" label={t("Template Name")} />
+                <SharedCheckbox
+                  name="isPushNotification"
+                  label={t("Push Notification")}
+                  checked={values.isPushNotification}
+                  onChange={(checked) =>
+                    setFieldValue("isPushNotification", checked)
+                  }
+                />
+              </Col>
+              <Col md={6} className="mb-2">
+                <CustomSelect
+                  name="type"
+                  label={t("Type")}
+                  value={values.type}
+                  onChange={(val) => setFieldValue("type", val)}
+                  isRequired
+                  endpointId={
+                    NotificationAlertRepository.NotificationTypes.getAll
+                  }
+                  valueKey="key"
+                  labelKey="value"
+                />
+              </Col>
+            </Row>
+
+            <Card className="shadow-sm mt-4 border">
+              <CardHeader className="p-3 fw-bold border-bottom">
+                {t("Content")}
+              </CardHeader>
+              <CardBody>
+                <Row>
+                  <Col md={6} className="mb-3">
+                    <CustomInput name="title" label={t("Title (English)")} />
+                    <CustomTextarea
+                      name="description"
+                      label={t("Message (English)")}
+                      rows={5}
+                    />
+                  </Col>
+                  <Col md={6} className="mb-3">
+                    <CustomInput name="title2" label={t("Title (Arabic)")} ar />
+                    <CustomTextarea
+                      name="description2"
+                      label={t("Message (Arabic)")}
+                      rows={5}
+                      ar
+                    />
+                  </Col>
+                </Row>
               </CardBody>
             </Card>
-          ) : (
-            <>
-              <Row>
-                <Col md={6} className="mb-2">
-                  <CustomInput
-                    name="name"
-                    label={t("Template Name")}
-                    readOnly={isReadOnly}
-                  />
-                  <SharedCheckbox
-                    name="isPushNotification"
-                    label={t("Push Notification")}
-                    checked={values.isPushNotification}
-                    onChange={(checked) =>
-                      setFieldValue("isPushNotification", checked)
-                    }
-                    disabled={isReadOnly}
-                  />
-                </Col>
-                <Col md={6} className="mb-2">
-                  <CustomSelect
-                    name="type"
-                    label={t("Type")}
-                    value={values.type}
-                    onChange={(val) => setFieldValue("type", val)}
-                    readOnly={isReadOnly}
-                    isRequired
-                    endpointId={
-                      NotificationAlertRepository.NotificationTypes.getAll
-                    }
-                    valueKey="key"
-                    labelKey="value"
-                  />
-                </Col>
-              </Row>
-
-              <Card className="shadow-sm mt-4 border">
-                <CardHeader className="p-3 fw-bold border-bottom">
-                  {t("Content")}
-                </CardHeader>
-                <CardBody>
-                  <Row>
-                    <Col md={6} className="mb-3">
-                      <CustomInput
-                        name="title"
-                        label={t("Title (English)")}
-                        readOnly={isReadOnly}
-                      />
-                      <CustomTextarea
-                        name="description"
-                        label={t("Message (English)")}
-                        readOnly={isReadOnly}
-                        rows={5}
-                      />
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <CustomInput
-                        name="title2"
-                        label={t("Title (Arabic)")}
-                        readOnly={isReadOnly}
-                        ar
-                      />
-                      <CustomTextarea
-                        name="description2"
-                        label={t("Message (Arabic)")}
-                        readOnly={isReadOnly}
-                        rows={5}
-                        ar
-                      />
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Card>
-            </>
-          )}
+          </>
         </Form>
       )}
     </Formik>
