@@ -12,7 +12,6 @@ import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
 import formatDate from "@/utils/DateFormatter";
-import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 
 import NotificationTemplateForm from "./Form/NotificationTemplateForm";
 
@@ -29,9 +28,6 @@ const NotificationTemplatePage = () => {
   >(null);
   const formikRef = useRef<FormikProps<any>>(null);
 
-  const [fromDate, setFromDate] = useState("05-20-2025");
-  const [toDate, setToDate] = useState("06-20-2025");
-
   const [pageSize] = useState(50);
   const [pageCount, setPageCount] = useState(0);
   const [totalRows, setTotalRows] = useState(0);
@@ -42,7 +38,7 @@ const NotificationTemplatePage = () => {
       dispatch(
         getMobileRequest({
           extension: NotificationAlertRepository.NotificationTemplate.getAll,
-          parameters: `_fromDate=${fromDate}&_toDate=${toDate}&_startAt=${page}&_pageSize=${pageSize}&_title=${searchTerm}&_description=${searchTerm}`,
+          parameters: `_fromDate=&_toDate=&_startAt=${page}&_pageSize=${pageSize}&_title=${searchTerm}&_description=${searchTerm}`,
         })
       )
     );
@@ -58,9 +54,6 @@ const NotificationTemplatePage = () => {
   useEffect(() => {
     fetchData();
   }, [pageCount]);
-  useEffect(() => {
-    fetchData(0);
-  }, [fromDate, toDate]);
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -132,30 +125,10 @@ const NotificationTemplatePage = () => {
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Notification Template")} onAdd={onAdd}>
-          <Row className="w-100">
-            <Col>
-              <CustomDatePicker
-                name="fromDate"
-                label={t("From Date")}
-                value={fromDate}
-                onChange={(val) => {
-                  if (val) setFromDate(val);
-                }}
-              />
-            </Col>
-            <Col>
-              <CustomDatePicker
-                name="toDate"
-                label={t("To Date")}
-                value={toDate}
-                onChange={(val) => {
-                  if (val) setToDate(val);
-                }}
-              />
-            </Col>
-          </Row>
-        </CommonCardHeader>
+        <CommonCardHeader
+          title={t("Notification Template")}
+          onAdd={onAdd}
+        ></CommonCardHeader>
         <CardBody>
           <DataTable
             title={t("New Message")}
