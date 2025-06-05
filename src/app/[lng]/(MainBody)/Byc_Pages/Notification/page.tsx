@@ -74,14 +74,10 @@ const Notification = () => {
       selector: (row: any) => row.clientName || "-",
       sortable: true,
     },
-    {
-      name: t("Client ID"),
-      selector: (row: any) => row.clientId || "-",
-      sortable: true,
-    },
+
     {
       name: t("Client Number"),
-      selector: (row: any) => row.ClientNb || "-",
+      selector: (row: any) => row.cellPhone || "-",
       sortable: true,
     },
     {
