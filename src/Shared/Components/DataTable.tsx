@@ -4,7 +4,7 @@ import { Label, Input } from "reactstrap";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppSelector } from "@/Redux/Hooks";
-
+import SharedModal from "@/Shared/Components/SharedModal";
 const DataTableComponent = ({
   title,
   data,
@@ -223,65 +223,24 @@ const DataTableComponent = ({
         />
       </div>
 
-      <Modal
-        isOpen={showDeleteConfirm}
-        toggle={() => {
+      <SharedModal
+        visible={showDeleteConfirm}
+        onClose={() => {
           setShowDeleteConfirm(false);
           setRowToDelete(null);
-          setDeleteConfirmText("");
-          setDeleteError(false);
         }}
-        centered
+        title={t("Delete")}
+        onSubmit={() => {
+          if (onDelete && rowToDelete) {
+            onDelete(rowToDelete);
+          }
+          setShowDeleteConfirm(false);
+          setRowToDelete(null);
+        }}
+        width="400px"
       >
-        <ModalHeader toggle={() => setShowDeleteConfirm(false)}>
-          {t("Are you sure you want to delete")}{" "}
-          <strong>{rowToDelete?.name || rowToDelete?.title || ""}</strong>?
-        </ModalHeader>
-        <ModalBody>
-          <p>
-            {t("This action is permanent. Please type")}{" "}
-            <strong>"delete"</strong> {t("below to confirm:")}
-          </p>
-          <Input
-            type="text"
-            placeholder='Type "delete" to confirm'
-            value={deleteConfirmText}
-            onChange={(e) => {
-              setDeleteConfirmText(e.target.value);
-              if (deleteError) setDeleteError(false);
-            }}
-            invalid={deleteError}
-          />
-          {deleteError && (
-            <small className="text-danger">
-              {t('You must type "delete" to confirm.')}
-            </small>
-          )}
-        </ModalBody>
-        <ModalFooter className="d-flex justify-content-end">
-          <i
-            className={`fa fa-trash ${
-              deleteConfirmText.trim().toLowerCase() === "delete"
-                ? "text-danger"
-                : "text-secondary"
-            }`}
-            style={{ fontSize: "24px", cursor: "pointer", transition: "0.2s" }}
-            title={t("Delete")}
-            onClick={() => {
-              if (deleteConfirmText.trim().toLowerCase() === "delete") {
-                if (onDelete && rowToDelete) {
-                  onDelete(rowToDelete);
-                }
-                setShowDeleteConfirm(false);
-                setRowToDelete(null);
-                setDeleteConfirmText("");
-              } else {
-                setDeleteError(true);
-              }
-            }}
-          />
-        </ModalFooter>
-      </Modal>
+        <p>{t("Are you sure you want to delete the selected record?")}</p>
+      </SharedModal>
 
       {pagination && (
         <div className="d-flex justify-content-between align-items-center gap-2 mt-3 flex-wrap">

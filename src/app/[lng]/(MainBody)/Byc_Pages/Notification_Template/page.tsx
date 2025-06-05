@@ -29,10 +29,10 @@ const NotificationTemplatePage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<"add" | "edit" | null>(null);
   const formikRef = useRef<FormikProps<any>>(null);
-  const [pageSize] = useState(50);
   const [pageCount, setPageCount] = useState(0);
   const [totalRows, setTotalRows] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const pageSize = 30;
 
   const fetchData = async (page = pageCount) => {
     const result = await withRequestTracking(dispatch, () =>
@@ -54,20 +54,12 @@ const NotificationTemplatePage = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [pageCount]);
-
-  useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      fetchData(0);
+      fetchData();
     }, 500);
 
     return () => clearTimeout(delayDebounce);
-  }, [searchTerm]);
-
-  useEffect(() => {
-    fetchData();
-  }, [pageCount]);
+  }, [searchTerm, pageCount]);
 
   const columns = [
     {
@@ -94,7 +86,7 @@ const NotificationTemplatePage = () => {
     },
   ];
 
-  const handleModalOpen = (row: any, action: "edit") => {
+  const openModal = (row: any = null, action: "add" | "edit" = "add") => {
     setSelectedRow(row);
     setModalAction(action);
     setModalOpen(true);
@@ -113,35 +105,24 @@ const NotificationTemplatePage = () => {
     }
   };
 
-  const onAdd = () => {
-    setSelectedRow(null);
-    setModalAction("add");
-    setModalOpen(true);
-  };
-
   const handlePageChange = (startAt: number) => {
-    const newPage = Math.ceil(startAt / pageSize);
+    const newPage = Math.floor(startAt / pageSize);
     setPageCount(newPage);
   };
 
   const handleDelete = async (row: any) => {
     if (!row?.recordId) return;
 
-    try {
-      await withRequestTracking(dispatch, () =>
-        dispatch(
-          deleteMobileRequest({
-            extension: `${NotificationAlertRepository.NotificationTemplate.delete}?_recordId=${row.recordId}`,
-            rawBody: false,
-          })
-        ).unwrap()
-      );
-      showToast("success", t("Deleted successfully"));
-      fetchData();
-    } catch (error) {
-      console.error("Delete error:", error);
-      showToast("error", t("Failed to delete"));
-    }
+    await withRequestTracking(dispatch, () =>
+      dispatch(
+        deleteMobileRequest({
+          extension: `${NotificationAlertRepository.NotificationTemplate.delete}?_recordId=${row.recordId}`,
+          rawBody: false,
+        })
+      ).unwrap()
+    );
+    showToast("success", t("Deleted successfully"));
+    fetchData();
   };
 
   return (
@@ -149,26 +130,28 @@ const NotificationTemplatePage = () => {
       <Card>
         <CommonCardHeader
           title={t("Notification Template")}
-          onAdd={onAdd}
+          onAdd={() => openModal()}
         ></CommonCardHeader>
         <CardBody>
           <DataTable
             title={t("New Message")}
             data={data}
             columns={columns}
-            highlightOnHover
             pagination
             serverPagination={true}
             totalRows={totalRows}
             pageSize={pageSize}
             onPageChange={handlePageChange}
             showActions={true}
-            onEdit={(row) => handleModalOpen(row, "edit")}
+            onEdit={(row) => openModal(row, "edit")}
             onDelete={handleDelete}
             Search={true}
             searchType="server"
             searchableColumns={["title", "description"]}
-            onSearchChange={(val) => setSearchTerm(val)}
+            onSearchChange={(val) => {
+              setSearchTerm(val);
+              setPageCount(0);
+            }}
           />
         </CardBody>
       </Card>

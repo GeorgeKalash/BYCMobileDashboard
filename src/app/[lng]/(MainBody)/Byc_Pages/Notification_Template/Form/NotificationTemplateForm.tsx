@@ -6,8 +6,6 @@ import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import {
   postMobileRequest,
-  putMobileRequest,
-  deleteMobileRequest,
   getMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
@@ -39,29 +37,31 @@ const NotificationTemplateForm = ({
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
 
-  const [templateData, setTemplateData] = useState<any>(null);
+  const [fetchedData, setFetchedData] = useState<any>(null);
 
-  // Fetch template data for editing or deleting
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required(t("required")),
+    title: Yup.string().required(t("required")),
+    title2: Yup.string().required(t("required")),
+    description: Yup.string().required(t("required")),
+    description2: Yup.string().required(t("required")),
+    type: Yup.string().required(t("required")),
+  });
+
   useEffect(() => {
     const fetchTemplate = async () => {
-      if (modalAction === "edit" && rowData?.recordId) {
-        try {
-          const response = await withRequestTracking(dispatch, () =>
-            dispatch(
-              getMobileRequest({
-                extension: `${NotificationAlertRepository.NotificationTemplate.getPack}?_recordId=${rowData.recordId}`,
-              })
-            )
-          );
+      if (modalAction === "edit") {
+        const response = await withRequestTracking(dispatch, () =>
+          dispatch(
+            getMobileRequest({
+              extension: `${NotificationAlertRepository.NotificationTemplate.getPack}?_recordId=${rowData.recordId}`,
+            })
+          )
+        );
 
-          if (response?.payload?.data) {
-            setTemplateData(response.payload.data);
-          }
-        } catch (error) {
-          console.error("Error fetching template data:", error);
-        }
-      } else if (modalAction === "add") {
-        setTemplateData(null);
+        setFetchedData(response.payload.data);
+      } else {
+        setFetchedData(null);
       }
     };
 
@@ -72,74 +72,60 @@ const NotificationTemplateForm = ({
     field: "title" | "description",
     langId: number
   ): string =>
-    templateData?.languages?.find((lang: any) => lang.languageId === langId)?.[
+    fetchedData?.languages?.find((lang: any) => lang.languageId === langId)?.[
       field
     ] ?? "";
 
   const initialValues = {
-    recordId: templateData?.header?.recordId?.toString() || "",
-    date: templateData?.header?.date || new Date().toISOString(),
-    name: templateData?.header?.name || "",
+    recordId: fetchedData?.header?.recordId?.toString() || "",
+    date: fetchedData?.header?.date || new Date().toISOString(),
+    name: fetchedData?.header?.name || "",
     title: getLanguageField("title", 1),
     title2: getLanguageField("title", 2),
     description: getLanguageField("description", 1),
     description2: getLanguageField("description", 2),
-    type: rowData?.type ?? templateData?.header?.type ?? "",
-    isPushNotification: !!templateData?.header?.isPushNotification,
+    type: rowData?.type ?? fetchedData?.header?.type ?? "",
+    isPushNotification: !!fetchedData?.header?.isPushNotification,
   };
 
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().required(t("required")),
-    title: Yup.string().required(t("required")),
-    title2: Yup.string().required(t("required")),
-    description: Yup.string().required(t("required")),
-    description2: Yup.string().required(t("required")),
-    type: Yup.string().required(t("required")),
-  });
   const handleSubmit = async (values: typeof initialValues) => {
-    try {
-      const timestamp = new Date().toISOString();
+    const timestamp = new Date().toISOString();
 
-      const payload = {
-        header: {
-          recordId: rowData?.recordId || 0,
-          date: values.date || timestamp,
-          name: values.name,
-          type: parseInt(values.type, 10),
-          isPushNotification: values.isPushNotification,
-        },
-        languages: [
-          {
-            templateId: rowData?.recordId || 0,
-            languageId: 1,
-            title: values.title,
-            description: values.description,
-          },
-          {
-            templateId: rowData?.recordId || 0,
-            languageId: 2,
-            title: values.title2,
-            description: values.description2,
-          },
-        ],
-      };
+    const supportedLanguages = [
+      { id: 1, titleKey: "title", descKey: "description" },
+      { id: 2, titleKey: "title2", descKey: "description2" },
+    ];
 
-      await withRequestTracking(dispatch, () =>
-        dispatch(
-          postMobileRequest({
-            extension: NotificationAlertRepository.NotificationTemplate.setPack,
-            body: payload,
-            rawBody: true,
-          })
-        ).unwrap()
-      );
+    const languages = supportedLanguages.map((lang) => ({
+      templateId: rowData?.recordId || 0,
+      languageId: lang.id,
+      title: (values as any)[lang.titleKey],
+      description: (values as any)[lang.descKey],
+    }));
 
-      showToast("success", t("Saved successfully"));
-      onSuccessSubmit?.();
-    } catch (error) {
-      console.error("Submission error:", error);
-      showToast("error", t("Failed to save"));
-    }
+    const payload = {
+      header: {
+        recordId: rowData?.recordId || 0,
+        date: values.date || timestamp,
+        name: values.name,
+        type: parseInt(values.type, 10),
+        isPushNotification: values.isPushNotification,
+      },
+      languages,
+    };
+
+    await withRequestTracking(dispatch, () =>
+      dispatch(
+        postMobileRequest({
+          extension: NotificationAlertRepository.NotificationTemplate.setPack,
+          body: payload,
+          rawBody: true,
+        })
+      ).unwrap()
+    );
+
+    showToast("success", t("Saved successfully"));
+    onSuccessSubmit?.();
   };
 
   return (
@@ -152,62 +138,58 @@ const NotificationTemplateForm = ({
     >
       {({ values, setFieldValue }) => (
         <Form>
-          <>
-            <Row>
-              <Col md={6} className="mb-2">
-                <CustomInput name="name" label={t("Template Name")} />
-                <SharedCheckbox
-                  name="isPushNotification"
-                  label={t("Push Notification")}
-                  checked={values.isPushNotification}
-                  onChange={(checked) =>
-                    setFieldValue("isPushNotification", checked)
-                  }
-                />
-              </Col>
-              <Col md={6} className="mb-2">
-                <CustomSelect
-                  name="type"
-                  label={t("Type")}
-                  value={values.type}
-                  onChange={(val) => setFieldValue("type", val)}
-                  isRequired
-                  endpointId={
-                    NotificationAlertRepository.NotificationTypes.getAll
-                  }
-                  valueKey="key"
-                  labelKey="value"
-                />
-              </Col>
-            </Row>
+          <Row>
+            <Col md={6}>
+              <CustomInput name="name" label={t("Template Name")} />
+              <SharedCheckbox
+                name="isPushNotification"
+                label={t("Push Notification")}
+                checked={values.isPushNotification}
+                onChange={(checked) =>
+                  setFieldValue("isPushNotification", checked)
+                }
+              />
+            </Col>
+            <Col md={6}>
+              <CustomSelect
+                name="type"
+                label={t("Type")}
+                value={values.type}
+                onChange={(val) => setFieldValue("type", val)}
+                isRequired
+                endpointId={
+                  NotificationAlertRepository.NotificationTypes.getAll
+                }
+                valueKey="key"
+                labelKey="value"
+              />
+            </Col>
+          </Row>
 
-            <Card className="shadow-sm mt-4 border">
-              <CardHeader className="p-3 fw-bold border-bottom">
-                {t("Content")}
-              </CardHeader>
-              <CardBody>
-                <Row>
-                  <Col md={6} className="mb-3">
-                    <CustomInput name="title" label={t("Title (English)")} />
-                    <CustomTextarea
-                      name="description"
-                      label={t("Message (English)")}
-                      rows={5}
-                    />
-                  </Col>
-                  <Col md={6} className="mb-3">
-                    <CustomInput name="title2" label={t("Title (Arabic)")} ar />
-                    <CustomTextarea
-                      name="description2"
-                      label={t("Message (Arabic)")}
-                      rows={5}
-                      ar
-                    />
-                  </Col>
-                </Row>
-              </CardBody>
-            </Card>
-          </>
+          <Card className="border">
+            <CardHeader className=" fw-bold ">{t("Content")}</CardHeader>
+            <CardBody>
+              <Row>
+                <Col md={6}>
+                  <CustomInput name="title" label={t("Title (English)")} />
+                  <CustomTextarea
+                    name="description"
+                    label={t("Message (English)")}
+                    rows={5}
+                  />
+                </Col>
+                <Col md={6}>
+                  <CustomInput name="title2" label={t("Title (Arabic)")} ar />
+                  <CustomTextarea
+                    name="description2"
+                    label={t("Message (Arabic)")}
+                    rows={5}
+                    ar
+                  />
+                </Col>
+              </Row>
+            </CardBody>
+          </Card>
         </Form>
       )}
     </Formik>
