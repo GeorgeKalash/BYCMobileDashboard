@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Card, CardBody, Col, Row } from "reactstrap";
+import { Card, CardBody, Col } from "reactstrap";
 import DataTable from "../../../../../Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedModal from "../../../../../Shared/Components/SharedModal";
@@ -25,21 +25,28 @@ const NotificationTemplatePage = () => {
   const dispatch = useAppDispatch();
 
   const [data, setData] = useState<{ key: string; value: string }[]>([]);
-  const [selectedRow, setSelectedRow] = useState<any>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"add" | "edit" | null>(null);
-  const formikRef = useRef<FormikProps<any>>(null);
-  const [pageCount, setPageCount] = useState(0);
-  const [totalRows, setTotalRows] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
-  const pageSize = 30;
 
-  const fetchData = async (page = pageCount) => {
+  const [modalState, setModalState] = useState({
+    open: false,
+    action: null as "add" | "edit" | null,
+    row: null as any,
+  });
+
+  const [paginationState, setPaginationState] = useState({
+    pageCount: 0,
+    totalRows: 0,
+    searchTerm: "",
+  });
+
+  const pageSize = 30;
+  const formikRef = useRef<FormikProps<any>>(null);
+
+  const fetchData = async (page = paginationState.pageCount) => {
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
           extension: NotificationAlertRepository.NotificationTemplate.getAll,
-          parameters: `_fromDate=&_toDate=&_startAt=${page}&_pageSize=${pageSize}&_title=${searchTerm}&_description=${searchTerm}`,
+          parameters: `_fromDate=&_toDate=&_startAt=${page}&_pageSize=${pageSize}&_title=${paginationState.searchTerm}&_description=${paginationState.searchTerm}`,
         })
       )
     );
@@ -49,7 +56,10 @@ const NotificationTemplatePage = () => {
 
     setData(Array.isArray(list) ? list : []);
     if (typeof total === "number") {
-      setTotalRows(total);
+      setPaginationState((prev) => ({
+        ...prev,
+        totalRows: total,
+      }));
     }
   };
 
@@ -59,7 +69,7 @@ const NotificationTemplatePage = () => {
     }, 500);
 
     return () => clearTimeout(delayDebounce);
-  }, [searchTerm, pageCount]);
+  }, [paginationState.searchTerm, paginationState.pageCount]);
 
   const columns = [
     {
@@ -67,7 +77,6 @@ const NotificationTemplatePage = () => {
       selector: (row: any) => row.name,
       sortable: true,
     },
-
     {
       name: t("Date"),
       selector: (row: any) =>
@@ -87,15 +96,19 @@ const NotificationTemplatePage = () => {
   ];
 
   const openModal = (row: any = null, action: "add" | "edit" = "add") => {
-    setSelectedRow(row);
-    setModalAction(action);
-    setModalOpen(true);
+    setModalState({
+      open: true,
+      action,
+      row,
+    });
   };
 
   const handleModalClose = () => {
-    setModalOpen(false);
-    setSelectedRow(null);
-    setModalAction(null);
+    setModalState({
+      open: false,
+      action: null,
+      row: null,
+    });
     fetchData();
   };
 
@@ -107,7 +120,10 @@ const NotificationTemplatePage = () => {
 
   const handlePageChange = (startAt: number) => {
     const newPage = Math.floor(startAt / pageSize);
-    setPageCount(newPage);
+    setPaginationState((prev) => ({
+      ...prev,
+      pageCount: newPage,
+    }));
   };
 
   const handleDelete = async (row: any) => {
@@ -139,7 +155,7 @@ const NotificationTemplatePage = () => {
             columns={columns}
             pagination
             serverPagination={true}
-            totalRows={totalRows}
+            totalRows={paginationState.totalRows}
             pageSize={pageSize}
             onPageChange={handlePageChange}
             showActions={true}
@@ -149,17 +165,20 @@ const NotificationTemplatePage = () => {
             searchType="server"
             searchableColumns={["title", "description"]}
             onSearchChange={(val) => {
-              setSearchTerm(val);
-              setPageCount(0);
+              setPaginationState((prev) => ({
+                ...prev,
+                searchTerm: val,
+                pageCount: 0,
+              }));
             }}
           />
         </CardBody>
       </Card>
       <SharedModal
-        visible={modalOpen}
+        visible={modalState.open}
         onClose={handleModalClose}
         title={
-          modalAction === "add"
+          modalState.action === "add"
             ? t("Add Notification Template")
             : t("Edit Notification Template")
         }
@@ -168,9 +187,9 @@ const NotificationTemplatePage = () => {
         onSubmit={handleSubmit}
       >
         <NotificationTemplateForm
-          rowData={selectedRow}
+          rowData={modalState.row}
           formikRef={formikRef}
-          modalAction={modalAction}
+          modalAction={modalState.action}
           onSuccessSubmit={handleModalClose}
         />
       </SharedModal>

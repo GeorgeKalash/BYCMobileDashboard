@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Formik, Form, FormikProps } from "formik";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
@@ -17,7 +17,6 @@ import CustomSelect from "@/Shared/Components/CustomSelect";
 import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
 import { Row, Col, Card, CardHeader, CardBody } from "reactstrap";
 import * as Yup from "yup";
-import { useRef } from "react";
 
 interface NotificationTemplateFormProps {
   rowData: any;
@@ -39,36 +38,52 @@ const NotificationTemplateForm = ({
   const localFormikRef = useRef<FormikProps<any>>(null);
   const formikReference = formikRef || localFormikRef;
 
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().required(t("required")),
-    title: Yup.string().required(t("required")),
-    title2: Yup.string().required(t("required")),
-    description: Yup.string().required(t("required")),
-    description2: Yup.string().required(t("required")),
-    type: Yup.string().required(t("required")),
-  });
+  const supportedLanguagesRef = useRef<
+    { id: number; titleKey: string; descKey: string }[]
+  >([
+    { id: 1, titleKey: "title", descKey: "description" },
+    { id: 2, titleKey: "title2", descKey: "description2" },
+  ]);
 
-  const initialValues = {
-    recordId: "",
-    date: new Date().toISOString(),
-    name: "",
-    title: "",
-    title2: "",
-    description: "",
-    description2: "",
-    type: rowData?.type ?? "",
-    isPushNotification: false,
+  const generateInitialValues = () => {
+    const langFields = supportedLanguagesRef.current.reduce((acc, lang) => {
+      acc[lang.titleKey] = "";
+      acc[lang.descKey] = "";
+      return acc;
+    }, {} as Record<string, string>);
+
+    return {
+      recordId: "",
+      date: new Date().toISOString(),
+      name: "",
+      type: rowData?.type ?? "",
+      isPushNotification: false,
+      ...langFields,
+    };
   };
+
+  const generateValidationSchema = () => {
+    const langSchema = supportedLanguagesRef.current.reduce((acc, lang) => {
+      acc[lang.titleKey] = Yup.string().required(t("required"));
+      acc[lang.descKey] = Yup.string().required(t("required"));
+      return acc;
+    }, {} as Record<string, any>);
+
+    return Yup.object().shape({
+      name: Yup.string().required(t("required")),
+      type: Yup.string().required(t("required")),
+      isPushNotification: Yup.boolean(),
+      ...langSchema,
+    });
+  };
+
+  const initialValues = generateInitialValues();
+  const validationSchema = generateValidationSchema();
 
   const handleSubmit = async (values: typeof initialValues) => {
     const timestamp = new Date().toISOString();
 
-    const supportedLanguages = [
-      { id: 1, titleKey: "title", descKey: "description" },
-      { id: 2, titleKey: "title2", descKey: "description2" },
-    ];
-
-    const languages = supportedLanguages.map((lang) => ({
+    const languages = supportedLanguagesRef.current.map((lang) => ({
       templateId: rowData?.recordId || 0,
       languageId: lang.id,
       title: (values as any)[lang.titleKey],
@@ -97,11 +112,16 @@ const NotificationTemplateForm = ({
     );
 
     showToast("success", t("Saved successfully"));
-    onSuccessSubmit?.()
+    onSuccessSubmit?.();
   };
 
-  const fetchTemplate = async () => {
-    if (modalAction === "edit" && formikReference && "current" in formikReference && formikReference.current) {
+  const fetchTemplate = useCallback(async () => {
+    if (
+      modalAction === "edit" &&
+      formikReference &&
+      "current" in formikReference &&
+      formikReference.current
+    ) {
       const response = await withRequestTracking(dispatch, () =>
         dispatch(
           getMobileRequest({
@@ -112,29 +132,44 @@ const NotificationTemplateForm = ({
 
       const data = response.payload.data;
 
+      const languagesFromApi = data?.languages || [];
+
+      supportedLanguagesRef.current = languagesFromApi.map(
+        (lang: any, index: number) => ({
+          id: lang.languageId,
+          titleKey: `title${index === 0 ? "" : index + 1}`,
+          descKey: `description${index === 0 ? "" : index + 1}`,
+        })
+      );
+
       const getLanguageField = (
         field: "title" | "description",
         langId: number
       ): string =>
-        data?.languages?.find((lang: any) => lang.languageId === langId)?.[field] ?? "";
+        data?.languages?.find((lang: any) => lang.languageId === langId)?.[
+          field
+        ] ?? "";
+
+      const langFields = supportedLanguagesRef.current.reduce((acc, lang) => {
+        acc[lang.titleKey] = getLanguageField("title", lang.id);
+        acc[lang.descKey] = getLanguageField("description", lang.id);
+        return acc;
+      }, {} as Record<string, string>);
 
       formikReference.current.setValues({
         recordId: data?.header?.recordId?.toString() || "",
         date: data?.header?.date || new Date().toISOString(),
         name: data?.header?.name || "",
-        title: getLanguageField("title", 1),
-        title2: getLanguageField("title", 2),
-        description: getLanguageField("description", 1),
-        description2: getLanguageField("description", 2),
         type: data?.header?.type?.toString() || "",
         isPushNotification: !!data?.header?.isPushNotification,
+        ...langFields,
       });
     }
-  };
+  }, [dispatch, modalAction, rowData, formikReference]);
 
   useEffect(() => {
     fetchTemplate();
-  }, [dispatch, modalAction, rowData]);
+  }, [fetchTemplate]);
 
   return (
     <Formik
@@ -153,7 +188,9 @@ const NotificationTemplateForm = ({
                 name="isPushNotification"
                 label={t("Push Notification")}
                 checked={formik.values.isPushNotification}
-                onChange={(checked) => formik.setFieldValue("isPushNotification", checked)}
+                onChange={(checked) =>
+                  formik.setFieldValue("isPushNotification", checked)
+                }
               />
             </Col>
             <Col md={6}>
@@ -163,7 +200,9 @@ const NotificationTemplateForm = ({
                 value={formik.values.type}
                 onChange={(val) => formik.setFieldValue("type", val)}
                 isRequired
-                endpointId={NotificationAlertRepository.NotificationTypes.getAll}
+                endpointId={
+                  NotificationAlertRepository.NotificationTypes.getAll
+                }
                 valueKey="key"
                 labelKey="value"
               />
@@ -173,14 +212,19 @@ const NotificationTemplateForm = ({
             <CardHeader className="fw-bold">{t("Content")}</CardHeader>
             <CardBody>
               <Row>
-                <Col md={6}>
-                  <CustomInput name="title" label={t("Title (English)")} />
-                  <CustomTextarea name="description" label={t("Message (English)")} rows={5} />
-                </Col>
-                <Col md={6}>
-                  <CustomInput name="title2" label={t("Title (Arabic)")} ar />
-                  <CustomTextarea name="description2" label={t("Message (Arabic)")} rows={5} ar />
-                </Col>
+                {supportedLanguagesRef.current.map((lang) => (
+                  <Col md={6} key={lang.id}>
+                    <CustomInput
+                      name={lang.titleKey}
+                      label={`${t("Title")} (Language ${lang.id})`}
+                    />
+                    <CustomTextarea
+                      name={lang.descKey}
+                      label={`${t("Message")} (Language ${lang.id})`}
+                      rows={5}
+                    />
+                  </Col>
+                ))}
               </Row>
             </CardBody>
           </Card>
