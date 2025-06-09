@@ -1,25 +1,23 @@
 "use client";
 
-import React, { KeyboardEvent } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, FormikHelpers, FormikProps } from "formik";
 import { Col, Row, Card, CardBody, CardTitle } from "reactstrap";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
-import CustomInput from "@/Shared/Components/CustomInput";
-import { postMobileRequest } from "@/Redux/Reducers/RequestThunks";
+import {
+  getMobileRequest,
+  postMobileRequest,
+} from "@/Redux/Reducers/RequestThunks";
+import { NotificationAlertRepository } from "@/Repositories/NotificatioAlert";
 import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
+import CustomInput from "@/Shared/Components/CustomInput";
 import * as Yup from "yup";
 import { showToast } from "@/Shared/Components/showToast";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 
-interface NotificationRowData {
-  title_en?: string;
-  message_en?: string;
-  title_ar?: string;
-  message_ar?: string;
-}
-
 interface NotificationPayloadItem {
+  templateId: number;
   clientId: number;
   seqNo: number;
   languageId: number;
@@ -29,31 +27,54 @@ interface NotificationPayloadItem {
   isRead: boolean;
 }
 
-interface NotificationFormProps {
-  rowData: NotificationRowData | null;
+interface Props {
+  templateId: number;
   formikRef?: React.Ref<FormikProps<any>>;
   onSuccessSubmit?: () => void;
-  modalAction: "add" | "edit" | null;
 }
 
-const NotificationForm: React.FC<NotificationFormProps> = ({
-  rowData,
+const NotificationForm = ({
+  templateId,
   formikRef,
   onSuccessSubmit,
-  modalAction,
-}) => {
+}: Props) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
 
-  if (!rowData && modalAction === "edit") return null;
+  const [initialValues, setInitialValues] = useState({
+    title_en: "",
+    message_en: "",
+    title_ar: "",
+    message_ar: "",
+  });
 
-  const initialValues = {
-    title_en: rowData?.title_en || "",
-    title_ar: rowData?.title_ar || "",
-    message_en: rowData?.message_en || "",
-    message_ar: rowData?.message_ar || "",
-  };
+  useEffect(() => {
+    const fetchTemplate = async () => {
+      const res = await withRequestTracking(dispatch, () =>
+        dispatch(
+          getMobileRequest({
+            extension: `${NotificationAlertRepository.NotificationTemplate.getPack}?_recordId=${templateId}`,
+          })
+        )
+      );
+
+      const data = res.payload.data;
+      const getLangField = (field: "title" | "description", langId: number) =>
+        data?.languages?.find((lang: any) => lang.languageId === langId)?.[
+          field
+        ] ?? "";
+
+      setInitialValues({
+        title_en: getLangField("title", 1),
+        message_en: getLangField("description", 1),
+        title_ar: getLangField("title", 2),
+        message_ar: getLangField("description", 2),
+      });
+    };
+
+    fetchTemplate();
+  }, [templateId]);
 
   const validationSchema = Yup.object().shape({
     title_en: Yup.string().required(t("required")),
@@ -69,72 +90,55 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
     const payload: NotificationPayloadItem[] = [];
     const currentDate = new Date().toISOString();
 
-    if (values.title_en.trim() || values.message_en.trim()) {
-      payload.push({
-        clientId: 0,
-        seqNo: 0,
-        languageId: 1,
-        date: currentDate,
-        title: values.title_en.trim(),
-        body: values.message_en.trim(),
-        isRead: false,
-      });
-    }
+    payload.push({
+      templateId,
+      clientId: 0,
+      seqNo: 0,
+      languageId: 1,
+      date: currentDate,
+      title: values.title_en.trim(),
+      body: values.message_en.trim(),
+      isRead: false,
+    });
 
-    if (values.title_ar.trim() || values.message_ar.trim()) {
-      payload.push({
-        clientId: 0,
-        seqNo: 0,
-        languageId: 2,
-        date: currentDate,
-        title: values.title_ar.trim(),
-        body: values.message_ar.trim(),
-        isRead: false,
-      });
-    }
+    payload.push({
+      templateId,
+      clientId: 0,
+      seqNo: 0,
+      languageId: 2,
+      date: currentDate,
+      title: values.title_ar.trim(),
+      body: values.message_ar.trim(),
+      isRead: false,
+    });
 
-    if (payload.length === 0) {
-      showToast("error", t("Please fill in at least one language section."));
-      setSubmitting(false);
-      return;
-    }
+    console.log("Submitting payload:", JSON.stringify(payload, null, 2));
 
     await withRequestTracking(dispatch, () =>
       dispatch(
         postMobileRequest({
           extension: NotificationMobileRepository.Notification.createPack,
-          body: payload,
+          body: { notificationAlert: payload },
           rawBody: true,
         })
       ).unwrap()
     );
 
     setSubmitting(false);
-    showToast("success");
+    showToast("success", t("Notification submitted successfully"));
     onSuccessSubmit?.();
   };
-
-  const handleKeyDown = (
-    event: KeyboardEvent<HTMLFormElement>,
-    submitForm: () => void
-  ) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      submitForm();
-    }
-  };
-
-  const isReadOnly = modalAction === "edit";
 
   return (
     <Formik
       initialValues={initialValues}
+      enableReinitialize
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
       innerRef={formikRef}
     >
-      {({ submitForm }) => (
-        <Form onKeyDown={(e) => handleKeyDown(e, submitForm)}>
+      {({ isSubmitting }) => (
+        <Form>
           <Row className="gy-4">
             <Col md="6">
               <Card className="h-100">
@@ -147,14 +151,12 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
                     label={t("Title (English)")}
                     type="text"
                     placeholder={t("Enter the title in English")}
-                    readOnly={isReadOnly}
                   />
                   <CustomInput
                     name="message_en"
                     label={t("Message (English)")}
                     type="text"
                     placeholder={t("Enter the message in English")}
-                    readOnly={isReadOnly}
                   />
                 </CardBody>
               </Card>
@@ -171,14 +173,12 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
                     label={t("Title (Arabic)")}
                     type="text"
                     placeholder={t("أدخل العنوان باللغة العربية")}
-                    readOnly={isReadOnly}
                   />
                   <CustomInput
                     name="message_ar"
                     label={t("Message (Arabic)")}
                     type="text"
                     placeholder={t("أدخل الرسالة باللغة العربية")}
-                    readOnly={isReadOnly}
                   />
                 </CardBody>
               </Card>

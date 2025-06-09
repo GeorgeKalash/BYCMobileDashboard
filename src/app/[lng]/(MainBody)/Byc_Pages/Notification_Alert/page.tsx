@@ -7,33 +7,29 @@ import SharedModal from "../../../../../Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { Formik, FormikProps } from "formik";
+import { NotificationAlertRepository } from "@/Repositories/NotificatioAlert";
 import NotificationForm from "./Form/NotificationForm";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomSelect from "@/Shared/Components/CustomSelect";
 import SharedButton from "@/Shared/Components/SharedButton";
+import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
+import { withRequestTracking } from "@/utils/withRequestTracking ";
 
 const Notification_Alert = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
-
-  const [data, setData] = useState<{ key: string; value: string }[]>([]);
-  const [selectedRow, setSelectedRow] = useState<any>({
-    idNumber: "123456789",
-    fullName: "John Doe",
-    mobile: "0555555555",
-    nationality: "1",
-    sponsors: ["2"],
-  }); // Example fallback data to prevent errors
+  const formikModalRef = useRef<FormikProps<any>>(null);
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"add" | "edit" | null>(null);
   const formikRef = useRef<FormikProps<any>>(null);
+  const [selectedRow, setSelectedRow] = useState<any>({
+    template: "",
+  });
 
   const handleModalClose = () => {
     setModalOpen(false);
     setSelectedRow(null);
-    setModalAction(null);
   };
 
   const handleSubmit = () => {
@@ -52,40 +48,27 @@ const Notification_Alert = () => {
               idNumber: selectedRow?.idNumber || "",
               fullName: selectedRow?.fullName || "",
               mobile: selectedRow?.mobile || "",
-              nationality: selectedRow?.nationality || "",
-              sponsors: selectedRow?.sponsors || [],
+              template: selectedRow?.template || "",
             }}
             enableReinitialize
             onSubmit={() => {}}
+            innerRef={formikRef}
           >
-            {() => (
+            {({ values, setFieldValue }) => (
               <Form>
                 <Row>
                   <Col md="4">
-                    <CustomInput name="idNumber" label="ID Number" readOnly />
-                  </Col>
-                  <Col md="4">
-                    <CustomInput name="fullName" label="Full Name" readOnly />
-                  </Col>
-                  <Col md="4">
-                    <CustomInput name="mobile" label="Mobile Number" readOnly />
-                  </Col>
-                  <Col md="4">
                     <CustomSelect
-                      name="nationality"
-                      label="Nationality"
-                      endpointId="nationalities"
-                      labelKey="label"
-                      valueKey="value"
-                    />
-                  </Col>
-                  <Col md="4">
-                    <CustomSelect
-                      name="sponsors"
-                      label="Sponsor"
-                      endpointId="sponsors"
-                      labelKey="label"
-                      valueKey="value"
+                      name="template"
+                      label={t("Template")}
+                      value={values.template}
+                      onChange={(val) => setFieldValue("template", val)}
+                      endpointId={
+                        NotificationAlertRepository.NotificationTemplate.get
+                      }
+                      labelKey="name"
+                      valueKey="recordId"
+                      isRequired
                     />
                   </Col>
                 </Row>
@@ -94,12 +77,13 @@ const Notification_Alert = () => {
           </Formik>
           <div className="d-flex justify-content-end mb-3">
             <SharedButton
-              title={t("Create Notification")}
+              title={t("Preview Template")}
               color="primary"
               size="sm"
               onClick={() => {
-                setSelectedRow(null);
-                setModalAction("add");
+                setSelectedRow(() => ({
+                  template: formikRef.current?.values.template,
+                }));
                 setModalOpen(true);
               }}
             />
@@ -110,19 +94,16 @@ const Notification_Alert = () => {
       <SharedModal
         visible={modalOpen}
         onClose={handleModalClose}
-        title={
-          modalAction === "add" ? t("Add Notification") : t("Edit Notification")
-        }
+        title={t("Send Notification")}
         width="600px"
         height="60vh"
-        onSubmit={handleSubmit}
+        onSubmit={() => formikModalRef.current?.submitForm()}
       >
         <NotificationForm
-          rowData={selectedRow}
-          formikRef={formikRef}
-          modalAction={modalAction}
+          templateId={formikRef.current?.values.template || null}
+          formikRef={formikModalRef}
           onSuccessSubmit={handleModalClose}
-        />
+        />{" "}
       </SharedModal>
     </Col>
   );

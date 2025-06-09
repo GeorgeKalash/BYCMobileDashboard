@@ -8,6 +8,7 @@ export const NotificationAlertRepository = {
   },
   NotificationTemplate: {
     getAll: service + "NotificationTemplate/page",
+    get: service + "NotificationTemplate/getAll",
 
     update: service + "NotificationTemplate/update",
     set: service + "NotificationTemplate/create",
