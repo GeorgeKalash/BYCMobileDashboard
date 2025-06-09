@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Formik, Form, FormikProps } from "formik";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
@@ -11,14 +11,13 @@ import {
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { showToast } from "@/Shared/Components/showToast";
-
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";
 import CustomSelect from "@/Shared/Components/CustomSelect";
 import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
-
 import { Row, Col, Card, CardHeader, CardBody } from "reactstrap";
 import * as Yup from "yup";
+import { useRef } from "react";
 
 interface NotificationTemplateFormProps {
   rowData: any;
@@ -37,7 +36,8 @@ const NotificationTemplateForm = ({
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
 
-  const [fetchedData, setFetchedData] = useState<any>(null);
+  const localFormikRef = useRef<FormikProps<any>>(null);
+  const formikReference = formikRef || localFormikRef;
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required(t("required")),
@@ -48,44 +48,16 @@ const NotificationTemplateForm = ({
     type: Yup.string().required(t("required")),
   });
 
-  useEffect(() => {
-    const fetchTemplate = async () => {
-      if (modalAction === "edit") {
-        const response = await withRequestTracking(dispatch, () =>
-          dispatch(
-            getMobileRequest({
-              extension: `${NotificationAlertRepository.NotificationTemplate.getPack}?_recordId=${rowData.recordId}`,
-            })
-          )
-        );
-
-        setFetchedData(response.payload.data);
-      } else {
-        setFetchedData(null);
-      }
-    };
-
-    fetchTemplate();
-  }, [dispatch, modalAction, rowData]);
-
-  const getLanguageField = (
-    field: "title" | "description",
-    langId: number
-  ): string =>
-    fetchedData?.languages?.find((lang: any) => lang.languageId === langId)?.[
-      field
-    ] ?? "";
-
   const initialValues = {
-    recordId: fetchedData?.header?.recordId?.toString() || "",
-    date: fetchedData?.header?.date || new Date().toISOString(),
-    name: fetchedData?.header?.name || "",
-    title: getLanguageField("title", 1),
-    title2: getLanguageField("title", 2),
-    description: getLanguageField("description", 1),
-    description2: getLanguageField("description", 2),
-    type: rowData?.type ?? fetchedData?.header?.type ?? "",
-    isPushNotification: !!fetchedData?.header?.isPushNotification,
+    recordId: "",
+    date: new Date().toISOString(),
+    name: "",
+    title: "",
+    title2: "",
+    description: "",
+    description2: "",
+    type: rowData?.type ?? "",
+    isPushNotification: false,
   };
 
   const handleSubmit = async (values: typeof initialValues) => {
@@ -125,8 +97,44 @@ const NotificationTemplateForm = ({
     );
 
     showToast("success", t("Saved successfully"));
-    onSuccessSubmit?.();
+    onSuccessSubmit?.()
   };
+
+  const fetchTemplate = async () => {
+    if (modalAction === "edit" && formikReference && "current" in formikReference && formikReference.current) {
+      const response = await withRequestTracking(dispatch, () =>
+        dispatch(
+          getMobileRequest({
+            extension: `${NotificationAlertRepository.NotificationTemplate.getPack}?_recordId=${rowData.recordId}`,
+          })
+        )
+      );
+
+      const data = response.payload.data;
+
+      const getLanguageField = (
+        field: "title" | "description",
+        langId: number
+      ): string =>
+        data?.languages?.find((lang: any) => lang.languageId === langId)?.[field] ?? "";
+
+      formikReference.current.setValues({
+        recordId: data?.header?.recordId?.toString() || "",
+        date: data?.header?.date || new Date().toISOString(),
+        name: data?.header?.name || "",
+        title: getLanguageField("title", 1),
+        title2: getLanguageField("title", 2),
+        description: getLanguageField("description", 1),
+        description2: getLanguageField("description", 2),
+        type: data?.header?.type?.toString() || "",
+        isPushNotification: !!data?.header?.isPushNotification,
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchTemplate();
+  }, [dispatch, modalAction, rowData]);
 
   return (
     <Formik
@@ -134,9 +142,9 @@ const NotificationTemplateForm = ({
       enableReinitialize
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
-      innerRef={formikRef}
+      innerRef={formikReference}
     >
-      {({ values, setFieldValue }) => (
+      {(formik) => (
         <Form>
           <Row>
             <Col md={6}>
@@ -144,48 +152,34 @@ const NotificationTemplateForm = ({
               <SharedCheckbox
                 name="isPushNotification"
                 label={t("Push Notification")}
-                checked={values.isPushNotification}
-                onChange={(checked) =>
-                  setFieldValue("isPushNotification", checked)
-                }
+                checked={formik.values.isPushNotification}
+                onChange={(checked) => formik.setFieldValue("isPushNotification", checked)}
               />
             </Col>
             <Col md={6}>
               <CustomSelect
                 name="type"
                 label={t("Type")}
-                value={values.type}
-                onChange={(val) => setFieldValue("type", val)}
+                value={formik.values.type}
+                onChange={(val) => formik.setFieldValue("type", val)}
                 isRequired
-                endpointId={
-                  NotificationAlertRepository.NotificationTypes.getAll
-                }
+                endpointId={NotificationAlertRepository.NotificationTypes.getAll}
                 valueKey="key"
                 labelKey="value"
               />
             </Col>
           </Row>
-
           <Card className="border">
-            <CardHeader className=" fw-bold ">{t("Content")}</CardHeader>
+            <CardHeader className="fw-bold">{t("Content")}</CardHeader>
             <CardBody>
               <Row>
                 <Col md={6}>
                   <CustomInput name="title" label={t("Title (English)")} />
-                  <CustomTextarea
-                    name="description"
-                    label={t("Message (English)")}
-                    rows={5}
-                  />
+                  <CustomTextarea name="description" label={t("Message (English)")} rows={5} />
                 </Col>
                 <Col md={6}>
                   <CustomInput name="title2" label={t("Title (Arabic)")} ar />
-                  <CustomTextarea
-                    name="description2"
-                    label={t("Message (Arabic)")}
-                    rows={5}
-                    ar
-                  />
+                  <CustomTextarea name="description2" label={t("Message (Arabic)")} rows={5} ar />
                 </Col>
               </Row>
             </CardBody>
