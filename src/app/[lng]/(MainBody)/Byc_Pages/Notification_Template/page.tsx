@@ -64,11 +64,7 @@ const NotificationTemplatePage = () => {
   };
 
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
       fetchData();
-    }, 500);
-
-    return () => clearTimeout(delayDebounce);
   }, [paginationState.searchTerm, paginationState.pageCount]);
 
   const columns = [
@@ -76,22 +72,26 @@ const NotificationTemplatePage = () => {
       name: t("Title"),
       selector: (row: any) => row.name,
       sortable: true,
+      id: "title",
     },
     {
       name: t("Date"),
       selector: (row: any) =>
-        row.date ? formatDate(row.date, "dd/MM/yyyy") : "",
+      row.date ? formatDate(row.date, "dd/MM/yyyy") : "",
       sortable: true,
+      id: "date",
     },
     {
       name: t("Type"),
       selector: (row: any) => row.typeName,
       sortable: true,
+      id: "type",
     },
     {
       name: t("Push Notification"),
       selector: (row: any) => (row.isPushNotification ? t("Yes") : t("No")),
       sortable: true,
+      id: "PushNotification",
     },
   ];
 
