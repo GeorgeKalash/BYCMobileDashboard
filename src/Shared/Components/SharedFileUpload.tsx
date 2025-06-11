@@ -1,4 +1,4 @@
-import { Card, CardBody, Col, FormGroup, Row } from "reactstrap";
+import { Card, CardBody, Col } from "reactstrap";
 import {
   Dropzone,
   ExtFile,
@@ -14,6 +14,7 @@ interface CommonFileUploadProp {
   multiple?: boolean;
   body?: boolean;
   title?: string;
+  onChange?: (files: File[]) => void;
 }
 
 const CommonFileUpload: React.FC<CommonFileUploadProp> = ({
@@ -21,57 +22,71 @@ const CommonFileUpload: React.FC<CommonFileUploadProp> = ({
   multiple,
   body,
   title,
+  onChange,
 }) => {
-  const BASE_URL = "https://www.myserver.com";
   const [extFiles, setExtFiles] = useState<ExtFile[]>([]);
   const [imageSrc, setImageSrc] = useState<File | string | undefined>(
     undefined
   );
 
   const updateFiles = (incomingFiles: ExtFile[]) => {
-    if (multiple) {
-      setExtFiles(incomingFiles);
-    } else {
-      // only keep the latest file if multiple is false
-      const latestFile = incomingFiles[incomingFiles.length - 1];
-      setExtFiles(latestFile ? [latestFile] : []);
+    const filteredFiles = multiple ? incomingFiles : incomingFiles.slice(-1);
+    setExtFiles(filteredFiles);
+
+    // Convert ExtFile[] to File[] and pass to parent
+    if (onChange) {
+      const files = filteredFiles
+        .map((f) => f.file)
+        .filter((f): f is File => f !== undefined);
+      onChange(files);
     }
   };
 
   const onDelete = (id: FileMosaicProps["id"]) => {
-    setExtFiles(extFiles.filter((x) => x.id !== id));
+    const newFiles = extFiles.filter((x) => x.id !== id);
+    setExtFiles(newFiles);
+    if (onChange) {
+      onChange(
+        newFiles.map((f) => f.file).filter((f): f is File => f !== undefined)
+      );
+    }
   };
+
   const handleSee = (imageSource: File | string | undefined) =>
     setImageSrc(imageSource);
+
   const handleAbort = (id: FileMosaicProps["id"]) => {
     setExtFiles(
       extFiles.map((ef) => {
         if (ef.id === id) {
           return { ...ef, uploadStatus: "aborted" };
-        } else return { ...ef };
+        }
+        return ef;
       })
     );
   };
+
   const handleCancel = (id: FileMosaicProps["id"]) => {
     setExtFiles(
       extFiles.map((ef) => {
         if (ef.id === id) {
           return { ...ef, uploadStatus: undefined };
-        } else return { ...ef };
+        }
+        return ef;
       })
     );
   };
+
   return (
     <Col sm="12">
       <Card>
         <CardBody>
-          <h6 className="sub-title mb-3">{title}</h6>
+          {title && <h6 className="sub-title mb-3">{title}</h6>}
           <Dropzone
             onChange={updateFiles}
             value={extFiles}
             maxFiles={maxFiles}
             multiple={multiple}
-            uploadConfig={{ url: BASE_URL + "/file" }}
             header={false}
             footer={false}
             minHeight={body ? "180px" : "80px"}
