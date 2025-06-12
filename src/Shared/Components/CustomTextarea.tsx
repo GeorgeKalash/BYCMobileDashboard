@@ -9,6 +9,7 @@ type CustomTextareaProps = {
   placeholder?: string;
   readOnly?: boolean;
   rows?: number;
+  ar?: boolean;
 };
 
 const CustomTextarea: React.FC<CustomTextareaProps> = ({
@@ -18,6 +19,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
   placeholder = "",
   readOnly = false,
   rows = 4,
+  ar = false,
 }) => {
   const [field, meta] = useField(name);
 
@@ -41,6 +43,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
         readOnly={readOnly}
         rows={rows}
         {...field}
+        dir={ar ? "rtl" : "ltr"}
       />
       <ErrorMessage name={name} component="div" className="invalid-feedback" />
     </FormGroup>
