@@ -9,7 +9,8 @@ type CustomInputProps = {
   isRequired?: boolean;
   placeholder?: string;
   readOnly?: boolean;
-  min?: number | string; 
+  min?: number | string;
+  ar?: boolean;
 };
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -20,6 +21,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   placeholder = "",
   readOnly = false,
   min,
+  ar = false,
 }) => {
   const [field, meta] = useField(name);
 
@@ -43,6 +45,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
         placeholder={placeholder}
         readOnly={readOnly}
         min={min}
+        dir={ar ? "rtl" : "ltr"}
         {...field}
       />
       <ErrorMessage name={name} component="div" className="invalid-feedback" />
