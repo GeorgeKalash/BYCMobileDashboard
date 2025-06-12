@@ -1,6 +1,6 @@
 "use client";
 
-import React, { KeyboardEvent } from "react";
+import React from "react";
 import { Formik, Form, FormikProps } from "formik";
 import { Col, Row, Card, CardBody } from "reactstrap";
 import { useTranslation } from "@/app/i18n/client";
@@ -16,18 +16,15 @@ interface NotificationFormProps {
   rowData: NotificationRowData | null;
   formikRef?: React.Ref<FormikProps<any>>;
   onSuccessSubmit?: () => void;
-  modalAction: "add" | "edit" | null;
+  modalAction: "edit" | null;
 }
 
 const NotificationForm: React.FC<NotificationFormProps> = ({
   rowData,
   formikRef,
-  modalAction,
 }) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
-
-  const isReadOnly = true;
 
   const initialValues = {
     title: rowData?.title || "",
@@ -35,7 +32,11 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
   };
 
   return (
-    <Formik initialValues={initialValues} innerRef={formikRef}>
+    <Formik
+      initialValues={initialValues}
+      innerRef={formikRef}
+      onSubmit={() => {}}
+    >
       {() => (
         <Form>
           <Row className="gy-4">
@@ -46,13 +47,13 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
                     name="title"
                     label={t("Title")}
                     type="text"
-                    readOnly={isReadOnly}
+                    readOnly
                   />
                   <CustomInput
                     name="body"
                     label={t("Body")}
                     type="text"
-                    readOnly={isReadOnly}
+                    readOnly
                   />
                 </CardBody>
               </Card>

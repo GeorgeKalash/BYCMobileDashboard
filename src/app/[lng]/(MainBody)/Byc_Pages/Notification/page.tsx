@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Card, CardBody, Col, Row } from "reactstrap";
+import { Card, CardBody, Col } from "reactstrap";
 import DataTable from "../../../../../Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
-import SharedModal from "../../../../../Shared/Components/SharedModal";
+import SharedModal from "@/Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
@@ -13,7 +13,6 @@ import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
 import NotificationForm from "./Form/NotificationForm";
 import formatDate from "@/utils/DateFormatter";
-// import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 
 const Notification = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -21,25 +20,34 @@ const Notification = () => {
   const dispatch = useAppDispatch();
 
   const [data, setData] = useState<any[]>([]);
-  const [selectedRow, setSelectedRow] = useState<any>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"add" | "edit" | null>(null);
+
+  const [modalState, setModalState] = useState({
+    open: false,
+    action: null as "edit" | null,
+    row: null as any,
+  });
+
+  const [paginationState, setPaginationState] = useState({
+    pageCount: 0,
+    totalRows: 0,
+    searchTerm: "",
+  });
+
+  const [filterState, setFilterState] = useState({
+    fromDate: "01-01-2025",
+    toDate: "01-01-2026",
+  });
+
+  const pageSize = 100;
+
   const formikRef = useRef<FormikProps<any>>(null);
 
-  const [fromDate, setFromDate] = useState("01-01-2025");
-  const [toDate, setToDate] = useState("01-01-2026");
-
-  const [pageSize] = useState(100);
-  const [pageCount, setPageCount] = useState(0);
-  const [totalRows, setTotalRows] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const fetchData = async (page = pageCount) => {
+  const fetchData = async (page = paginationState.pageCount) => {
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
           extension: `${NotificationMobileRepository.Notification.getAll}`,
-          parameters: `_fromDate=${fromDate}&_toDate=${toDate}&_startAt=${page}&_pageSize=${pageSize}&_title=${searchTerm}&_body=${searchTerm}`,
+          parameters: `_fromDate=${filterState.fromDate}&_toDate=${filterState.toDate}&_startAt=${page}&_pageSize=${pageSize}&_title=${paginationState.searchTerm}&_body=${paginationState.searchTerm}`,
         })
       )
     );
@@ -49,24 +57,21 @@ const Notification = () => {
 
     setData(Array.isArray(list) ? list : []);
     if (typeof total === "number") {
-      setTotalRows(total);
+      setPaginationState((prev) => ({
+        ...prev,
+        totalRows: total,
+      }));
     }
   };
 
   useEffect(() => {
     fetchData();
-  }, [pageCount]);
-
-  useEffect(() => {
-    fetchData(0);
-  }, [fromDate, toDate]);
-
-  useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      fetchData(0);
-    }, 500);
-    return () => clearTimeout(delayDebounce);
-  }, [searchTerm]);
+  }, [
+    paginationState.pageCount,
+    paginationState.searchTerm,
+    // filterState.fromDate,
+    // filterState.toDate,
+  ]);
 
   const columns = [
     {
@@ -74,7 +79,6 @@ const Notification = () => {
       selector: (row: any) => row.clientName || "-",
       sortable: true,
     },
-
     {
       name: t("Client Number"),
       selector: (row: any) => row.cellPhone || "-",
@@ -85,7 +89,6 @@ const Notification = () => {
       selector: (row: any) => row.templateName || "-",
       sortable: true,
     },
-
     {
       name: t("Language"),
       selector: (row: any) => row.languageName || "-",
@@ -97,7 +100,6 @@ const Notification = () => {
         row.date ? formatDate(row.date, "dd/MM/yyyy") : "-",
       sortable: true,
     },
-
     {
       name: t("Is Read"),
       selector: (row: any) => (row.isRead ? t("Yes") : t("No")),
@@ -106,15 +108,19 @@ const Notification = () => {
   ];
 
   const handleModalOpen = (row: any, action: "edit") => {
-    setSelectedRow(row);
-    setModalAction(action);
-    setModalOpen(true);
+    setModalState({
+      open: true,
+      action,
+      row,
+    });
   };
 
   const handleModalClose = () => {
-    setModalOpen(false);
-    setSelectedRow(null);
-    setModalAction(null);
+    setModalState({
+      open: false,
+      action: null,
+      row: null,
+    });
     fetchData();
   };
 
@@ -124,15 +130,34 @@ const Notification = () => {
     }
   };
 
-  const onAdd = () => {
-    setSelectedRow(null);
-    setModalAction("add");
-    setModalOpen(true);
-  };
-
   const handlePageChange = (startAt: number) => {
     const newPage = Math.ceil(startAt / pageSize);
-    setPageCount(newPage);
+    setPaginationState((prev) => ({
+      ...prev,
+      pageCount: newPage,
+    }));
+  };
+
+  const handleSearchChange = (val: string) => {
+    setPaginationState((prev) => ({
+      ...prev,
+      searchTerm: val,
+      pageCount: 0,
+    }));
+  };
+
+  const handleFromDateChange = (val: string) => {
+    setFilterState((prev) => ({
+      ...prev,
+      fromDate: val,
+    }));
+  };
+
+  const handleToDateChange = (val: string) => {
+    setFilterState((prev) => ({
+      ...prev,
+      toDate: val,
+    }));
   };
 
   return (
@@ -144,16 +169,16 @@ const Notification = () => {
               <CustomDatePicker
                 name="fromDate"
                 label={t("From Date")}
-                value={fromDate}
-                onChange={(val) => val && setFromDate(val)}
+                value={filterState.fromDate}
+                onChange={(val) => val && handleFromDateChange(val)}
               />
             </Col>
             <Col>
               <CustomDatePicker
                 name="toDate"
                 label={t("To Date")}
-                value={toDate}
-                onChange={(val) => val && setToDate(val)}
+                value={filterState.toDate}
+                onChange={(val) => val && handleToDateChange(val)}
               />
             </Col>
           </Row> */}
@@ -166,12 +191,12 @@ const Notification = () => {
             highlightOnHover
             pagination
             serverPagination
-            totalRows={totalRows}
+            totalRows={paginationState.totalRows}
             pageSize={pageSize}
             onPageChange={handlePageChange}
             showActions
             onEdit={(row) => handleModalOpen(row, "edit")}
-            Search={true}
+            // Search={true}
             // searchType="server"
             // onSearchChange={(val) => setSearchTerm(val)}
             searchableColumns={["title", "body"]}
@@ -179,16 +204,16 @@ const Notification = () => {
         </CardBody>
       </Card>
       <SharedModal
-        visible={modalOpen}
+        visible={modalState.open}
         onClose={handleModalClose}
-        title={t(" Notification")}
+        title={t("Notification")}
         width="600px"
         height="60vh"
       >
         <NotificationForm
-          rowData={selectedRow}
+          rowData={modalState.row}
           formikRef={formikRef}
-          modalAction={modalAction}
+          modalAction={modalState.action}
           onSuccessSubmit={handleModalClose}
         />
       </SharedModal>
