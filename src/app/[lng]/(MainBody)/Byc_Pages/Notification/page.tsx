@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Card, CardBody, Col } from "reactstrap";
+import { Card, CardBody, Col, Row } from "reactstrap";
 import DataTable from "../../../../../Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedModal from "@/Shared/Components/SharedModal";
@@ -13,7 +13,7 @@ import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
 import NotificationForm from "./Form/NotificationForm";
 import formatDate from "@/utils/DateFormatter";
-
+import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 const Notification = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
@@ -47,7 +47,7 @@ const Notification = () => {
       dispatch(
         getMobileRequest({
           extension: `${NotificationMobileRepository.Notification.getAll}`,
-          parameters: `_fromDate=${filterState.fromDate}&_toDate=${filterState.toDate}&_startAt=${page}&_pageSize=${pageSize}&_title=${paginationState.searchTerm}&_body=${paginationState.searchTerm}`,
+          parameters: `_fromDate=${filterState.fromDate}&_toDate=${filterState.toDate}&_startAt=${page}&_pageSize=${pageSize}`,
         })
       )
     );
@@ -68,9 +68,9 @@ const Notification = () => {
     fetchData();
   }, [
     paginationState.pageCount,
-    paginationState.searchTerm,
-    // filterState.fromDate,
-    // filterState.toDate,
+    // paginationState.searchTerm,
+    filterState.fromDate,
+    filterState.toDate,
   ]);
 
   const columns = [
@@ -124,25 +124,11 @@ const Notification = () => {
     fetchData();
   };
 
-  const handleSubmit = () => {
-    if (formikRef.current) {
-      formikRef.current.submitForm();
-    }
-  };
-
   const handlePageChange = (startAt: number) => {
     const newPage = Math.ceil(startAt / pageSize);
     setPaginationState((prev) => ({
       ...prev,
       pageCount: newPage,
-    }));
-  };
-
-  const handleSearchChange = (val: string) => {
-    setPaginationState((prev) => ({
-      ...prev,
-      searchTerm: val,
-      pageCount: 0,
     }));
   };
 
@@ -164,7 +150,7 @@ const Notification = () => {
     <Col xs="12">
       <Card>
         <CommonCardHeader title={t("Notifications")}>
-          {/* <Row className="w-100">
+          <Row className="w-100">
             <Col>
               <CustomDatePicker
                 name="fromDate"
@@ -181,7 +167,7 @@ const Notification = () => {
                 onChange={(val) => val && handleToDateChange(val)}
               />
             </Col>
-          </Row> */}
+          </Row>
         </CommonCardHeader>
         <CardBody>
           <DataTable
@@ -198,7 +184,13 @@ const Notification = () => {
             onEdit={(row) => handleModalOpen(row, "edit")}
             // Search={true}
             // searchType="server"
-            // onSearchChange={(val) => setSearchTerm(val)}
+            // onSearchChange={(val) =>
+            //   setPaginationState((prev) => ({
+            //     ...prev,
+            //     searchTerm: val,
+            //     pageCount: 0,
+            //   }))
+            // }
             searchableColumns={["title", "body"]}
           />
         </CardBody>
