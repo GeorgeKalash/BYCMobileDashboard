@@ -55,7 +55,6 @@ const NotificationTypeForm: React.FC<NotificationFormProps> = ({
 
     const trimmedValue = values.value.trim();
 
-    try {
       if (modalAction === "edit") {
         await withRequestTracking(dispatch, () =>
           dispatch(
@@ -101,9 +100,6 @@ const NotificationTypeForm: React.FC<NotificationFormProps> = ({
 
       showToast("success", t("Saved successfully"));
       onSuccessSubmit?.();
-    } catch (error) {
-      console.error(error);
-      showToast("error", t("Failed to save"));
     } finally {
       setSubmitting(false);
     }
