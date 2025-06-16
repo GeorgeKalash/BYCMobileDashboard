@@ -100,9 +100,7 @@ const NotificationTypeForm: React.FC<NotificationFormProps> = ({
 
       showToast("success", t("Saved successfully"));
       onSuccessSubmit?.();
-    } finally {
-      setSubmitting(false);
-    }
+    
   };
 
   const handleKeyDown = (
