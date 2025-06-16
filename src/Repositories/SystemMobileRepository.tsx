@@ -13,8 +13,4 @@ export const SystemMobileRepository = {
     setKeyValuePairs: service + "Languages/setKeyValuePairs",
     updateKeyValuePairs: service + "Languages/updateKeyValuePairs",
   },
-  CarouselImages: {
-    add: service + "AddCarouselImages",
-    get: service + "GetCarouselImages",
-  },
 };

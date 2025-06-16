@@ -1,7 +1,11 @@
-const service = '/api/Dashboard/'
+const service = "/api/Dashboard/";
 
 export const DashboardMobileRepository = {
   Requests: {
-    get: service + 'requestLogs',
+    get: service + "requestLogs",
   },
-}
+  CarouselImages: {
+    add: service + "Carousel/setPack",
+    get: service + "Carousel/GetCarouselImages",
+  },
+};
