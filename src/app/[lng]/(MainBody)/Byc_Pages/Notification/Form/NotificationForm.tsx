@@ -6,7 +6,7 @@ import { Col, Row, Card, CardBody } from "reactstrap";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
-
+import CustomTextarea from "@/Shared/Components/CustomTextarea";
 interface NotificationRowData {
   title?: string;
   body?: string;
@@ -34,6 +34,7 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
   return (
     <Formik
       initialValues={initialValues}
+      enableReinitialize
       innerRef={formikRef}
       onSubmit={() => {}}
     >
@@ -49,12 +50,7 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
                     type="text"
                     readOnly
                   />
-                  <CustomInput
-                    name="body"
-                    label={t("Body")}
-                    type="text"
-                    readOnly
-                  />
+                  <CustomTextarea name="body" label={t("Body")} readOnly />
                 </CardBody>
               </Card>
             </Col>

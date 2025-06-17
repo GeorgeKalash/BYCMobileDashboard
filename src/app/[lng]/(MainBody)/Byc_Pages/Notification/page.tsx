@@ -14,136 +14,158 @@ import { NotificationMobileRepository } from "@/Repositories/NotificationMobileR
 import NotificationForm from "./Form/NotificationForm";
 import formatDate from "@/utils/DateFormatter";
 import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
+import CustomInput from "@/Shared/Components/CustomInput";
+import CustomSelect from "@/Shared/Components/CustomSelect";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+
 const Notification = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
+  const formikRef = useRef<FormikProps<any>>(null);
 
-  const [data, setData] = useState<any[]>([]);
+  type Filters = {
+    fromDate: string;
+    toDate: string;
+    title: string;
+    phoneNumber: string;
+    templateId: string | number | null;
+  };
 
-  const [modalState, setModalState] = useState({
+  const [filters, setFilters] = useState<Filters>({
+    fromDate: "01-01-2025",
+    toDate: "01-01-2026",
+    title: "",
+    phoneNumber: "",
+    templateId: "",
+  });
+
+  const [tableData, setTableData] = useState({
+    data: [],
+    pagination: {
+      pageCount: 0,
+      totalRows: 0,
+      pageSize: 100,
+    },
+  });
+
+  const [modal, setModal] = useState({
     open: false,
     action: null as "edit" | null,
     row: null as any,
   });
 
-  const [paginationState, setPaginationState] = useState({
-    pageCount: 0,
-    totalRows: 0,
-    searchTerm: "",
-  });
+  const fetchData = async (page = tableData.pagination.pageCount) => {
+    const query =
+      `_fromDate=${filters.fromDate}&_toDate=${filters.toDate}` +
+      `&_startAt=${page}&_pageSize=${tableData.pagination.pageSize}` +
+      `&_title=${filters.title}&_templateId=${filters.templateId}` +
+      `&_destination=${filters.phoneNumber}`;
 
-  const [filterState, setFilterState] = useState({
-    fromDate: "01-01-2025",
-    toDate: "01-01-2026",
-  });
-
-  const pageSize = 100;
-
-  const formikRef = useRef<FormikProps<any>>(null);
-
-  const fetchData = async (page = paginationState.pageCount) => {
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
-          extension: `${NotificationMobileRepository.Notification.getAll}`,
-          parameters: `_fromDate=${filterState.fromDate}&_toDate=${filterState.toDate}&_startAt=${page}&_pageSize=${pageSize}`,
+          extension: NotificationMobileRepository.Notification.getAll,
+          parameters: query,
         })
       )
     );
 
-    const list = result?.payload?.data?.list;
-    const total = result?.payload?.data?.count;
+    const list = result?.payload?.data?.list ?? [];
+    const total = result?.payload?.data?.count ?? 0;
 
-    setData(Array.isArray(list) ? list : []);
-    if (typeof total === "number") {
-      setPaginationState((prev) => ({
-        ...prev,
+    setTableData((prev) => ({
+      ...prev,
+      data: list,
+      pagination: {
+        ...prev.pagination,
         totalRows: total,
-      }));
-    }
+      },
+    }));
+  };
+
+  const handlePageChange = (startAt: number) => {
+    const newPage = Math.ceil(startAt / tableData.pagination.pageSize);
+    setTableData((prev) => ({
+      ...prev,
+      pagination: {
+        ...prev.pagination,
+        pageCount: newPage,
+      },
+    }));
   };
 
   useEffect(() => {
     fetchData();
   }, [
-    paginationState.pageCount,
-    // paginationState.searchTerm,
-    filterState.fromDate,
-    filterState.toDate,
+    tableData.pagination.pageCount,
+    filters.fromDate,
+    filters.toDate,
+    filters.templateId,
   ]);
 
   const columns = [
     {
       name: t("Client Name"),
-      selector: (row: any) => row.clientName || "-",
+      selector: (row: any) => row.clientName,
       sortable: true,
+      id: "ClientName",
     },
     {
       name: t("Client Number"),
-      selector: (row: any) => row.cellPhone || "-",
+      selector: (row: any) => row.cellPhone,
       sortable: true,
+      id: "ClientNumber",
+    },
+    {
+      name: t("Type"),
+      selector: (row: any) => row.typeName,
+
+      sortable: true,
+      id: "Type",
     },
     {
       name: t("Template Name"),
-      selector: (row: any) => row.templateName || "-",
+      selector: (row: any) => row.templateName,
       sortable: true,
+      id: "TemplateName",
     },
     {
       name: t("Language"),
-      selector: (row: any) => row.languageName || "-",
+      selector: (row: any) => row.languageName,
       sortable: true,
+      id: "Language",
     },
     {
       name: t("Date"),
       selector: (row: any) =>
         row.date ? formatDate(row.date, "dd/MM/yyyy") : "-",
       sortable: true,
+      id: "Date",
     },
     {
       name: t("Is Read"),
       selector: (row: any) => (row.isRead ? t("Yes") : t("No")),
       sortable: true,
+      id: "IsRead",
     },
   ];
 
   const handleModalOpen = (row: any, action: "edit") => {
-    setModalState({
-      open: true,
-      action,
-      row,
-    });
+    setModal({ open: true, action, row });
   };
 
   const handleModalClose = () => {
-    setModalState({
-      open: false,
-      action: null,
-      row: null,
-    });
+    setModal({ open: false, action: null, row: null });
     fetchData();
   };
 
-  const handlePageChange = (startAt: number) => {
-    const newPage = Math.ceil(startAt / pageSize);
-    setPaginationState((prev) => ({
-      ...prev,
-      pageCount: newPage,
-    }));
+  const handleFilterChange = (field: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleFromDateChange = (val: string) => {
-    setFilterState((prev) => ({
-      ...prev,
-      fromDate: val,
-    }));
-  };
-
-  const handleToDateChange = (val: string) => {
-    setFilterState((prev) => ({
-      ...prev,
-      toDate: val,
-    }));
+  const handleFilterBlur = () => {
+    fetchData();
   };
 
   return (
@@ -151,61 +173,95 @@ const Notification = () => {
       <Card>
         <CommonCardHeader title={t("Notifications")}>
           <Row className="w-100">
-            <Col>
+            <Col md="2">
               <CustomDatePicker
                 name="fromDate"
                 label={t("From Date")}
-                value={filterState.fromDate}
-                onChange={(val) => val && handleFromDateChange(val)}
+                value={filters.fromDate}
+                onChange={(val) =>
+                  val && setFilters((prev) => ({ ...prev, fromDate: val }))
+                }
               />
             </Col>
-            <Col>
+            <Col md="2">
               <CustomDatePicker
                 name="toDate"
                 label={t("To Date")}
-                value={filterState.toDate}
-                onChange={(val) => val && handleToDateChange(val)}
+                value={filters.toDate}
+                onChange={(val) =>
+                  val && setFilters((prev) => ({ ...prev, toDate: val }))
+                }
+              />
+            </Col>
+            <Col md="2">
+              <CustomInput
+                name="title"
+                label={t("Title")}
+                placeholder={t("Search by title")}
+                value={filters.title}
+                onChange={(e) => handleFilterChange("title", e.target.value)}
+                onBlur={handleFilterBlur}
+              />
+            </Col>
+            <Col md="2">
+              <CustomInput
+                name="phoneNumber"
+                type="number"
+                label={t("Phone Number")}
+                placeholder={t("Search by phone")}
+                value={filters.phoneNumber}
+                onChange={(e) =>
+                  handleFilterChange("phoneNumber", e.target.value)
+                }
+                onBlur={handleFilterBlur}
+              />
+            </Col>
+            <Col md="2">
+              <CustomSelect
+                name="templateId"
+                label={t("Template Name")}
+                value={filters.templateId}
+                onChange={(val) =>
+                  setFilters((prev) => ({ ...prev, templateId: val }))
+                }
+                endpointId={
+                  NotificationAlertRepository.NotificationTypes.getAll
+                }
+                valueKey="key"
+                labelKey="value"
               />
             </Col>
           </Row>
         </CommonCardHeader>
+
         <CardBody>
           <DataTable
             title={t("Notifications")}
-            data={data}
+            data={tableData.data}
             columns={columns}
             highlightOnHover
             pagination
             serverPagination
-            totalRows={paginationState.totalRows}
-            pageSize={pageSize}
+            totalRows={tableData.pagination.totalRows}
+            pageSize={tableData.pagination.pageSize}
             onPageChange={handlePageChange}
             showActions
             onEdit={(row) => handleModalOpen(row, "edit")}
-            // Search={true}
-            // searchType="server"
-            // onSearchChange={(val) =>
-            //   setPaginationState((prev) => ({
-            //     ...prev,
-            //     searchTerm: val,
-            //     pageCount: 0,
-            //   }))
-            // }
-            searchableColumns={["title", "body"]}
           />
         </CardBody>
       </Card>
+
       <SharedModal
-        visible={modalState.open}
+        visible={modal.open}
         onClose={handleModalClose}
         title={t("Notification")}
         width="600px"
         height="60vh"
       >
         <NotificationForm
-          rowData={modalState.row}
+          rowData={modal.row}
           formikRef={formikRef}
-          modalAction={modalState.action}
+          modalAction={modal.action}
           onSuccessSubmit={handleModalClose}
         />
       </SharedModal>
