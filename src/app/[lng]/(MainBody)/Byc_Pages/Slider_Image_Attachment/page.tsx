@@ -1,31 +1,34 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { CardBody, Card, Col, Row } from "reactstrap";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedButton from "@/Shared/Components/SharedButton";
 import SortableFileTable from "@/Shared/Components/FileTable";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
-import { useAppDispatch } from "@/Redux/Hooks";
+import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import {
   getMobileRequest,
   postMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import { useTranslation } from "@/app/i18n/client";
-import { useAppSelector } from "@/Redux/Hooks";
 
 const SliderImageAttachment = () => {
-  const [selectedFiles, setSelectedFiles] = useState<
-    { file: File; Link: string }[]
-  >([]);
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [state, setState] = useState({
+    selectedFiles: [] as { file: File; Link: string }[],
+    isDraggingOver: false,
+    isLoading: false,
+    isUploading: false,
+  });
+
+  const updateState = (partial: Partial<typeof state>) =>
+    setState((prev) => ({ ...prev, ...partial }));
 
   const base64ToFile = (
     base64String: string,
@@ -35,17 +38,15 @@ const SliderImageAttachment = () => {
     const byteString = atob(base64String);
     const ab = new ArrayBuffer(byteString.length);
     const ia = new Uint8Array(ab);
-
     for (let i = 0; i < byteString.length; i++) {
       ia[i] = byteString.charCodeAt(i);
     }
-
     const blob = new Blob([ab], { type: mimeType });
     return new File([blob], filename, { type: mimeType });
   };
 
   const fetchImages = async () => {
-    setIsLoading(true);
+    updateState({ isLoading: true });
     const response = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
@@ -56,7 +57,6 @@ const SliderImageAttachment = () => {
     );
 
     const list = response?.payload?.data || [];
-
     const filesFromApi = list.map(
       (
         item: { image: string; directLink: string },
@@ -67,8 +67,7 @@ const SliderImageAttachment = () => {
       }
     );
 
-    setSelectedFiles(filesFromApi);
-    setIsLoading(false);
+    updateState({ selectedFiles: filesFromApi, isLoading: false });
   };
 
   useEffect(() => {
@@ -77,39 +76,32 @@ const SliderImageAttachment = () => {
 
   const handleDropFiles = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setIsDraggingOver(false);
+    updateState({ isDraggingOver: false });
 
     const files = Array.from(e.dataTransfer.files) as File[];
-
     if (files.length > 0) {
-      const filesWithLink = files.map((file) => ({
-        file,
-        Link: "",
-      }));
-
-      setSelectedFiles((prevFiles) => [...prevFiles, ...filesWithLink]);
+      const filesWithLink = files.map((file) => ({ file, Link: "" }));
+      updateState({
+        selectedFiles: [...state.selectedFiles, ...filesWithLink],
+      });
     }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []) as File[];
-
     if (files.length > 0) {
-      const filesWithLink = files.map((file) => ({
-        file,
-        Link: "",
-      }));
-
-      setSelectedFiles((prevFiles) => [...prevFiles, ...filesWithLink]);
+      const filesWithLink = files.map((file) => ({ file, Link: "" }));
+      updateState({
+        selectedFiles: [...state.selectedFiles, ...filesWithLink],
+      });
     }
-
     e.target.value = "";
   };
 
   const handleUpload = async () => {
-    setIsUploading(true);
+    updateState({ isUploading: true });
     const formData = new FormData();
-    selectedFiles.forEach(({ file, Link }) => {
+    state.selectedFiles.forEach(({ file, Link }) => {
       formData.append("_files", file);
       formData.append("_directLinks", Link);
     });
@@ -125,7 +117,7 @@ const SliderImageAttachment = () => {
     );
 
     await fetchImages();
-    setIsUploading(false);
+    updateState({ isUploading: false });
   };
   type Column = {
     key: string;
@@ -137,7 +129,7 @@ const SliderImageAttachment = () => {
     { key: "index", title: t("Index") ?? "Index" },
     {
       key: "drag",
-      title: t("Drag") ?? "Drag",
+      title: t("Drag"),
       style: { width: "50px", textAlign: "center" },
     },
     { key: "image", title: t("Image") ?? "Image" },
@@ -145,7 +137,7 @@ const SliderImageAttachment = () => {
     { key: "name", title: t("File Name") ?? "File Name" },
     {
       key: "actions",
-      title: t("Actions") ?? "Actions",
+      title: t("Actions"),
       style: { width: "100px", textAlign: "center" },
     },
   ];
@@ -158,23 +150,22 @@ const SliderImageAttachment = () => {
           <CardBody
             onDragOver={(e) => {
               e.preventDefault();
-              setIsDraggingOver(true);
+              updateState({ isDraggingOver: true });
             }}
-            onDragLeave={() => setIsDraggingOver(false)}
+            onDragLeave={() => updateState({ isDraggingOver: false })}
             onDrop={handleDropFiles}
             style={{
               borderRadius: "8px",
               padding: "20px",
               transition: "border 0.3s",
-
-              backgroundColor: isDraggingOver ? "#f9f9f9" : "transparent",
+              backgroundColor: state.isDraggingOver ? "#f9f9f9" : "transparent",
             }}
           >
-            {isLoading ? (
+            {state.isLoading ? (
               <div style={{ textAlign: "center", padding: "20px" }}>
                 {t("Loading images...")}
               </div>
-            ) : selectedFiles.length === 0 ? (
+            ) : state.selectedFiles.length === 0 ? (
               <p style={{ textAlign: "center", color: "#666" }}>
                 {t(
                   "Drag & drop images here, or click 'Open Files' button to select images, or wait for API to load images."
@@ -182,8 +173,10 @@ const SliderImageAttachment = () => {
               </p>
             ) : (
               <SortableFileTable
-                files={selectedFiles}
-                onChange={setSelectedFiles}
+                files={state.selectedFiles}
+                onChange={(newFiles) =>
+                  updateState({ selectedFiles: newFiles })
+                }
                 columns={columns}
               />
             )}
@@ -202,15 +195,15 @@ const SliderImageAttachment = () => {
           <Col xs="auto" className="d-flex gap-2">
             <SharedButton
               color="secondary"
-              title={t("Open Files")}
+              title={t("Upload Files")}
               onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
+              disabled={state.isUploading}
             />
             <SharedButton
               color="primary"
-              title={isUploading ? t("Uploading...") : t("Submit")}
+              title={state.isUploading ? t("Uploading...") : t("Submit")}
               onClick={handleUpload}
-              disabled={selectedFiles.length === 0 || isUploading}
+              disabled={state.selectedFiles.length === 0 || state.isUploading}
             />
           </Col>
         </Row>
