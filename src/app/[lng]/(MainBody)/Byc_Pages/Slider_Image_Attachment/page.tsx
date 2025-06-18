@@ -45,30 +45,30 @@ const SliderImageAttachment = () => {
   };
 
   const fetchImages = async () => {
-    try {
-      setIsLoading(true);
-      const response = await withRequestTracking(dispatch, () =>
-        dispatch(
-          getMobileRequest({
-            extension: DashboardMobileRepository.CarouselImages.get,
-            parameters: "",
-          })
-        )
-      );
+    setIsLoading(true);
+    const response = await withRequestTracking(dispatch, () =>
+      dispatch(
+        getMobileRequest({
+          extension: DashboardMobileRepository.CarouselImages.get,
+          parameters: "",
+        })
+      )
+    );
 
-      const list = response?.payload?.data || [];
+    const list = response?.payload?.data || [];
 
-      const filesFromApi = list.map((base64String: string, index: number) => {
-        const file = base64ToFile(base64String, `image_api_${index + 1}.png`);
-        return { file, Link: `Image ${index + 1} Link` };
-      });
+    const filesFromApi = list.map(
+      (
+        item: { image: string; directLink: string },
+        index: number
+      ): { file: File; Link: string } => {
+        const file = base64ToFile(item.image, `image_api_${index + 1}.png`);
+        return { file, Link: item.directLink };
+      }
+    );
 
-      setSelectedFiles(filesFromApi);
-    } catch (error) {
-      console.error("Error fetching images", error);
-    } finally {
-      setIsLoading(false);
-    }
+    setSelectedFiles(filesFromApi);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -107,36 +107,48 @@ const SliderImageAttachment = () => {
   };
 
   const handleUpload = async () => {
-    try {
-      setIsUploading(true);
-      const formData = new FormData();
-      selectedFiles.forEach(({ file, Link }) => {
-        formData.append("_files", file);
-        formData.append("_Links", Link);
-      });
+    setIsUploading(true);
+    const formData = new FormData();
+    selectedFiles.forEach(({ file, Link }) => {
+      formData.append("_files", file);
+      formData.append("_directLinks", Link);
+    });
 
-      console.log(
-        "Uploading files:",
-        selectedFiles.map((f) => f.file.name)
-      );
+    await withRequestTracking(dispatch, () =>
+      dispatch(
+        postMobileRequest({
+          extension: DashboardMobileRepository.CarouselImages.add,
+          body: formData,
+          rawBody: false,
+        })
+      ).unwrap()
+    );
 
-      await withRequestTracking(dispatch, () =>
-        dispatch(
-          postMobileRequest({
-            extension: DashboardMobileRepository.CarouselImages.add,
-            body: formData,
-            rawBody: false,
-          })
-        ).unwrap()
-      );
-
-      await fetchImages();
-    } catch (error) {
-      console.error("Error uploading images", error);
-    } finally {
-      setIsUploading(false);
-    }
+    await fetchImages();
+    setIsUploading(false);
   };
+  type Column = {
+    key: string;
+    title: string;
+    style?: React.CSSProperties;
+  };
+
+  const columns: Column[] = [
+    { key: "index", title: t("Index") ?? "Index" },
+    {
+      key: "drag",
+      title: t("Drag") ?? "Drag",
+      style: { width: "50px", textAlign: "center" },
+    },
+    { key: "image", title: t("Image") ?? "Image" },
+    { key: "link", title: t("Image Link") ?? "Image Link" },
+    { key: "name", title: t("File Name") ?? "File Name" },
+    {
+      key: "actions",
+      title: t("Actions") ?? "Actions",
+      style: { width: "100px", textAlign: "center" },
+    },
+  ];
 
   return (
     <Col xs="12">
@@ -172,6 +184,7 @@ const SliderImageAttachment = () => {
               <SortableFileTable
                 files={selectedFiles}
                 onChange={setSelectedFiles}
+                columns={columns}
               />
             )}
 

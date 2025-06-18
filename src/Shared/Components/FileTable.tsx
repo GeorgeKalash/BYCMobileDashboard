@@ -17,20 +17,26 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Table } from "reactstrap";
 import { DragEndEvent } from "@dnd-kit/core";
-import { useTranslation } from "@/app/i18n/client";
-import { useAppSelector } from "@/Redux/Hooks";
-
+import SharedButton from "@/Shared/Components/SharedButton";
 type FileItem = { file: File; Link: string };
+
+type Column = {
+  key: string;
+  title: string;
+  style?: React.CSSProperties;
+};
 
 type SortableFileTableProps = {
   files: FileItem[];
   onChange: (updatedFiles: FileItem[]) => void;
+  columns: Column[];
 };
 
-const SortableFileTable = ({ files, onChange }: SortableFileTableProps) => {
-  const { i18LangStatus } = useAppSelector((state) => state.langSlice);
-  const { t } = useTranslation(i18LangStatus);
-
+const SortableFileTable = ({
+  files,
+  onChange,
+  columns,
+}: SortableFileTableProps) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 5 },
@@ -74,32 +80,26 @@ const SortableFileTable = ({ files, onChange }: SortableFileTableProps) => {
               style={{
                 background: "#f7f7f7",
                 position: "sticky",
-                top: "0",
+                top: 0,
                 zIndex: 1,
               }}
             >
               <tr>
-                <th>{t("Index")}</th>
-                <th style={{ width: "50px", textAlign: "center" }}>
-                  {t("Drag")}
-                </th>
-                <th>{t("Image")}</th>
-                <th>{t("Image Link")}</th>
-                <th>{t("File Name")}</th>
-                <th style={{ width: "100px", textAlign: "center" }}>
-                  {t("Actions")}
-                </th>
+                {columns.map((col) => (
+                  <th key={col.key} style={col.style}>
+                    {col.title}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {files.map(({ file, Link }, index) => (
                 <SortableRow
-                  key={file.name}
+                  key={`${file.name}-${index}`}
                   id={file.name}
                   index={index}
                   file={file}
                   Link={Link}
-                  t={t}
                   onRemove={() => handleRemoveFile(index)}
                   onLinkChange={(newDesc) => handleLinkChange(index, newDesc)}
                 />
@@ -119,7 +119,6 @@ const SortableRow = ({
   Link,
   onRemove,
   onLinkChange,
-  t,
 }: {
   id: string;
   index: number;
@@ -127,7 +126,6 @@ const SortableRow = ({
   Link: string;
   onRemove: () => void;
   onLinkChange: (newDesc: string) => void;
-  t: (key: string) => string;
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -157,7 +155,7 @@ const SortableRow = ({
             color: "#555",
             userSelect: "none",
           }}
-          title={t("Drag to reorder")}
+          title="Drag to reorder"
         >
           ⠿
         </span>
@@ -185,7 +183,7 @@ const SortableRow = ({
           type="text"
           value={Link}
           onChange={(e) => onLinkChange(e.target.value)}
-          placeholder={t("Add Link")}
+          placeholder="Add Link"
           style={{
             width: "100%",
             padding: "4px 8px",
@@ -197,13 +195,13 @@ const SortableRow = ({
       </td>
       <td style={{ verticalAlign: "middle" }}>{file.name}</td>
       <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-        <button
-          className="btn btn-sm btn-outline-danger"
+        <SharedButton
+          title="Remove"
           onClick={onRemove}
-          type="button"
-        >
-          {t("Remove")}
-        </button>
+          color="danger"
+          outline={true}
+          size="sm"
+        />
       </td>
     </tr>
   );
