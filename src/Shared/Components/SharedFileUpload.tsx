@@ -33,7 +33,6 @@ const CommonFileUpload: React.FC<CommonFileUploadProp> = ({
     const filteredFiles = multiple ? incomingFiles : incomingFiles.slice(-1);
     setExtFiles(filteredFiles);
 
-    // Convert ExtFile[] to File[] and pass to parent
     if (onChange) {
       const files = filteredFiles
         .map((f) => f.file)
