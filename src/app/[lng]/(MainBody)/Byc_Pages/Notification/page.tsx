@@ -17,6 +17,7 @@ import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomSelect from "@/Shared/Components/CustomSelect";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+import SharedButton from "@/Shared/Components/SharedButton";
 
 const Notification = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -93,16 +94,12 @@ const Notification = () => {
         pageCount: newPage,
       },
     }));
+    fetchData(newPage);
   };
 
   useEffect(() => {
     fetchData();
-  }, [
-    tableData.pagination.pageCount,
-    filters.fromDate,
-    filters.toDate,
-    filters.templateId,
-  ]);
+  }, [tableData.pagination.pageCount]);
 
   const columns = [
     {
@@ -164,10 +161,6 @@ const Notification = () => {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleFilterBlur = () => {
-    fetchData();
-  };
-
   return (
     <Col xs="12">
       <Card>
@@ -200,7 +193,6 @@ const Notification = () => {
                 placeholder={t("Search by title")}
                 value={filters.title}
                 onChange={(e) => handleFilterChange("title", e.target.value)}
-                onBlur={handleFilterBlur}
               />
             </Col>
             <Col md="2">
@@ -213,7 +205,6 @@ const Notification = () => {
                 onChange={(e) =>
                   handleFilterChange("phoneNumber", e.target.value)
                 }
-                onBlur={handleFilterBlur}
               />
             </Col>
             <Col md="2">
@@ -222,7 +213,7 @@ const Notification = () => {
                 label={t("Template Name")}
                 value={filters.templateId}
                 onChange={(val) =>
-                  setFilters((prev) => ({ ...prev, templateId: val }))
+                  setFilters((prev) => ({ ...prev, templateId: val ?? "" }))
                 }
                 endpointId={
                   NotificationAlertRepository.NotificationTypes.getAll
@@ -230,6 +221,9 @@ const Notification = () => {
                 valueKey="key"
                 labelKey="value"
               />
+            </Col>
+            <Col md="2" className="d-flex align-items-end">
+              <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
             </Col>
           </Row>
         </CommonCardHeader>
