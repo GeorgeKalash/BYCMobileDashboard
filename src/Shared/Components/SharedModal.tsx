@@ -38,7 +38,7 @@ const SharedModal: React.FC<SharedModalProps> = ({
       style={{ maxWidth: width }}
     >
       <ModalHeader toggle={onClose}>{title}</ModalHeader>
-      <ModalBody style={{ maxHeight: height, overflowY: "auto" }}>
+      <ModalBody style={{ height: height, overflowY: "auto" }}>
         {children}
       </ModalBody>
       <ModalFooter>
