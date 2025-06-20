@@ -191,7 +191,7 @@ const SliderImageAttachment = () => {
             onChange={handleFileSelect}
           />
         </CardBody>
-        <Row className="m-3" style={{ flexShrink: 0 }}>
+        <Row className="m-3 justify-content-end" style={{ flexShrink: 0 }}>
           <Col xs="auto" className="d-flex gap-2">
             <SharedButton
               color="secondary"
