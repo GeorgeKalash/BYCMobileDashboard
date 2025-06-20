@@ -12,7 +12,7 @@ import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
 import { FormikProps } from "formik";
 import TextControlForm from "./Form/TextControlForm";
 import CustomSelect from "@/Shared/Components/CustomSelect";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 
 const TextControl = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);

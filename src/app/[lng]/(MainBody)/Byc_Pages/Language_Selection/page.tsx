@@ -10,7 +10,7 @@ import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
 import ActivateLanguageForm from "./Form/ActivateLanguageForm";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 import { FormikProps } from "formik";
 
 const LanguageSelection = () => {

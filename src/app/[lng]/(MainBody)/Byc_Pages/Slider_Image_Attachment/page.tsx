@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CardBody, Card, Col, Row } from "reactstrap";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedButton from "@/Shared/Components/SharedButton";
 import SortableFileTable from "@/Shared/Components/FileTable";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import {
   getMobileRequest,
@@ -119,6 +119,7 @@ const SliderImageAttachment = () => {
     await fetchImages();
     updateState({ isUploading: false });
   };
+
   type Column = {
     key: string;
     title: string;
@@ -143,55 +144,57 @@ const SliderImageAttachment = () => {
   ];
 
   return (
-    <Col xs="12">
-      <Card>
+    <Col xs="12" className="d-flex flex-column" style={{ height: "100%" }}>
+      <Card className="d-flex flex-column" style={{ flex: 1, overflow: "hidden" }}>
         <CommonCardHeader title={t("Image Attachments")} />
-        <Row className="gy-3">
-          <CardBody
-            onDragOver={(e) => {
-              e.preventDefault();
-              updateState({ isDraggingOver: true });
-            }}
-            onDragLeave={() => updateState({ isDraggingOver: false })}
-            onDrop={handleDropFiles}
-            style={{
-              borderRadius: "8px",
-              padding: "20px",
-              transition: "border 0.3s",
-              backgroundColor: state.isDraggingOver ? "#f9f9f9" : "transparent",
-            }}
-          >
-            {state.isLoading ? (
-              <div style={{ textAlign: "center", padding: "20px" }}>
-                {t("Loading images...")}
-              </div>
-            ) : state.selectedFiles.length === 0 ? (
-              <p style={{ textAlign: "center", color: "#666" }}>
-                {t(
-                  "Drag & drop images here, or click 'Open Files' button to select images, or wait for API to load images."
-                )}
-              </p>
-            ) : (
-              <SortableFileTable
-                files={state.selectedFiles}
-                onChange={(newFiles) =>
-                  updateState({ selectedFiles: newFiles })
-                }
-                columns={columns}
-              />
-            )}
-
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              style={{ display: "none" }}
-              ref={fileInputRef}
-              onChange={handleFileSelect}
+        <CardBody
+          onDragOver={(e) => {
+            e.preventDefault();
+            updateState({ isDraggingOver: true });
+          }}
+          onDragLeave={() => updateState({ isDraggingOver: false })}
+          onDrop={handleDropFiles}
+          className="flex-grow-1"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            overflowY: "auto",
+            borderRadius: "8px",
+            padding: "20px",
+            transition: "border 0.3s",
+            backgroundColor: state.isDraggingOver ? "#f9f9f9" : "transparent",
+          }}
+        >
+          {state.isLoading ? (
+            <div style={{ textAlign: "center", padding: "20px" }}>
+              {t("Loading images...")}
+            </div>
+          ) : state.selectedFiles.length === 0 ? (
+            <p style={{ textAlign: "center", color: "#666" }}>
+              {t(
+                "Drag & drop images here, or click 'Open Files' button to select images, or wait for API to load images."
+              )}
+            </p>
+          ) : (
+            <SortableFileTable
+              files={state.selectedFiles}
+              onChange={(newFiles) =>
+                updateState({ selectedFiles: newFiles })
+              }
+              columns={columns}
             />
-          </CardBody>
-        </Row>
-        <Row className="justify-content-end mb-3">
+          )}
+
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            style={{ display: "none" }}
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+          />
+        </CardBody>
+        <Row className="m-3" style={{ flexShrink: 0 }}>
           <Col xs="auto" className="d-flex gap-2">
             <SharedButton
               color="secondary"

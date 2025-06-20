@@ -76,48 +76,40 @@ const SortableFileTable = ({
           style={{
             display: "flex",
             flexDirection: "column",
-            height: "60vh",
-            overflow: "hidden",
+            overflow: "auto",
           }}
         >
-          <div
-            style={{
-              flex: 1,
-              overflow: "auto",
-            }}
-          >
-            <Table hover responsive>
-              <thead
-                style={{
-                  background: "#f7f7f7",
-                  position: "sticky",
-                  top: 0,
-                  zIndex: 1,
-                }}
-              >
-                <tr>
-                  {columns.map((col) => (
-                    <th key={col.key} style={col.style}>
-                      {col.title}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {files.map(({ file, Link }, index) => (
-                  <SortableRow
-                    key={`${file.name}-${index}`}
-                    id={file.name}
-                    index={index}
-                    file={file}
-                    Link={Link}
-                    onRemove={() => handleRemoveFile(index)}
-                    onLinkChange={(newDesc) => handleLinkChange(index, newDesc)}
-                  />
+          <Table hover responsive>
+            <thead
+              style={{
+                background: "#f7f7f7",
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+              }}
+            >
+              <tr>
+                {columns.map((col) => (
+                  <th key={col.key} style={col.style}>
+                    {col.title}
+                  </th>
                 ))}
-              </tbody>
-            </Table>
-          </div>
+              </tr>
+            </thead>
+            <tbody>
+              {files.map(({ file, Link }, index) => (
+                <SortableRow
+                  key={`${file.name}-${index}`}
+                  id={file.name}
+                  index={index}
+                  file={file}
+                  Link={Link}
+                  onRemove={() => handleRemoveFile(index)}
+                  onLinkChange={(newDesc) => handleLinkChange(index, newDesc)}
+                />
+              ))}
+            </tbody>
+          </Table>
         </div>
       </SortableContext>
     </DndContext>
