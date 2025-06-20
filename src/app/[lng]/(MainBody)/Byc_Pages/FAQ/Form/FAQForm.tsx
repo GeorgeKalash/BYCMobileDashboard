@@ -88,7 +88,7 @@ const FAQForm = ({
             <CardHeader className="fw-bold">{t("FAQ Entry")}</CardHeader>
             <CardBody>
               <Row>
-                <Col md={6}>
+                <Col md={12}>
                   <CustomInput name="question" label={t("Question")} />
                   <CustomTextarea name="answer" label={t("Answer")} rows={5} />
                 </Col>
