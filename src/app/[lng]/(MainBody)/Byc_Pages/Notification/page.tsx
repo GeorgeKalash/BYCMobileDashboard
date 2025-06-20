@@ -222,7 +222,7 @@ const Notification = () => {
                 labelKey="value"
               />
             </Col>
-            <Col md="2" className="d-flex align-items-end">
+            <Col md="2" className="d-flex align-items-center">
               <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
             </Col>
           </Row>
