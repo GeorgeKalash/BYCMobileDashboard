@@ -77,6 +77,7 @@ const SortableFileTable = ({
             display: "flex",
             flexDirection: "column",
             overflow: "auto",
+            height: "60vh",
           }}
         >
           <Table hover responsive>
