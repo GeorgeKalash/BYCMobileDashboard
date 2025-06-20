@@ -139,13 +139,12 @@ const SliderImageAttachment = () => {
     {
       key: "actions",
       title: t("Actions"),
-      style: { width: "100px", textAlign: "center" },
     },
   ];
 
   return (
-    <Col xs="12" className="d-flex flex-column" style={{ height: "100%" }}>
-      <Card className="d-flex flex-column" style={{ flex: 1, overflow: "hidden" }}>
+    <Col xs="12">
+      <Card style={{ flex: 1, overflow: "hidden" }}>
         <CommonCardHeader title={t("Image Attachments")} />
         <CardBody
           onDragOver={(e) => {
@@ -178,9 +177,7 @@ const SliderImageAttachment = () => {
           ) : (
             <SortableFileTable
               files={state.selectedFiles}
-              onChange={(newFiles) =>
-                updateState({ selectedFiles: newFiles })
-              }
+              onChange={(newFiles) => updateState({ selectedFiles: newFiles })}
               columns={columns}
             />
           )}
