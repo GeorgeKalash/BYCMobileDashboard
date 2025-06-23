@@ -19,23 +19,21 @@ import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { showToast } from "@/Shared/Components/showToast";
 
 const initialValues = {
+  "maintenance-mode": "",
   yakeen_enable_service: "",
-  yakeen_daily_request_count: "",
-  yakeen_monthly_request_count: "",
   yakeen_user_daily_request: "",
+  yakeen_user_monthly_request: "",
+  nafath_enable_service: "",
+  nafath_daily_request_count: "",
+  nafath_monthly_request_count: "",
   daily_user_new_request: "",
+  max_daily_user_new_request: "",
+  enable_fast_password_service: "",
+  enable_biometric_service: "",
 };
 
 const validationSchema = Yup.object({
   yakeen_enable_service: Yup.string().required("Required"),
-  yakeen_daily_request_count: Yup.number()
-    .min(0, "Must be at least 0"),
-  yakeen_monthly_request_count: Yup.number()
-    .min(0, "Must be at least 0"),
-  yakeen_user_daily_request: Yup.number()
-    .min(0, "Must be at least 0"),
-  daily_user_new_request: Yup.number()
-    .min(0, "Must be at least 0"),
 });
 
 const MobileVerificationForm = () => {
@@ -67,109 +65,183 @@ const MobileVerificationForm = () => {
 
   return (
     <Col xs="12">
-      <Card>
-        <CommonCardHeader title={t("Defaults")} />
-        <CardBody>
-          <Formik
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            validationSchema={validationSchema}
-            enableReinitialize
-          >
-           {({ values, setValues }) => {
-              useEffect(() => {
-                const fetchAndSet = async () => {
-                  const result = await withRequestTracking(dispatch, () =>
-                    dispatch(
-                      getMobileRequest({
-                        extension: SystemMobileRepository.Default.get,
-                        parameters: "_key=",
-                      })
-                    ).unwrap()
-                  );
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
+        enableReinitialize
+      >
+        {({ values, setValues, setFieldValue }) => {
+          useEffect(() => {
+            const fetchAndSet = async () => {
+              const result = await withRequestTracking(dispatch, () =>
+                dispatch(
+                  getMobileRequest({
+                    extension: SystemMobileRepository.Default.get,
+                    parameters: "_key=",
+                  })
+                ).unwrap()
+              );
 
-                  if (result.status === 1 && Array.isArray(result.data)) {
-                    const dataObj: Partial<typeof initialValues> = {};
-
-                    result.data.forEach(
-                      (item: { key: string; value: string }) => {
-                        if (item.key in initialValues) {
-                          dataObj[item.key as keyof typeof initialValues] =
-                            item.value;
-                        }
-                      }
-                    );
-
-                    setValues({
-                      ...initialValues,
-                      ...dataObj,
-                    });
+              if (result.status === 1 && Array.isArray(result.data)) {
+                const dataObj: Partial<typeof initialValues> = {};
+                result.data.forEach((item: { key: string; value: string }) => {
+                  if (item.key in initialValues) {
+                    dataObj[item.key as keyof typeof initialValues] =
+                      item.value;
                   }
-                };
-                fetchAndSet();
-              }, []);
+                });
+                setValues({ ...initialValues, ...dataObj });
+              }
+            };
+            fetchAndSet();
+          }, []);
 
-              return (
-                <Form>
+          return (
+            <Form style={{ maxHeight: "85vh", overflowY: "auto" }}>
+              <Card className="mb-3">
+                <CommonCardHeader title={t("Maintenance Mode")} />
+                <CardBody>
+                  <Row>
+                    <Col md="4">
+                      <CustomSelect
+                        name="maintenance-mode"
+                        label={t("Enable Maintenance Mode")}
+                        dataSetId={11}
+                        valueKey="key"
+                        labelKey="value"
+                        value={Number(values["maintenance-mode"])}
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+
+              <Card className="mb-3">
+                <CommonCardHeader title={t("YAKEEN Settings")} />
+                <CardBody>
                   <Row className="gy-3">
                     <Col md="4">
                       <CustomSelect
                         name="yakeen_enable_service"
-                        label={t("Check mobile compatibility with YAKEEN")}
+                        label={t("Enable YAKEEN")}
                         dataSetId={11}
                         valueKey="key"
                         labelKey="value"
-                        value={Number(values.yakeen_enable_service)} 
+                        value={Number(values.yakeen_enable_service)}
+                        onChange={(val) =>
+                          setFieldValue("yakeen_enable_service", val)
+                        }
                       />
                     </Col>
                     <Col md="4">
-                      <CustomInput
-                        name="yakeen_daily_request_count"
-                        label={t("Number of YAKEEN checks per day")}
-                        type="number"
-                        placeholder="0"
-                        min={0}
-                      />
-                    </Col>
-                    <Col md="4">
-                      <CustomInput
-                        name="yakeen_monthly_request_count"
-                        label={t("Number of YAKEEN checks per month")}
-                        type="number"
-                        placeholder="0"
-                        min={0}
-                      />
-                    </Col>
-                    <Col md="6">
                       <CustomInput
                         name="yakeen_user_daily_request"
-                        label={t("Maximum number of Nafath access codes")}
-                        type="number"
-                        placeholder="0"
-                        min={0}
+                        label={t("Daily Request")}
                       />
                     </Col>
-                    <Col md="6">
+                    <Col md="4">
                       <CustomInput
-                        name="daily_user_new_request"
-                        label={t("Maximum number of new memberships per day")}
-                        type="number"
-                        placeholder="0"
-                        min={0}
+                        name="yakeen_user_monthly_request"
+                        label={t("Monthly Request")}
                       />
                     </Col>
                   </Row>
-                  <SharedButton
-                    color="primary"
-                    type="submit"
-                    title={t("Submit")}
-                  />
-                </Form>
-              );
-            }}
-          </Formik>
-        </CardBody>
-      </Card>
+                </CardBody>
+              </Card>
+
+              <Card className="mb-3">
+                <CommonCardHeader title={t("NAFATH Settings")} />
+                <CardBody>
+                  <Row className="gy-3">
+                    <Col md="4">
+                      <CustomSelect
+                        name="nafath_enable_service"
+                        label={t("Enable NAFATH")}
+                        dataSetId={11}
+                        valueKey="key"
+                        labelKey="value"
+                        value={Number(values.nafath_enable_service)}
+                        onChange={(val) =>
+                          setFieldValue("nafath_enable_service", val)
+                        }
+                      />
+                    </Col>
+                    <Col md="4">
+                      <CustomInput
+                        name="nafath_daily_request_count"
+                        label={t("Daily Request Count")}
+                      />
+                    </Col>
+                    <Col md="4">
+                      <CustomInput
+                        name="nafath_monthly_request_count"
+                        label={t("Monthly Request Count")}
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+
+              <Card className="mb-3">
+                <CommonCardHeader title={t("User Request Limits")} />
+                <CardBody>
+                  <Row className="gy-3">
+                    <Col md="4">
+                      <CustomInput
+                        name="daily_user_new_request"
+                        label={t("New Users Per Day")}
+                      />
+                    </Col>
+                    <Col md="4">
+                      <CustomInput
+                        name="max_daily_user_new_request"
+                        label={t("Max Daily User Requests")}
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+
+              <Card className="mb-3">
+                <CommonCardHeader title={t("Security Settings")} />
+                <CardBody>
+                  <Row className="gy-3">
+                    <Col md="4">
+                      <CustomSelect
+                        name="enable_fast_password_service"
+                        label={t("Enable Fast Password")}
+                        dataSetId={11}
+                        valueKey="key"
+                        labelKey="value"
+                        value={Number(values.enable_fast_password_service)}
+                        onChange={(val) =>
+                          setFieldValue("enable_fast_password_service", val)
+                        }
+                      />
+                    </Col>
+                    <Col md="4">
+                      <CustomSelect
+                        name="enable_biometric_service"
+                        label={t("Enable Biometric")}
+                        dataSetId={11}
+                        valueKey="key"
+                        labelKey="value"
+                        value={Number(values.enable_biometric_service)}
+                        onChange={(val) =>
+                          setFieldValue("enable_biometric_service", val)
+                        }
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+
+              <SharedButton type="submit" color="primary" title={t("Submit")} />
+            </Form>
+          );
+        }}
+      </Formik>
     </Col>
   );
 };
