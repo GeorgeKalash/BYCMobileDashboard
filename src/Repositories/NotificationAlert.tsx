@@ -19,8 +19,11 @@ export const NotificationAlertRepository = {
   NotificationGroup: {
     page: service + "NotificationGroup/page",
     getpack: service + "NotificationGroup/getPack",
-    update: service + "",
+    update: service + "NotificationGroup/update",
     create: service + "NotificationGroup/create",
     delete: service + "NotificationGroup/delete",
+
+    addClient: service + "NotificationGroupClient/create",
+    deleteClient: service + "NotificationGroupClient/delete",
   },
 };

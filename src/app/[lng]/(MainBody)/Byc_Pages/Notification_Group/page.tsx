@@ -158,8 +158,8 @@ const Notification_Group = () => {
           visible={modalState.open}
           onClose={handleModalClose}
           title={modalState.action === "add" ? t("Add  ") : t("Edit  ")}
-          width={modalState.action === "edit" ? "80vw" : ""}
-          height={modalState.action === "edit" ? "80vh" : ""}
+          width={"80vw"}
+          height={"80vh"}
           onSubmit={handleSubmit}
         >
           <NotificationGroupForm

@@ -1,7 +1,11 @@
-const service = '/api/Dashboard/'
+const service = "/api/Dashboard/";
 
 export const DashboardMobileRepository = {
   Requests: {
-    get: service + 'requestLogs',
+    get: service + "requestLogs",
   },
-}
+  mobileUser: {
+    get: service + "MobileUser/getById",
+    snapshot: service + "MobileUser/snapshot",
+  },
+};
