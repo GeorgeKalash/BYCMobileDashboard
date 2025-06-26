@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { FormGroup, Label, Input, Spinner } from "reactstrap";
 import { useAppDispatch } from "@/Redux/Hooks";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 import { useTranslation } from "react-i18next";
 import DataTableComponent from "@/Shared/Components/DataTable";
 
