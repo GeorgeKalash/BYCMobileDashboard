@@ -127,6 +127,7 @@ const Requests = () => {
     <Col xs="12">
       <Card>
         <CommonCardHeader title={t("Requests")}>
+         <div style={{ minWidth: 250, maxWidth: 400, width: "100%" }}>
           <CustomSelect
             name="eventType"
             dataSetId={159}
@@ -135,6 +136,7 @@ const Requests = () => {
             value={eventType ?? ""}
             onChange={handleLanguageChange}
           />
+        </div>
         </CommonCardHeader>
         <CardBody>
           <DataTable
