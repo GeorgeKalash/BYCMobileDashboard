@@ -38,7 +38,7 @@ const validationSchema = Yup.object({
     .min(0, "Must be at least 0"),
 });
 
-const MobileVerificationForm = () => {
+const Defaults = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
@@ -174,4 +174,4 @@ const MobileVerificationForm = () => {
   );
 };
 
-export default MobileVerificationForm;
+export default Defaults;
