@@ -95,7 +95,7 @@ const MobileVerificationForm = () => {
             onSubmit={handleSubmit}
           >
             {({ values, setFieldValue }) => (
-              <Form>
+              <Form style={{ maxHeight: "85vh", overflowY: "auto" }}>
                 <FieldArray name="settings">
                   {() =>
                     values.settings.map((item, index) => (
@@ -138,7 +138,6 @@ const MobileVerificationForm = () => {
                     ))
                   }
                 </FieldArray>
-
                 <Col className="d-flex justify-content-end">
                   <SharedButton
                     color="primary"
