@@ -11,7 +11,7 @@ import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import { FormikProps } from "formik";
 import CustomSelect from "@/Shared/Components/CustomSelect";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 import formatDate from "@/utils/DateFormatter";
 import RequestsForm from "./Form/RequestsForm";
 
@@ -127,6 +127,7 @@ const Requests = () => {
     <Col xs="12">
       <Card>
         <CommonCardHeader title={t("Requests")}>
+         <div style={{ minWidth: 250, maxWidth: 400, width: "100%" }}>
           <CustomSelect
             name="eventType"
             dataSetId={159}
@@ -135,6 +136,7 @@ const Requests = () => {
             value={eventType ?? ""}
             onChange={handleLanguageChange}
           />
+        </div>
         </CommonCardHeader>
         <CardBody>
           <DataTable

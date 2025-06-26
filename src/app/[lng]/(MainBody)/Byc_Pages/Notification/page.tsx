@@ -1,127 +1,261 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Card, CardBody, Col } from "reactstrap";
+import { Card, CardBody, Col, Row } from "reactstrap";
 import DataTable from "../../../../../Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
-import SharedModal from "../../../../../Shared/Components/SharedModal";
+import SharedModal from "@/Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
 import NotificationForm from "./Form/NotificationForm";
+import formatDate from "@/utils/DateFormatter";
+import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
+import CustomInput from "@/Shared/Components/CustomInput";
+import CustomSelect from "@/Shared/Components/CustomSelect";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+import SharedButton from "@/Shared/Components/SharedButton";
 
 const Notification = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
-
-  const [data, setData] = useState<{ key: string; value: string }[]>([]);
-  const [selectedRow, setSelectedRow] = useState<any>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"add" | "edit" | null>(null);
   const formikRef = useRef<FormikProps<any>>(null);
 
-  const fetchData = async () => {
+  type Filters = {
+    fromDate: string;
+    toDate: string;
+    title: string;
+    phoneNumber: string;
+    templateId: string | number | null;
+  };
+
+  const [filters, setFilters] = useState<Filters>({
+    fromDate: "01-01-2025",
+    toDate: "01-01-2026",
+    title: "",
+    phoneNumber: "",
+    templateId: "",
+  });
+
+  const [tableData, setTableData] = useState({
+    data: [],
+    pagination: {
+      pageCount: 0,
+      totalRows: 0,
+      pageSize: 100,
+    },
+  });
+
+  const [modal, setModal] = useState({
+    open: false,
+    action: null as "edit" | null,
+    row: null as any,
+  });
+
+  const fetchData = async (page = tableData.pagination.pageCount) => {
+    const query =
+      `_fromDate=${filters.fromDate}&_toDate=${filters.toDate}` +
+      `&_startAt=${page}&_pageSize=${tableData.pagination.pageSize}` +
+      `&_title=${filters.title}&_templateId=${filters.templateId}` +
+      `&_destination=${filters.phoneNumber}`;
+
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
-          extension: `${NotificationMobileRepository.Notification.getAll}`,
-          parameters: "",
+          extension: NotificationMobileRepository.Notification.getAll,
+          parameters: query,
         })
       )
     );
 
-    const keyValuePairs = result?.payload?.data?.keyValuePairs;
+    const list = result?.payload?.data?.list ?? [];
+    const total = result?.payload?.data?.count ?? 0;
 
-    if (keyValuePairs && typeof keyValuePairs === "object") {
-      const transformed = Object.entries(keyValuePairs).map(([key, value]) => ({
-        key,
-        value: String(value ?? ""),
-      }));
-      setData(transformed);
-    } else {
-      setData([]);
-    }
+    setTableData((prev) => ({
+      ...prev,
+      data: list,
+      pagination: {
+        ...prev.pagination,
+        totalRows: total,
+      },
+    }));
+  };
+
+  const handlePageChange = (startAt: number) => {
+    const newPage = Math.ceil(startAt / tableData.pagination.pageSize);
+    setTableData((prev) => ({
+      ...prev,
+      pagination: {
+        ...prev.pagination,
+        pageCount: newPage,
+      },
+    }));
+    fetchData(newPage);
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [tableData.pagination.pageCount]);
 
   const columns = [
     {
-      name: t("ID"),
-      selector: (row: any) => row.id,
+      name: t("Client Name"),
+      selector: (row: any) => row.clientName,
       sortable: true,
+      id: "ClientName",
     },
     {
-      name: t("Message In English"),
-      selector: (row: any) => row.message_en || "-",
+      name: t("Client Number"),
+      selector: (row: any) => row.cellPhone,
       sortable: true,
+      id: "ClientNumber",
     },
     {
-      name: t("Message In Arabic"),
-      selector: (row: any) => row.message_ar || "-",
+      name: t("Type"),
+      selector: (row: any) => row.typeName,
+
       sortable: true,
+      id: "Type",
+    },
+    {
+      name: t("Template Name"),
+      selector: (row: any) => row.templateName,
+      sortable: true,
+      id: "TemplateName",
+    },
+    {
+      name: t("Language"),
+      selector: (row: any) => row.languageName,
+      sortable: true,
+      id: "Language",
+    },
+    {
+      name: t("Date"),
+      selector: (row: any) =>
+        row.date ? formatDate(row.date, "dd/MM/yyyy") : "-",
+      sortable: true,
+      id: "Date",
+    },
+    {
+      name: t("Is Read"),
+      selector: (row: any) => (row.isRead ? t("Yes") : t("No")),
+      sortable: true,
+      id: "IsRead",
     },
   ];
 
   const handleModalOpen = (row: any, action: "edit") => {
-    setSelectedRow(row);
-    setModalAction(action);
-    setModalOpen(true);
+    setModal({ open: true, action, row });
   };
 
   const handleModalClose = () => {
-    setModalOpen(false);
-    setSelectedRow(null);
-    setModalAction(null);
+    setModal({ open: false, action: null, row: null });
     fetchData();
   };
 
-  const handleSubmit = () => {
-    if (formikRef.current) {
-      formikRef.current.submitForm();
-    }
-  };
-
-  const onAdd = () => {
-    setSelectedRow(null);
-    setModalAction("add");
-    setModalOpen(true);
+  const handleFilterChange = (field: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Notifications")} onAdd={onAdd}/>
+        <CommonCardHeader title={t("Notifications")}>
+          <Row className="w-100">
+            <Col md="2">
+              <CustomDatePicker
+                name="fromDate"
+                label={t("From Date")}
+                value={filters.fromDate}
+                onChange={(val) =>
+                  val && setFilters((prev) => ({ ...prev, fromDate: val }))
+                }
+              />
+            </Col>
+            <Col md="2">
+              <CustomDatePicker
+                name="toDate"
+                label={t("To Date")}
+                value={filters.toDate}
+                onChange={(val) =>
+                  val && setFilters((prev) => ({ ...prev, toDate: val }))
+                }
+              />
+            </Col>
+            <Col md="2">
+              <CustomInput
+                name="title"
+                label={t("Title")}
+                placeholder={t("Search by title")}
+                value={filters.title}
+                onChange={(e) => handleFilterChange("title", e.target.value)}
+              />
+            </Col>
+            <Col md="2">
+              <CustomInput
+                name="phoneNumber"
+                type="number"
+                label={t("Phone Number")}
+                placeholder={t("Search by phone")}
+                value={filters.phoneNumber}
+                onChange={(e) =>
+                  handleFilterChange("phoneNumber", e.target.value)
+                }
+              />
+            </Col>
+            <Col md="2">
+              <CustomSelect
+                name="templateId"
+                label={t("Template Name")}
+                value={filters.templateId}
+                onChange={(val) =>
+                  setFilters((prev) => ({ ...prev, templateId: val ?? "" }))
+                }
+                endpointId={
+                  NotificationAlertRepository.NotificationTypes.getAll
+                }
+                valueKey="key"
+                labelKey="value"
+              />
+            </Col>
+            <Col md="2" className="d-flex align-items-center">
+              <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
+            </Col>
+          </Row>
+        </CommonCardHeader>
+
         <CardBody>
           <DataTable
-            title={t("New Message")}
-            data={data}
+            title={t("Notifications")}
+            data={tableData.data}
             columns={columns}
             highlightOnHover
             pagination
-            showActions={true}
+            serverPagination
+            totalRows={tableData.pagination.totalRows}
+            pageSize={tableData.pagination.pageSize}
+            onPageChange={handlePageChange}
+            showActions
             onEdit={(row) => handleModalOpen(row, "edit")}
           />
         </CardBody>
       </Card>
+
       <SharedModal
-        visible={modalOpen}
+        visible={modal.open}
         onClose={handleModalClose}
-        title={modalAction === "add" ? t("Add Notification") : t("Edit Notification")}
+        title={t("Notification")}
         width="600px"
         height="60vh"
-        onSubmit={handleSubmit}
       >
         <NotificationForm
-          rowData={selectedRow}
+          rowData={modal.row}
           formikRef={formikRef}
-          modalAction={modalAction}
+          modalAction={modal.action}
           onSuccessSubmit={handleModalClose}
         />
       </SharedModal>
