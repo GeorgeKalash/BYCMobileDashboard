@@ -12,7 +12,7 @@ import {
   deleteMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
 import formatDate from "@/utils/DateFormatter";
 import { showToast } from "@/Shared/Components/showToast";

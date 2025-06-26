@@ -13,7 +13,7 @@ import {
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
 import * as Yup from "yup";
 import { showToast } from "@/Shared/Components/showToast";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 
 interface NotificationRowData {
   key?: number;

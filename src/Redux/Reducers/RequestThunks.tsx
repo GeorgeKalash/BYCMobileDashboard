@@ -17,7 +17,6 @@ const makeApiRequest = async (
 ) => {
   const headers: Record<string, string> = {
     Authorization: `Bearer ${token}`,
-    "Content-Type": "multipart/form-data",
     LanguageId: languageId?.toString() || "1",
   };
 
@@ -32,17 +31,30 @@ const makeApiRequest = async (
     );
   }
 
-  if (rawBody) {
-    headers["Content-Type"] = "application/json";
-    if (method === "POST")
+  if (method === "POST") {
+    if (body instanceof FormData) {
+      return axios.post(url, body, { headers });
+    }
+
+    if (rawBody) {
+      headers["Content-Type"] = "application/json";
       return axios.post(url, JSON.stringify(body), { headers });
-    if (method === "PUT")
+    } else {
+      const formData = new FormData();
+      formData.append("record", JSON.stringify(body));
+      return axios.post(url, formData, { headers });
+    }
+  }
+
+  if (method === "PUT") {
+    if (rawBody) {
+      headers["Content-Type"] = "application/json";
       return axios.put(url, JSON.stringify(body), { headers });
-  } else {
-    const formData = new FormData();
-    formData.append("record", JSON.stringify(body));
-    if (method === "POST") return axios.post(url, formData, { headers });
-    if (method === "PUT") return axios.put(url, formData, { headers });
+    } else {
+      const formData = new FormData();
+      formData.append("record", JSON.stringify(body));
+      return axios.put(url, formData, { headers });
+    }
   }
 
   throw new Error(`Unsupported method: ${method}`);
