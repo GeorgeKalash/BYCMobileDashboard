@@ -157,7 +157,7 @@ const Notification_Group = () => {
         <SharedModal
           visible={modalState.open}
           onClose={handleModalClose}
-          title={modalState.action === "add" ? t("Add  ") : t("Edit  ")}
+          title={modalState.action === "add" ? t("Add") : t("Edit")}
           width={"80vw"}
           height={"80vh"}
           onSubmit={handleSubmit}

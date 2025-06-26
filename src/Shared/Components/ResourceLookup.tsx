@@ -169,21 +169,33 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
       </FormGroup>
 
       {loading && (
-        <div className="form-control bg-white border d-flex align-items-center">
+        <div
+          className="bg-white border d-flex align-items-center"
+          style={{
+            position: "absolute",
+            top: "100%",
+            zIndex: 1050,
+            width: "100%",
+            borderRadius: "4px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            padding: "0.75rem",
+          }}
+        >
           <Spinner size="sm" className="me-2" />
           {t("Searching")}...
         </div>
       )}
-
       {!loading && showDropdown && results.length === 0 && (
         <div
-          className="border bg-light text-muted text-center py-3"
+          className="bg-white border text-muted text-center"
           style={{
             position: "absolute",
+            top: "100%",
             zIndex: 1050,
             width: "100%",
             borderRadius: "4px",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            padding: "0.75rem",
           }}
         >
           <i className="fa fa-search-minus me-2" style={{ fontSize: "16px" }} />
