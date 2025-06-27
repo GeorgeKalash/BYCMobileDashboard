@@ -16,7 +16,7 @@ import formatDate from "@/utils/DateFormatter";
 import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomSelect from "@/Shared/Components/CustomSelect";
-import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import SharedButton from "@/Shared/Components/SharedButton";
 
 const Notification = () => {

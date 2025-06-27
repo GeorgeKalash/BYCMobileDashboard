@@ -10,7 +10,7 @@ import {
   postMobileRequest,
   getMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
-import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import * as Yup from "yup";
 import { showToast } from "@/Shared/Components/showToast";
 import { withRequestTracking } from "@/utils/withRequestTracking";

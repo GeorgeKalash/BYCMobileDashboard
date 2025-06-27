@@ -66,6 +66,12 @@ export const MenuList: MenuItem[] | undefined = [
         title: "Slider Image Attachment",
         icon: "ui-kits",
       },
+      {
+        path: "/Byc_Pages/Users",
+        type: "link",
+        title: "Users",
+        icon: "ui-kits",
+      },
     ],
   },
 ];

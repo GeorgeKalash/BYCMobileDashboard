@@ -8,7 +8,7 @@ import {
   postMobileRequest,
   getMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
-import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { showToast } from "@/Shared/Components/showToast";
 import CustomInput from "@/Shared/Components/CustomInput";
