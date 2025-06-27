@@ -114,14 +114,17 @@ const TextControl = () => {
     <Col xs="12">
       <Card>
         <CommonCardHeader title={t("Text Control")} onAdd={onAdd}>
-          <CustomSelect
-            name="languageId"
-            endpointId={`${SystemMobileRepository.Languages.get}`}
-            valueKey="languageId"
-            labelKey="name"
-            value={languageId ?? ""}
-            onChange={handleLanguageChange}
-          />
+         <div style={{ minWidth: 250, maxWidth: 400, width: "100%" }}>
+            <CustomSelect
+              name="languageId"
+              endpointId={`${SystemMobileRepository.Languages.get}`}
+              valueKey="languageId"
+              labelKey="name"
+              value={languageId ?? ""}
+              onChange={handleLanguageChange}
+              clearable={false}
+            />
+          </div>
         </CommonCardHeader>
         <CardBody>
           <DataTable

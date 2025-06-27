@@ -244,14 +244,28 @@ const DataTableComponent = ({
 
       {pagination && (
         <div className="d-flex justify-content-between align-items-center gap-2 mt-3 flex-wrap">
-          <span className="text-muted ms-2">
-            Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
-          </span>
+          <div className="text-muted ms-2">
+            {(() => {
+              const total =
+                serverPagination && typeof totalRows === "number"
+                  ? totalRows
+                  : sortedData.length;
+              const start = (currentPage - 1) * pageSize + 1;
+              const end = Math.min(start + pageSize - 1, total);
+
+              return (
+                <span>
+                  <i className="fa fa-database me-1" />
+                  Displaying Records <strong>{start}</strong> - <strong>{end}</strong> of{" "}
+                  <strong>{total}</strong>
+                </span>
+              );
+            })()}
+          </div>
+
           <div className="d-flex gap-2 me-2">
             <button
-              onClick={() =>
-                handlePageChange((currentPage - 1) * pageSize, false)
-              }
+              onClick={() => handlePageChange((currentPage - 1) * pageSize, false)}
               className="btn btn-outline-primary btn-sm rounded-pill shadow-sm px-3"
               disabled={currentPage === 1}
             >
@@ -267,6 +281,7 @@ const DataTableComponent = ({
           </div>
         </div>
       )}
+
     </>
   );
 };

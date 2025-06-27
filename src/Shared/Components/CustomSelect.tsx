@@ -27,6 +27,7 @@ interface CustomSelectProps {
   value?: string | number | null;
   onChange?: (value: string | number | null) => void;
   readOnly?: boolean;
+  clearable?: boolean;
 }
 
 const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
@@ -44,6 +45,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   value,
   onChange,
   readOnly = false,
+  clearable = true,
 }) => {
   const [selectOptions, setSelectOptions] = useState<OptionType[]>(
     options || []
@@ -172,7 +174,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
                     style={{
                       position: "absolute",
                       top: "50%",
-                      right: "3.5rem",
+                      right: clearable ? "3.5rem" : "2rem",
                       transform: "translateY(-50%)",
                       padding: 0,
                     }}
@@ -181,24 +183,25 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
                     <RefreshCw size={16} />
                   </Button>
                 )}
-
-                <Button
-                  type="button"
-                  color="link"
-                  size="sm"
-                  onClick={clearSelection}
-                  className="text-danger"
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    right: "2rem",
-                    transform: "translateY(-50%)",
-                    padding: 0,
-                  }}
-                  title="Clear"
-                >
-                  <XCircle size={16} />
-                </Button>
+                {clearable && (
+                  <Button
+                    type="button"
+                    color="link"
+                    size="sm"
+                    onClick={clearSelection}
+                    className="text-danger"
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      right: "2rem",
+                      transform: "translateY(-50%)",
+                      padding: 0,
+                    }}
+                    title="Clear"
+                  >
+                    <XCircle size={16} />
+                  </Button>
+                )}
               </>
             )}
           </>
