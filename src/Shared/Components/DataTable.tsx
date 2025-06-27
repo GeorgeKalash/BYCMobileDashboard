@@ -241,7 +241,6 @@ const DataTableComponent = ({
       >
         <p>{t("Are you sure you want to delete the selected record?")}</p>
       </SharedModal>
-
       {pagination && (
         <div className="d-flex justify-content-between align-items-center gap-2 mt-3 flex-wrap">
           <div className="text-muted ms-2">
@@ -255,14 +254,13 @@ const DataTableComponent = ({
 
               return (
                 <span>
-                  <i className="fa fa-database me-1" />
+                  <i className="fa me-1" />
                   Displaying Records <strong>{start}</strong> - <strong>{end}</strong> of{" "}
                   <strong>{total}</strong>
                 </span>
               );
             })()}
           </div>
-
           <div className="d-flex gap-2 me-2">
             <button
               onClick={() => handlePageChange((currentPage - 1) * pageSize, false)}
