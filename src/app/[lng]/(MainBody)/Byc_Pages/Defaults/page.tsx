@@ -30,6 +30,7 @@ const initialValues = {
   max_daily_user_new_request: "",
   enable_fast_password_service: "",
   enable_biometric_service: "",
+  default_payment_method: "",
 };
 
 const validationSchema = Yup.object({
@@ -44,6 +45,7 @@ const validationSchema = Yup.object({
   max_daily_user_new_request: Yup.string().required("Required"),
   enable_fast_password_service: Yup.string().required("Required"),
   enable_biometric_service: Yup.string().required("Required"),
+  default_payment_method: Yup.string().required("Required"),
 });
 
 const MobileVerificationForm = () => {
@@ -121,12 +123,42 @@ const MobileVerificationForm = () => {
                         valueKey="key"
                         labelKey="value"
                         value={Number(values["maintenance-mode"])}
+                        onChange={(val) =>
+                          setFieldValue("maintenance-mode", val)
+                        }
                       />
                     </Col>
                   </Row>
                 </CardBody>
               </Card>
+              <Card className="mb-3">
+                <CommonCardHeader title={t("Payment Methods")} />
+                <CardBody>
+                  <Row>
+                    <Col md="4">
+                      <CustomSelect
+                        name="default_payment_method"
+                        label={t("Enable Payment method")}
+                        endpointId={`/api/KVS/Dashboard/getAllKVS?_dataset=2&_language=1`}
+                        valueKey="key"
+                        labelKey="value"
+                        value={Number(values["default_payment_method"])}
+                        onChange={(val) => {
+                          const selected = [
+                            { key: 1, value: "Hyperpay" },
+                            { key: 2, value: "Moyassar" },
+                          ].find((opt) => opt.key === Number(val));
 
+                          setFieldValue(
+                            "default_payment_method",
+                            selected?.value ?? ""
+                          );
+                        }}
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
               <Card className="mb-3">
                 <CommonCardHeader title={t("YAKEEN Settings")} />
                 <CardBody>
