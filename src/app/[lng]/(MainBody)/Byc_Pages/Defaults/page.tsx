@@ -31,6 +31,7 @@ const initialValues = {
   enable_fast_password_service: "",
   enable_biometric_service: "",
   default_payment_method: "",
+  NB_INCORRECT_LOGIN: "",
 };
 
 const validationSchema = Yup.object({
@@ -46,6 +47,7 @@ const validationSchema = Yup.object({
   enable_fast_password_service: Yup.string().required("Required"),
   enable_biometric_service: Yup.string().required("Required"),
   default_payment_method: Yup.string().required("Required"),
+  NB_INCORRECT_LOGIN: Yup.string().required("Required"),
 });
 
 const MobileVerificationForm = () => {
@@ -143,17 +145,9 @@ const MobileVerificationForm = () => {
                         valueKey="key"
                         labelKey="value"
                         value={Number(values["default_payment_method"])}
-                        onChange={(val) => {
-                          const selected = [
-                            { key: 1, value: "Hyperpay" },
-                            { key: 2, value: "Moyassar" },
-                          ].find((opt) => opt.key === Number(val));
-
-                          setFieldValue(
-                            "default_payment_method",
-                            selected?.value ?? ""
-                          );
-                        }}
+                        onChange={(val) =>
+                          setFieldValue("default_payment_method", val)
+                        }
                       />
                     </Col>
                   </Row>
@@ -278,7 +272,21 @@ const MobileVerificationForm = () => {
                   </Row>
                 </CardBody>
               </Card>
-
+              <Card className="mb-3">
+                <CommonCardHeader
+                  title={t("User Incorrect Login Attempt Limits")}
+                />
+                <CardBody>
+                  <Row className="gy-3">
+                    <Col md="4">
+                      <CustomInput
+                        name="NB_INCORRECT_LOGIN"
+                        label={t("Incorrect Login Attempts")}
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
               <SharedButton type="submit" color="primary" title={t("Submit")} />
             </Form>
           );
