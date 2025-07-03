@@ -68,16 +68,10 @@ const FAQ = () => {
 
   const columns = [
     {
-      name: t("Question"),
-      selector: (row: any) => row.question,
+      name: t("title"),
+      selector: (row: any) => row.title,
       sortable: true,
-      id: "question",
-    },
-    {
-      name: t("Answer"),
-      selector: (row: any) => row.answer,
-      sortable: true,
-      id: "answer",
+      id: "title",
     },
   ];
 
