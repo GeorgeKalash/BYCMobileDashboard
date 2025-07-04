@@ -17,7 +17,7 @@ import {
 import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
 import { showToast } from "@/Shared/Components/showToast";
-
+import CustomTimePicker from "@/Shared/Components/CustomTimePicker";
 const initialValues = {
   "maintenance-mode": "",
   yakeen_enable_service: "",
@@ -32,6 +32,7 @@ const initialValues = {
   enable_biometric_service: "",
   default_payment_method: "",
   NB_INCORRECT_LOGIN: "",
+  TERMS_LAST_UPDATED: "",
 };
 
 const validationSchema = Yup.object({
@@ -48,6 +49,7 @@ const validationSchema = Yup.object({
   enable_biometric_service: Yup.string().required("Required"),
   default_payment_method: Yup.string().required("Required"),
   NB_INCORRECT_LOGIN: Yup.string().required("Required"),
+  TERMS_LAST_UPDATED: Yup.string().required("Required"),
 });
 
 const MobileVerificationForm = () => {
@@ -282,6 +284,27 @@ const MobileVerificationForm = () => {
                       <CustomInput
                         name="NB_INCORRECT_LOGIN"
                         label={t("Incorrect Login Attempts")}
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+              <Card className="mb-3">
+                <CommonCardHeader title={t("Updated Terms And Condition")} />
+                <CardBody>
+                  <Row className="gy-3">
+                    <Col md="4">
+                      <CustomTimePicker
+                        name="TERMS_LAST_UPDATED"
+                        label={t("Terms Last Updated")}
+                        isRequired
+                        value={values.TERMS_LAST_UPDATED}
+                        onChange={(val) =>
+                          setFieldValue("TERMS_LAST_UPDATED", val)
+                        }
+                        placeholder="Pick date and time"
+                        showNowButton={true}
+                        datePickerDisabled={true}
                       />
                     </Col>
                   </Row>
