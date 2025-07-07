@@ -11,6 +11,7 @@ import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
 import * as Yup from "yup";
 import { showToast } from "@/Shared/Components/showToast";
 import { withRequestTracking } from "@/utils/withRequestTracking ";
+import CustomTextarea from "@/Shared/Components/CustomTextarea";
 
 const TextControlForm = ({
   rowData,
@@ -94,7 +95,7 @@ const TextControlForm = ({
                 placeholder={t("Enter Key")}
                 readOnly={modalAction === "edit"}
               />
-              <CustomInput
+              <CustomTextarea
                 name="value"
                 label={t("Value")}
                 placeholder={t("Enter value")}
