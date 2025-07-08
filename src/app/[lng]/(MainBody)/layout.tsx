@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
+import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { setToggleSidebar } from "@/Redux/Reducers/LayoutSlice";
 import { setLayout } from "@/Redux/Reducers/ThemeCustomizerSlice";
@@ -20,6 +21,7 @@ export default function RootLayout({
 }) {
   const dispatch = useAppDispatch();
   const { layout } = useAppSelector((state) => state.themeCustomizer);
+  const router = useRouter();
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -32,10 +34,12 @@ export default function RootLayout({
 
     if (!sessionData && !localData) {
       dispatch(logout());
+      router.replace("/auth/login");
+      return;
     }
 
     setIsReady(true);
-  }, [dispatch]);
+  }, [dispatch, router]);
 
   const compactSidebar = () => {
     const windowWidth = window.innerWidth;
@@ -47,7 +51,9 @@ export default function RootLayout({
         dispatch(setLayout("compact-wrapper"));
       } else {
         dispatch(setToggleSidebar(false));
-        dispatch(setLayout(localStorage.getItem("layout")));
+        dispatch(
+          setLayout(localStorage.getItem("layout") || "compact-wrapper")
+        );
       }
     }
   };
@@ -68,10 +74,10 @@ export default function RootLayout({
           <SideBar />
           <div className="page-body">{children}</div>
         </div>
+        <ThemeCustomizer />
+        <ToastContainer />
+        <TapTop />
       </div>
-      <ThemeCustomizer />
-      <ToastContainer />
-      <TapTop />
     </Provider>
   );
 }

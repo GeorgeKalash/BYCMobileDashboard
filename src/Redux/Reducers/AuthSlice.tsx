@@ -175,9 +175,6 @@ export const login = createAsyncThunk(
   }
 );
 
-// ===========================
-// Slice
-// ===========================
 export const authSlice = createSlice({
   name: "auth",
   initialState,
