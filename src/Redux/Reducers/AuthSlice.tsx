@@ -36,6 +36,55 @@ const initialState: AuthState = {
   errorMessage: "",
 };
 
+export const getValidAccessToken = async (
+  user: User | null,
+  setUserCallback?: (updatedUser: User) => void
+): Promise<string | null> => {
+  if (!user) return null;
+
+  const now = Math.floor(Date.now() / 1000);
+  if (user.expiresAt > now) return user.accessToken;
+
+  const formData = new FormData();
+  formData.append(
+    "record",
+    JSON.stringify({
+      accessToken: user.accessToken,
+      refreshToken: user.refreshToken,
+    })
+  );
+
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_AuthURL}/MA.asmx/newAT`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    const { accessToken, refreshToken } = res.data.record;
+    const decoded: any = jwtDecode(accessToken);
+
+    const updatedUser: User = {
+      ...user,
+      accessToken,
+      refreshToken,
+      expiresAt: decoded.exp,
+    };
+
+    sessionStorage.setItem("userData", JSON.stringify(updatedUser));
+    setUserCallback?.(updatedUser);
+    return accessToken;
+  } catch (error) {
+    console.error("❌ Token refresh failed", error);
+    return null;
+  }
+};
+
 export const fetchAC = createAsyncThunk(
   "auth/fetchAC",
   async (_, { rejectWithValue }) => {
@@ -76,9 +125,7 @@ export const login = createAsyncThunk(
         }
       );
 
-      if (!getUS2.data.record) {
-        return rejectWithValue("User not found");
-      }
+      if (!getUS2.data.record) return rejectWithValue("User not found");
 
       const signIn3Params = `_email=${username}&_password=${encryptePWD(
         password
@@ -95,11 +142,11 @@ export const login = createAsyncThunk(
         }
       );
 
-      if (!signIn3.data.record) {
+      if (!signIn3.data.record)
         return rejectWithValue(signIn3.data.message || "Login failed");
-      }
 
       const accessToken = signIn3.data.record.accessToken;
+      const refreshToken = signIn3.data.record.refreshToken;
       const decoded: any = jwtDecode(accessToken);
 
       const user: User = {
@@ -111,12 +158,12 @@ export const login = createAsyncThunk(
         fullName: getUS2.data.record.fullName,
         role: "admin",
         accessToken,
-        refreshToken: signIn3.data.record.refreshToken,
+        refreshToken,
         expiresAt: decoded.exp,
       };
 
-      window.sessionStorage.setItem("userData", JSON.stringify(user));
-      window.localStorage.setItem("languageId", String(user.languageId));
+      sessionStorage.setItem("userData", JSON.stringify(user));
+      localStorage.setItem("languageId", String(user.languageId));
       document.cookie = `access_token=${user.accessToken}; path=/;`;
       window.location.replace("/en/Byc_Pages/Home_Page");
 
@@ -128,21 +175,24 @@ export const login = createAsyncThunk(
   }
 );
 
+// ===========================
+// Slice
+// ===========================
 export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     logout(state) {
       state.user = null;
-      window.localStorage.removeItem("userData");
-      window.sessionStorage.removeItem("userData");
+      localStorage.removeItem("userData");
+      sessionStorage.removeItem("userData");
       document.cookie =
         "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
       window.location.replace("/auth/login");
     },
     setLanguageId(state, action: PayloadAction<number>) {
       state.languageId = action.payload;
-      window.localStorage.setItem("languageId", String(action.payload));
+      localStorage.setItem("languageId", String(action.payload));
     },
   },
   extraReducers: (builder) => {
