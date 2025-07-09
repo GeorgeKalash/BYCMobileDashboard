@@ -9,7 +9,7 @@ import {
   getMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 import { showToast } from "@/Shared/Components/showToast";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";

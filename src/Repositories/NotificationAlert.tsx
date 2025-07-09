@@ -6,7 +6,6 @@ export const NotificationAlertRepository = {
     update: service + "NotificationTypes/updateType",
     set: service + "NotificationTypes/setTypes",
   },
-
   NotificationTemplate: {
     getAll: service + "NotificationTemplate/page",
 

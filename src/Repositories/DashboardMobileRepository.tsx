@@ -8,4 +8,15 @@ export const DashboardMobileRepository = {
     getPack: service + "Otp/OtpLimit/getAll",
     setPack: service + "Otp/OtpLimit/setPack",
   },
+  FAQ: {
+    page: service + "FAQ/page",
+    getById: service + "FAQ/getById",
+    add: service + "FAQ/add",
+    update: service + "FAQ/update",
+    delete: service + "FAQ/delete",
+  },
+  CarouselImages: {
+    add: service + "Carousel/setPack",
+    get: service + "Carousel/GetCarouselImages",
+  }
 };
