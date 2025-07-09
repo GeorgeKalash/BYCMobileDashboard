@@ -9,7 +9,7 @@ import {
   getMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 import { showToast } from "@/Shared/Components/showToast";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";
@@ -216,11 +216,11 @@ const NotificationTemplateForm = ({
                   <Col md={6} key={lang.id}>
                     <CustomInput
                       name={lang.titleKey}
-                      label={`${t("Title")} (Language ${lang.id})`}
+                      label={`${t("Title")} (${t(`Language ${lang.id}`)})`}
                     />
                     <CustomTextarea
                       name={lang.descKey}
-                      label={`${t("Message")} (Language ${lang.id})`}
+                      label={`${t("Message")} (${t(`Language ${lang.id}`)})`}
                       rows={5}
                     />
                   </Col>
