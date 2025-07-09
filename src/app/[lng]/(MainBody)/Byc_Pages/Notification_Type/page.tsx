@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
 import NotificationTypeForm from "./Form/NotificationTypeForm";
 

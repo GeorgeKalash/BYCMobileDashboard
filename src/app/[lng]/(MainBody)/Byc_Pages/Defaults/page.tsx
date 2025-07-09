@@ -15,7 +15,7 @@ import {
   postMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
 import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 import { showToast } from "@/Shared/Components/showToast";
 
 const initialValues = {
