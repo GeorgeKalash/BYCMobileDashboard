@@ -38,7 +38,7 @@ const UsersPage = () => {
       dispatch(
         getMobileRequest({
           extension: DashboardMobileRepository.MobileUser.page,
-          parameters: `_fromDate=&_toDate=&_startAt=${page}&_pageSize=${pageSize}`,
+          parameters: `&_startAt=${page}&_pageSize=${pageSize}`,
         })
       )
     );
@@ -153,7 +153,7 @@ const UsersPage = () => {
       >
         {modalState.row && (
           <UsersForm
-            userId={modalState.row.clientId}
+            userId={modalState.row.username}
             formikRef={formikRef}
             onSuccessSubmit={handleModalClose}
           />
