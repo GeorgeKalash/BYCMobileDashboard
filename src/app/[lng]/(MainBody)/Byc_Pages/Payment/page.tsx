@@ -61,17 +61,12 @@ const Payment = () => {
   }, []);
 
   const handleSubmit = async (values: typeof initialValues) => {
-    const transformedData = values.brands.map(({ id, name, isInactive }) => ({
-      key: `${id}`,
-      name,
-      isInactive: String(isInactive),
-    }));
 
     await withRequestTracking(dispatch, () =>
       dispatch(
         postMobileRequest({
           extension: PaymentGatewayRepository.PaymentBrand.update,
-          body: transformedData,
+          body: values.brands,
           rawBody: true,
         })
       ).unwrap()
