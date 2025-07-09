@@ -13,7 +13,7 @@ import {
 } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
-import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import formatDate from "@/utils/DateFormatter";
 import { showToast } from "@/Shared/Components/showToast";
 

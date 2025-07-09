@@ -21,4 +21,9 @@ export const DashboardMobileRepository = {
     add: service + "Carousel/setPack",
     get: service + "Carousel/GetCarouselImages",
   },
+  MobileUser: {
+    page: service + "MobileUser/page",
+    getById: service + "MobileUser/getById",
+    changeUserStatus: service + "MobileUser/changeUserStatus",
+  },
 };
