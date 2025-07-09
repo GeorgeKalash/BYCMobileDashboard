@@ -35,12 +35,17 @@ export const MenuList: MenuItem[] | undefined = [
         type: "link",
         title: "Notification Type",
         icon: "ui-kits",
-
-        },
-       {
+      },
+      {
         path: "/Byc_Pages/Notification_Template",
         type: "link",
         title: "Notifications Template",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/OTP_Control",
+        type: "link",
+        title: "OTP Control",
         icon: "ui-kits",
       },
       {
@@ -52,7 +57,25 @@ export const MenuList: MenuItem[] | undefined = [
       {
         path: "/Byc_Pages/Payment",
         type: "link",
+        title: "FAQ",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/FAQ",
+        type: "link",
+        title: "FAQ",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/Slider_Image_Attachment",
+        type: "link",
         title: "Payment",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/Users",
+        type: "link",
+        title: "Users",
         icon: "ui-kits",
       },
     ],

@@ -8,7 +8,7 @@ import {
   postMobileRequest,
   getMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
-import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { showToast } from "@/Shared/Components/showToast";
 import CustomInput from "@/Shared/Components/CustomInput";
@@ -125,7 +125,8 @@ const NotificationTemplateForm = ({
       const response = await withRequestTracking(dispatch, () =>
         dispatch(
           getMobileRequest({
-            extension: `${NotificationAlertRepository.NotificationTemplate.getPack}?_recordId=${rowData.recordId}`,
+            extension: `${NotificationAlertRepository.NotificationTemplate.getPack}`,
+            parameters:`_recordId=${rowData.recordId}`
           })
         )
       );
@@ -216,11 +217,11 @@ const NotificationTemplateForm = ({
                   <Col md={6} key={lang.id}>
                     <CustomInput
                       name={lang.titleKey}
-                      label={`${t("Title")} (Language ${lang.id})`}
+                      label={`${t("Title")} (${t(`Language ${lang.id}`)})`}
                     />
                     <CustomTextarea
                       name={lang.descKey}
-                      label={`${t("Message")} (Language ${lang.id})`}
+                      label={`${t("Message")} (${t(`Language ${lang.id}`)})`}
                       rows={5}
                     />
                   </Col>

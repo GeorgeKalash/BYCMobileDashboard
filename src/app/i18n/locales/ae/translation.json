@@ -196,5 +196,9 @@
   "Add Text": "إضافة نص",
   "Edit Text": "تحرير النص",
   "Key": "مفتاح",
-  "Value": "قيمة"
+  "Value": "قيمة",
+  "Language 1": "الإنجليزية",
+  "Language 2": "العربية",
+  "deviceIMEI": "جهازIMEI",
+  "emailValidTo": "البريد الإلكتروني صالح ل"
 }

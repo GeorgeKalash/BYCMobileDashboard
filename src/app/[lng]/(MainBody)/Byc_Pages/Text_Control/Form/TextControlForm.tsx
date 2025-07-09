@@ -10,6 +10,7 @@ import { postMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
 import * as Yup from "yup";
 import { showToast } from "@/Shared/Components/showToast";
+import CustomTextarea from "@/Shared/Components/CustomTextarea";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 
 const TextControlForm = ({
@@ -94,7 +95,7 @@ const TextControlForm = ({
                 placeholder={t("Enter Key")}
                 readOnly={modalAction === "edit"}
               />
-              <CustomInput
+              <CustomTextarea
                 name="value"
                 label={t("Value")}
                 placeholder={t("Enter value")}
