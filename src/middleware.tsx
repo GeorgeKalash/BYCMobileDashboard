@@ -11,7 +11,9 @@ export function middleware(request: NextRequest) {
   }
 
   if (isAuthRoute && hasToken) {
-    return NextResponse.redirect(new URL("/en/Byc_Pages/Defaults", request.url));
+    return NextResponse.redirect(
+      new URL("/en/Byc_Pages/Home_Page", request.url)
+    );
   }
 
   return NextResponse.next();

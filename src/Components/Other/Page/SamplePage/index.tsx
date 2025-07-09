@@ -15,7 +15,7 @@ import { SharedSwitch } from "@/Shared/Components/SharedSwitch";
 import SharedFileUpload from "@/Shared/Components/SharedFileUpload";
 import { useAppDispatch } from "@/Redux/Hooks";
 import { BusinessPartnerRepository } from "@/Repositories/BusinessPartnerRepository";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 import { getRequest } from "@/Redux/Reducers/RequestThunks";
 
 interface DocumentType {
