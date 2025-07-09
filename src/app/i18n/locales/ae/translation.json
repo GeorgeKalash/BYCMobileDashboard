@@ -198,5 +198,7 @@
   "Key": "مفتاح",
   "Value": "قيمة",
   "Language 1": "الإنجليزية",
-  "Language 2": "العربية"
+  "Language 2": "العربية",
+  "deviceIMEI": "جهازIMEI",
+  "emailValidTo": "البريد الإلكتروني صالح ل"
 }

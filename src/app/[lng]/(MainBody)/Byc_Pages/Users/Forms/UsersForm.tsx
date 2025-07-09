@@ -70,25 +70,20 @@ const UsersForm = ({
 
   const handleSubmit = async (
     values: FormValues,
-    { setSubmitting }: FormikHelpers<FormValues>
   ) => {
-    try {
-      await withRequestTracking(dispatch, () =>
-        dispatch(
-          postMobileRequest({
-            extension: DashboardMobileRepository.MobileUser.changeUserStatus,
-            parameters: ``,
-            body: values,
-            rawBody: true,
-          })
-        ).unwrap()
-      );
+    await withRequestTracking(dispatch, () =>
+      dispatch(
+        postMobileRequest({
+          extension: DashboardMobileRepository.MobileUser.changeUserStatus,
+          parameters: ``,
+          body: values,
+          rawBody: true,
+        })
+      ).unwrap()
+    );
 
-      showToast("success");
-      onSuccessSubmit?.();
-    } finally {
-      setSubmitting(false);
-    }
+    showToast("success");
+    onSuccessSubmit?.();
   };
 
   const handleKeyDown = (

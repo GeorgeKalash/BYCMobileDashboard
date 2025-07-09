@@ -206,5 +206,7 @@
   "clockStamp": "Clock Stamp",
   "curl": "Curl",
   "Language 1": "English",
-  "Language 2": "Arabic"
+  "Language 2": "Arabic",
+  "deviceIMEI": "device IMEI",
+  "emailValidTo": "Email Valid To"
 }
