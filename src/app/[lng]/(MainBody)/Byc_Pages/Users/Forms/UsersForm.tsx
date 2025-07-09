@@ -47,7 +47,7 @@ const UsersForm = ({
         dispatch(
           getMobileRequest({
             extension: DashboardMobileRepository.MobileUser.getById,
-            parameters: `_userId=${userId}`,
+            parameters: `_username=${userId}`,
           })
         ).unwrap()
       );
@@ -55,7 +55,7 @@ const UsersForm = ({
       setInitialValues({
         username: result.data?.username || "",
         isInactive: !!result.data?.isInactive||false,
-        reason: result.data?.reason || "",
+        reason: result.data?.inactiveReason || "",
       });
     };
   

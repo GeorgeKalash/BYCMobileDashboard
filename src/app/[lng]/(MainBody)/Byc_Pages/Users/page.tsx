@@ -153,8 +153,8 @@ const UsersPage = () => {
       >
         {modalState.row && (
           <UsersForm
-            userId={modalState.row.username}
-            formikRef={formikRef}
+          userId={modalState.row.username.replace(/\+/g, "%2B")}
+          formikRef={formikRef}
             onSuccessSubmit={handleModalClose}
           />
         )}

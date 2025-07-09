@@ -125,7 +125,8 @@ const NotificationTemplateForm = ({
       const response = await withRequestTracking(dispatch, () =>
         dispatch(
           getMobileRequest({
-            extension: `${NotificationAlertRepository.NotificationTemplate.getPack}?_recordId=${rowData.recordId}`,
+            extension: `${NotificationAlertRepository.NotificationTemplate.getPack}`,
+            parameters:`_recordId=${rowData.recordId}`
           })
         )
       );
