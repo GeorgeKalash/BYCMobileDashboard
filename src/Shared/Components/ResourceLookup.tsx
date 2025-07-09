@@ -59,12 +59,17 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
         containerRef.current &&
         !containerRef.current.contains(e.target as Node)
       ) {
-        setShowDropdown(false);
+        if (showDropdown && results.length > 0) {
+          handleSelect(results[0]);
+        } else {
+          setShowDropdown(false);
+        }
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [results, showDropdown]);
 
   const fetchData = async (query: string) => {
     if (query.length < minChars) {
@@ -227,6 +232,7 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
             direction="ltr"
             showActions={false}
             Search={false}
+            onRowClicked={handleSelect}
           />
         </div>
       )}

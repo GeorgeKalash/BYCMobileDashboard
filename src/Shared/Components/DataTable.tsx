@@ -24,6 +24,7 @@ const DataTableComponent = ({
   searchableColumns,
   searchType,
   onSearchChange,
+  onRowClicked,
 }: {
   title?: string;
   data: any[];
@@ -43,6 +44,7 @@ const DataTableComponent = ({
   searchableColumns?: string[];
   searchType?: "local" | "server";
   onSearchChange?: (value: string) => void;
+  onRowClicked?: (row: any) => void;
 }) => {
   const [filterText, setFilterText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -203,6 +205,7 @@ const DataTableComponent = ({
           persistTableHead
           sortServer
           pagination={false}
+          onRowClicked={onRowClicked}
           onSort={(column, direction) => {
             const columnId =
               typeof column.id === "string"
