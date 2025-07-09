@@ -18,6 +18,7 @@ import CustomInput from "@/Shared/Components/CustomInput";
 import CustomSelect from "@/Shared/Components/CustomSelect";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import SharedButton from "@/Shared/Components/SharedButton";
+import { format } from "date-fns";
 
 const Notification = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -34,8 +35,8 @@ const Notification = () => {
   };
 
   const [filters, setFilters] = useState<Filters>({
-    fromDate: "01-01-2025",
-    toDate: "01-01-2026",
+    fromDate: format(new Date(), "MM-dd-yyyy"),
+    toDate: format(new Date(), "MM-dd-yyyy"),
     title: "",
     phoneNumber: "",
     templateId: "",
@@ -198,13 +199,14 @@ const Notification = () => {
             <Col md="2">
               <CustomInput
                 name="phoneNumber"
-                type="number"
+                type="text"
                 label={t("Phone Number")}
                 placeholder={t("Search by phone")}
                 value={filters.phoneNumber}
-                onChange={(e) =>
-                  handleFilterChange("phoneNumber", e.target.value)
-                }
+                onChange={(e) => {
+                  const onlyNums = e.target.value.replace(/\D/g, "");
+                  handleFilterChange("phoneNumber", onlyNums);
+                }}
               />
             </Col>
             <Col md="2">

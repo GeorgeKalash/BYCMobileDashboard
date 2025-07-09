@@ -10,6 +10,8 @@ export const DashboardMobileRepository = {
     add: service + "FAQ/add",
     update: service + "FAQ/update",
     delete: service + "FAQ/delete",
+    setpack: service + "FAQ/setPack",
+    getpack: service + "FAQ/getPack",
   },
   CarouselImages: {
     add: service + "Carousel/setPack",
