@@ -198,7 +198,7 @@ const DataTableComponent = ({
           data={paginatedData}
           fixedHeader
           striped
-          fixedHeaderScrollHeight="67vh"
+          fixedHeaderScrollHeight="60vh"
           highlightOnHover={highlightOnHover}
           persistTableHead
           sortServer
@@ -255,15 +255,17 @@ const DataTableComponent = ({
               return (
                 <span>
                   <i className="fa me-1" />
-                  Displaying Records <strong>{start}</strong> - <strong>{end}</strong> of{" "}
-                  <strong>{total}</strong>
+                  Displaying Records <strong>{start}</strong> -
+                  <strong>{end}</strong> of <strong>{total}</strong>
                 </span>
               );
             })()}
           </div>
           <div className="d-flex gap-2 me-2">
             <button
-              onClick={() => handlePageChange((currentPage - 1) * pageSize, false)}
+              onClick={() =>
+                handlePageChange((currentPage - 1) * pageSize, false)
+              }
               className="btn btn-outline-primary btn-sm rounded-pill shadow-sm px-3"
               disabled={currentPage === 1}
             >
@@ -279,7 +281,6 @@ const DataTableComponent = ({
           </div>
         </div>
       )}
-
     </>
   );
 };

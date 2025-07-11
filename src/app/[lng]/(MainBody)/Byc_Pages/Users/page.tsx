@@ -12,7 +12,7 @@ import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import formatDate from "@/utils/DateFormatter";
-import UsersForm from "./Forms/UsersForm";
+import UsersForm, { UsersFormHandle } from "./Forms/UsersForm";
 
 const UsersPage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -108,7 +108,13 @@ const UsersPage = () => {
       open: false,
       row: null,
     });
-    fetchData(paginationState.pageCount); 
+    fetchData(paginationState.pageCount);
+  };
+
+  const formLogicRef = useRef<UsersFormHandle>(null);
+
+  const handleInfoClick = () => {
+    formLogicRef.current?.logFormValues();
   };
 
   const handleSubmit = () => {
@@ -147,14 +153,16 @@ const UsersPage = () => {
         visible={modalState.open}
         onClose={handleModalClose}
         title={t("User")}
-        width="30vw"
+        width="50vw"
         height="70vh"
         onSubmit={handleSubmit}
+        onInfoClick={handleInfoClick}
       >
         {modalState.row && (
           <UsersForm
-          userId={modalState.row.username.replace(/\+/g, "%2B")}
-          formikRef={formikRef}
+            ref={formLogicRef}
+            userId={modalState.row.username.replace(/\+/g, "%2B")}
+            formikRef={formikRef}
             onSuccessSubmit={handleModalClose}
           />
         )}

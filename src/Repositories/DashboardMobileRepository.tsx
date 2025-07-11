@@ -26,4 +26,7 @@ export const DashboardMobileRepository = {
     getById: service + "MobileUser/getById",
     changeUserStatus: service + "MobileUser/changeUserStatus",
   },
+  TransactionLog: {
+    getAll: service + "System/TransactionLog/getAll",
+  },
 };

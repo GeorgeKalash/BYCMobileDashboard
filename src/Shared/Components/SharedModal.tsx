@@ -3,11 +3,12 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import SharedButton from "./SharedButton";
 import { useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "react-i18next";
-
+const infoLogo = "/assets/images/icons/info.png";
 interface SharedModalProps {
   visible: boolean;
   onClose: () => void;
   onSubmit?: () => void;
+  onInfoClick?: () => void;
   title: string;
   children: ReactNode;
   width?: string;
@@ -19,6 +20,7 @@ const SharedModal: React.FC<SharedModalProps> = ({
   visible,
   onClose,
   onSubmit,
+  onInfoClick,
   title,
   children,
   width = "",
@@ -42,6 +44,14 @@ const SharedModal: React.FC<SharedModalProps> = ({
         {children}
       </ModalBody>
       <ModalFooter>
+        {typeof onInfoClick === "function" && (
+          <SharedButton
+            logo={infoLogo}
+            color="info"
+            tooltip="More info"
+            onClick={onInfoClick}
+          />
+        )}
         {typeof onSubmit === "function" && (
           <SharedButton
             color="primary"
