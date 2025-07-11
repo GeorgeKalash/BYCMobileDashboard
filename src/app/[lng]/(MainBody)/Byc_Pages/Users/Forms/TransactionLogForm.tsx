@@ -8,13 +8,13 @@ import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 
-interface TransactionLogModalProps {
+interface TransactionLogFormProps {
   visible: boolean;
   onClose: () => void;
   phoneNumber?: string;
 }
 
-const TransactionLogModal: React.FC<TransactionLogModalProps> = ({
+const TransactionLogForm: React.FC<TransactionLogFormProps> = ({
   visible,
   onClose,
   phoneNumber,
@@ -63,13 +63,13 @@ const TransactionLogModal: React.FC<TransactionLogModalProps> = ({
     },
     {
       name: t("User Name"),
-      selector: (row: any) => row.userName,
+      selector: (row: any) => row.username,
       sortable: true,
       id: "userName",
     },
     {
       name: t("Transaction Name"),
-      selector: (row: any) => row.transactionName,
+      selector: (row: any) => row.typeName,
       sortable: true,
       id: "TransactionName",
     },
@@ -97,4 +97,4 @@ const TransactionLogModal: React.FC<TransactionLogModalProps> = ({
   );
 };
 
-export default TransactionLogModal;
+export default TransactionLogForm;
