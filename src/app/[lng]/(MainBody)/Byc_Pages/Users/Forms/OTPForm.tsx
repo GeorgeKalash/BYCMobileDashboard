@@ -79,7 +79,7 @@ const OTPForm: React.FC<OTPFormProps> = ({ visible, onClose, phoneNumber }) => {
       width="80vw"
     >
       <div style={{ padding: "1rem", maxHeight: "70vh", overflowY: "auto" }}>
-        {otpData.length > 0 ? (
+        {otpData.length > 0 &&
           otpData.map((item) => (
             <Card className="mb-3" key={item.resourceId}>
               <CardHeader tag="h5">{item.resourceName}</CardHeader>
@@ -89,7 +89,7 @@ const OTPForm: React.FC<OTPFormProps> = ({ visible, onClose, phoneNumber }) => {
                     <CustomInput
                       name={`lastRequest-${item.resourceId}`}
                       label={t("Last Request")}
-                      value={item.lastRequest?.split("T")[0] || t("No data")}
+                      value={item.lastRequest?.split("T")[0] || ""}
                       onChange={() => {}}
                       onBlur={() => {}}
                       readOnly
@@ -126,10 +126,7 @@ const OTPForm: React.FC<OTPFormProps> = ({ visible, onClose, phoneNumber }) => {
                 </Row>
               </CardBody>
             </Card>
-          ))
-        ) : (
-          <p>{t("No OTP data available.")}</p>
-        )}
+          ))}
       </div>
     </SharedModal>
   );
