@@ -13,6 +13,8 @@ import { withRequestTracking } from "@/utils/withRequestTracking";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import formatDate from "@/utils/DateFormatter";
 import UsersForm, { UsersFormHandle } from "./Forms/UsersForm";
+import SharedButton from "@/Shared/Components/SharedButton";
+const lock = "/assets/images/icons/lock.png";
 
 const UsersPage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -116,6 +118,9 @@ const UsersPage = () => {
   const handleInfoClick = () => {
     formLogicRef.current?.logFormValues();
   };
+  const handleOTPPress = () => {
+    formLogicRef.current?.openOtpModal();
+  };
 
   const handleSubmit = () => {
     if (formikRef.current) {
@@ -157,6 +162,15 @@ const UsersPage = () => {
         height="70vh"
         onSubmit={handleSubmit}
         onInfoClick={handleInfoClick}
+        footerActions={
+          <SharedButton
+            logo={lock}
+            color="warning"
+            title={t("OTP")}
+            onClick={handleOTPPress}
+            tooltip={t("OTP")}
+          />
+        }
       >
         {modalState.row && (
           <UsersForm

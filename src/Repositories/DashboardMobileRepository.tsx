@@ -7,6 +7,9 @@ export const DashboardMobileRepository = {
   OTP: {
     getPack: service + "Otp/OtpLimit/getAll",
     setPack: service + "Otp/OtpLimit/setPack",
+    getCounter: service + "Otp/OtpCounter/getAll",
+    getById: service + "Otp/OtpCounter/getById",
+    reset: service + "Otp/OtpCounter/reset",
   },
   FAQ: {
     page: service + "FAQ/page",
