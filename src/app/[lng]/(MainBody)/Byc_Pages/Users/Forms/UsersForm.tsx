@@ -24,6 +24,8 @@ import { withRequestTracking } from "@/utils/withRequestTracking";
 import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";
 import TransactionLogForm from "./TransactionLogForm";
+import SharedModal from "@/Shared/Components/SharedModal";
+import AdditionalInfoForm from "./AdditionalInfoForm";
 interface FormValues {
   username: string;
   isInactive: boolean;
@@ -32,6 +34,7 @@ interface FormValues {
 
 export interface UsersFormHandle {
   logFormValues: () => void;
+  openAdditionalInfoModal: () => void;
 }
 
 const UsersForm = forwardRef<
@@ -46,6 +49,7 @@ const UsersForm = forwardRef<
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
   const [showMoreInfoModal, setShowMoreInfoModal] = useState(false);
+  const [showAdditionalInfoModal, setShowAdditionalInfoModal] = useState(false);
 
   const [initialValues, setInitialValues] = useState<FormValues | null>(null);
   const internalFormikRef = useRef<FormikProps<FormValues> | null>(null);
@@ -74,6 +78,9 @@ const UsersForm = forwardRef<
   useImperativeHandle(ref, () => ({
     logFormValues: () => {
       setShowMoreInfoModal(true);
+    },
+    openAdditionalInfoModal: () => {
+      setShowAdditionalInfoModal(true);
     },
   }));
   const validationSchema = Yup.object().shape({
@@ -159,6 +166,11 @@ const UsersForm = forwardRef<
       <TransactionLogForm
         visible={showMoreInfoModal}
         onClose={() => setShowMoreInfoModal(false)}
+        phoneNumber={initialValues?.username}
+      />
+      <AdditionalInfoForm
+        visible={showAdditionalInfoModal}
+        onClose={() => setShowAdditionalInfoModal(false)}
         phoneNumber={initialValues?.username}
       />
     </>

@@ -13,6 +13,8 @@ import { withRequestTracking } from "@/utils/withRequestTracking";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import formatDate from "@/utils/DateFormatter";
 import UsersForm, { UsersFormHandle } from "./Forms/UsersForm";
+import SharedButton from "@/Shared/Components/SharedButton";
+const add = "/assets/images/icons/add.png";
 
 const UsersPage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -116,6 +118,9 @@ const UsersPage = () => {
   const handleInfoClick = () => {
     formLogicRef.current?.logFormValues();
   };
+  const handleAdditionalInfoPress = () => {
+    formLogicRef.current?.openAdditionalInfoModal();
+  };
 
   const handleSubmit = () => {
     if (formikRef.current) {
@@ -157,6 +162,15 @@ const UsersPage = () => {
         height="70vh"
         onSubmit={handleSubmit}
         onInfoClick={handleInfoClick}
+        footerActions={
+          <SharedButton
+            logo={add}
+            color="secondary"
+            title={t("AdditionalInfo")}
+            onClick={handleAdditionalInfoPress}
+            tooltip={t("AdditionalInfo")}
+          />
+        }
       >
         {modalState.row && (
           <UsersForm
