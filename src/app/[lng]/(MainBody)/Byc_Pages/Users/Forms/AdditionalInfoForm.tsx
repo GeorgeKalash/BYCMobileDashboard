@@ -41,7 +41,6 @@ const AdditionalInfoForm: React.FC<AdditionalInfoFormProps> = ({
   const [questionsWithType, setQuestionsWithType] = useState<
     QuestionWithType[]
   >([]);
-  const [loading, setLoading] = useState(true);
 
   const langIdMap: Record<string, number> = { ar: 1, en: 2 };
   const langId =
@@ -69,29 +68,22 @@ const AdditionalInfoForm: React.FC<AdditionalInfoFormProps> = ({
   );
 
   const loadData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [fieldTypes, extraInfoQuestions] = await Promise.all([
-        fetchKVSOptions(FIELD_TYPE_DATASET),
-        fetchKVSOptions(EXTRA_INFO_QUESTIONS_DATASET),
-      ]);
+    const [fieldTypes, extraInfoQuestions] = await Promise.all([
+      fetchKVSOptions(FIELD_TYPE_DATASET),
+      fetchKVSOptions(EXTRA_INFO_QUESTIONS_DATASET),
+    ]);
 
-      const typeMap = fieldTypes.reduce((acc, curr) => {
-        acc[curr.value.toString()] = curr.label;
-        return acc;
-      }, {} as Record<string, string>);
+    const typeMap = fieldTypes.reduce((acc, curr) => {
+      acc[curr.value.toString()] = curr.label;
+      return acc;
+    }, {} as Record<string, string>);
 
-      const combined = extraInfoQuestions.map((q) => ({
-        ...q,
-        type: typeMap[q.value.toString()] || "Unknown",
-      }));
+    const combined = extraInfoQuestions.map((q) => ({
+      ...q,
+      type: typeMap[q.value.toString()] || "Unknown",
+    }));
 
-      setQuestionsWithType(combined);
-    } catch (error) {
-      showToast("error");
-    } finally {
-      setLoading(false);
-    }
+    setQuestionsWithType(combined);
   }, [fetchKVSOptions]);
 
   useEffect(() => {
@@ -109,33 +101,24 @@ const AdditionalInfoForm: React.FC<AdditionalInfoFormProps> = ({
       width="60vw"
     >
       <div style={{ padding: "1rem", maxHeight: "70vh", overflowY: "auto" }}>
-        {loading ? (
-          <div
-            className="d-flex justify-content-center align-items-center"
-            style={{ minHeight: "150px" }}
-          >
-            <Spinner size="lg" />
-          </div>
-        ) : (
-          <Card>
-            <>
-              <ul>
-                {questionsWithType.map((q) => (
-                  <li key={q.value}>
-                    <Row className="align-items-center">
-                      <Col xs="10">
-                        <strong>{q.label}</strong> — <em>{q.type}</em>
-                      </Col>
-                      <Col xs="2" className="text-end">
-                        <SharedCheckbox />
-                      </Col>
-                    </Row>
-                  </li>
-                ))}
-              </ul>
-            </>
-          </Card>
-        )}
+        <Card>
+          <>
+            <ul>
+              {questionsWithType.map((q) => (
+                <li key={q.value}>
+                  <Row className="align-items-center">
+                    <Col xs="10">
+                      <strong>{q.label}</strong> — <em>{q.type}</em>
+                    </Col>
+                    <Col xs="2" className="text-end">
+                      <SharedCheckbox />
+                    </Col>
+                  </Row>
+                </li>
+              ))}
+            </ul>
+          </>
+        </Card>
       </div>
     </SharedModal>
   );
