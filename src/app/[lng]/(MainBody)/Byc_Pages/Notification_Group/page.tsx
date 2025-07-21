@@ -15,7 +15,7 @@ import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { showToast } from "@/Shared/Components/showToast";
 import NotificationGroupForm from "./Form/NotificationGroupForm";
-import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 
 const Notification_Group = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);

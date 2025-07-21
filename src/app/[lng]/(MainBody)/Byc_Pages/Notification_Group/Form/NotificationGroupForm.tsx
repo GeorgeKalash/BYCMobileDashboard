@@ -11,7 +11,7 @@ import {
   getMobileRequest,
   deleteMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
-import { NotificationAlertRepository } from "@/Repositories/NotificationAlert";
+import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import { showToast } from "@/Shared/Components/showToast";
 import { Card, CardBody, Col, Row, FormGroup } from "reactstrap";
 import { useTranslation } from "react-i18next";
