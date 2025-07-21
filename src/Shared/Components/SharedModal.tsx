@@ -3,7 +3,10 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import SharedButton from "./SharedButton";
 import { useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "react-i18next";
+
 const infoLogo = "/assets/images/icons/info.png";
+const saveLogo = "/assets/images/icons/save.png";
+
 interface SharedModalProps {
   visible: boolean;
   onClose: () => void;
@@ -14,6 +17,7 @@ interface SharedModalProps {
   width?: string;
   height?: string;
   className?: string;
+  footerActions?: ReactNode;
 }
 
 const SharedModal: React.FC<SharedModalProps> = ({
@@ -26,6 +30,7 @@ const SharedModal: React.FC<SharedModalProps> = ({
   width = "",
   height = "",
   className = "",
+  footerActions,
 }) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
@@ -40,23 +45,29 @@ const SharedModal: React.FC<SharedModalProps> = ({
       style={{ maxWidth: width }}
     >
       <ModalHeader toggle={onClose}>{title}</ModalHeader>
+
       <ModalBody style={{ maxHeight: height, overflowY: "auto" }}>
         {children}
       </ModalBody>
+
       <ModalFooter>
+        {footerActions}
+
         {typeof onInfoClick === "function" && (
           <SharedButton
             logo={infoLogo}
             color="info"
-            tooltip="More info"
+            tooltip={t("More info")}
             onClick={onInfoClick}
           />
         )}
+
         {typeof onSubmit === "function" && (
           <SharedButton
+            logo={saveLogo}
             color="primary"
             onClick={onSubmit}
-            title={t("Submit")}
+            tooltip={t("Submit")}
           />
         )}
       </ModalFooter>

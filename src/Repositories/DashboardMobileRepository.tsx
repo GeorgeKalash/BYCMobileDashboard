@@ -4,9 +4,13 @@ export const DashboardMobileRepository = {
   Requests: {
     get: service + "requestLogs",
   },
+
   OTP: {
     getPack: service + "Otp/OtpLimit/getAll",
     setPack: service + "Otp/OtpLimit/setPack",
+    getCounter: service + "Otp/OtpCounter/getAll",
+    getById: service + "Otp/OtpCounter/getById",
+    reset: service + "Otp/OtpCounter/reset",
   },
   FAQ: {
     page: service + "FAQ/page",
@@ -25,8 +29,17 @@ export const DashboardMobileRepository = {
     page: service + "MobileUser/page",
     getById: service + "MobileUser/getById",
     changeUserStatus: service + "MobileUser/changeUserStatus",
+    SearchEngine: service + "MobileUser/SearchEngine/page",
   },
   TransactionLog: {
     getAll: service + "System/TransactionLog/getAll",
+  },
+  AdditionalInfo: {
+    getAll: service + "AdditionalInfo/getAll",
+  },
+  ExtraInfo: {
+    getAll: service + "ClientExtraInfo/getAll",
+    update: service + "ClientExtraInfo/update",
+    validate: service + "ClientExtraInfo/validate",
   },
 };
