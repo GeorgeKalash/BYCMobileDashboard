@@ -13,13 +13,12 @@ import {
 } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
-import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
-import formatDate from "@/utils/DateFormatter";
+import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import { showToast } from "@/Shared/Components/showToast";
 
-import NotificationTemplateForm from "./Form/NotificationTemplateForm";
+import FAQForm from "./Form/FAQForm";
 
-const NotificationTemplatePage = () => {
+const FAQ = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
@@ -45,8 +44,8 @@ const NotificationTemplatePage = () => {
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
-          extension: NotificationAlertRepository.NotificationTemplate.getAll,
-          parameters: `_fromDate=&_toDate=&_startAt=${page}&_pageSize=${pageSize}&_title=${paginationState.searchTerm}&_description=${paginationState.searchTerm}`,
+          extension: DashboardMobileRepository.FAQ.page,
+          parameters: `_fromDate=&_toDate=&_startAt=${page}&_pageSize=${pageSize}&_title=${paginationState.searchTerm}`,
         })
       )
     );
@@ -64,34 +63,15 @@ const NotificationTemplatePage = () => {
   };
 
   useEffect(() => {
-      fetchData();
+    fetchData();
   }, [paginationState.searchTerm, paginationState.pageCount]);
 
   const columns = [
     {
-      name: t("Title"),
-      selector: (row: any) => row.name,
+      name: t("title"),
+      selector: (row: any) => row.title,
       sortable: true,
       id: "title",
-    },
-    {
-      name: t("Date"),
-      selector: (row: any) =>
-      row.date ? formatDate(row.date, "dd/MM/yyyy") : "",
-      sortable: true,
-      id: "date",
-    },
-    {
-      name: t("Type"),
-      selector: (row: any) => row.typeName,
-      sortable: true,
-      id: "type",
-    },
-    {
-      name: t("Push Notification"),
-      selector: (row: any) => (row.isPushNotification ? t("Yes") : t("No")),
-      sortable: true,
-      id: "PushNotification",
     },
   ];
 
@@ -132,7 +112,7 @@ const NotificationTemplatePage = () => {
     await withRequestTracking(dispatch, () =>
       dispatch(
         deleteMobileRequest({
-          extension: `${NotificationAlertRepository.NotificationTemplate.delete}?_recordId=${row.recordId}`,
+          extension: `${DashboardMobileRepository.FAQ.delete}?_recordId=${row.recordId}`,
           rawBody: false,
         })
       ).unwrap()
@@ -186,7 +166,7 @@ const NotificationTemplatePage = () => {
         height="70vh"
         onSubmit={handleSubmit}
       >
-        <NotificationTemplateForm
+        <FAQForm
           rowData={modalState.row}
           formikRef={formikRef}
           modalAction={modalState.action}
@@ -197,4 +177,4 @@ const NotificationTemplatePage = () => {
   );
 };
 
-export default NotificationTemplatePage;
+export default FAQ;
