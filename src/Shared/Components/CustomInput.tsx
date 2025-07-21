@@ -1,5 +1,4 @@
-import React from "react";
-import { Field, ErrorMessage, useField } from "formik";
+import { useFormikContext, useField } from "formik";
 import { FormGroup, Label } from "reactstrap";
 
 type CustomInputProps = {
@@ -9,7 +8,11 @@ type CustomInputProps = {
   isRequired?: boolean;
   placeholder?: string;
   readOnly?: boolean;
-  min?: number | string; 
+  min?: number | string;
+  ar?: boolean;
+  value?: string | number;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 };
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -20,32 +23,45 @@ const CustomInput: React.FC<CustomInputProps> = ({
   placeholder = "",
   readOnly = false,
   min,
+  ar = false,
+  value,
+  onChange,
+  onBlur,
 }) => {
-  const [field, meta] = useField(name);
+  const formik = useFormikContext();
+  const isControlled =
+    typeof value !== "undefined" || typeof onChange !== "undefined";
 
-  const isEmpty = isRequired && !field.value;
+  const [field, meta] = isControlled
+    ? [{ name, value, onChange, onBlur }, {}]
+    : useField(name);
 
-  const validationClass = meta.touched
-    ? meta.error || isEmpty
-      ? "is-invalid"
-      : ""
-    : "";
+  const isEmpty = isRequired && !(isControlled ? value : field.value);
+  const validationClass =
+    formik && meta.touched ? (meta.error || isEmpty ? "is-invalid" : "") : "";
 
   return (
     <FormGroup>
-      <Label>
+      <Label htmlFor={name}>
         {label} {isRequired && <span className="text-danger">*</span>}
       </Label>
-      <Field
+      <input
+        id={name}
+        name={name}
         type={type}
         autoComplete="off"
         className={`form-control ${validationClass}`}
         placeholder={placeholder}
         readOnly={readOnly}
         min={min}
-        {...field}
+        dir={ar ? "rtl" : "ltr"}
+        value={isControlled ? value ?? "" : field.value}
+        onChange={isControlled ? onChange : field.onChange}
+        onBlur={isControlled ? onBlur : field.onBlur}
       />
-      <ErrorMessage name={name} component="div" className="invalid-feedback" />
+      {formik && meta.touched && meta.error && (
+        <div className="invalid-feedback">{meta.error}</div>
+      )}
     </FormGroup>
   );
 };

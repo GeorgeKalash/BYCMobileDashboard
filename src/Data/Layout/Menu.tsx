@@ -7,6 +7,12 @@ export const MenuList: MenuItem[] | undefined = [
     menucontent: "BYC Pages to use",
     Items: [
       {
+        path: "/Byc_Pages/Home_Page",
+        type: "link",
+        title: "Home Page",
+        icon: "ui-kits",
+      },
+      {
         path: "/Byc_Pages/Defaults",
         type: "link",
         title: "Defaults",
@@ -38,9 +44,45 @@ export const MenuList: MenuItem[] | undefined = [
         icon: "ui-kits",
       },
       {
+        path: "/Byc_Pages/Notification_Type",
+        type: "link",
+        title: "Notification Type",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/Notification_Template",
+        type: "link",
+        title: "Notifications Template",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/OTP_Control",
+        type: "link",
+        title: "OTP Control",
+        icon: "ui-kits",
+      },
+      {
         path: "/Byc_Pages/Requests",
         type: "link",
         title: "Requests",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/FAQ",
+        type: "link",
+        title: "FAQ",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/Slider_Image_Attachment",
+        type: "link",
+        title: "Slider Image Attachment",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/Users",
+        type: "link",
+        title: "Users",
         icon: "ui-kits",
       },
     ],

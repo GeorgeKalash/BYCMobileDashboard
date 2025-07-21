@@ -1,5 +1,5 @@
 import React from "react";
-import { Field, ErrorMessage, useField } from "formik";
+import { useField, useFormikContext } from "formik";
 import { FormGroup, Label } from "reactstrap";
 
 type CustomTextareaProps = {
@@ -9,6 +9,10 @@ type CustomTextareaProps = {
   placeholder?: string;
   readOnly?: boolean;
   rows?: number;
+  ar?: boolean;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
 };
 
 const CustomTextarea: React.FC<CustomTextareaProps> = ({
@@ -18,31 +22,43 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
   placeholder = "",
   readOnly = false,
   rows = 4,
+  ar = false,
+  value,
+  onChange,
+  onBlur,
 }) => {
-  const [field, meta] = useField(name);
+  const formik = useFormikContext();
+  const isControlled =
+    typeof value !== "undefined" || typeof onChange !== "undefined";
 
-  const isEmpty = isRequired && !field.value;
+  const [field, meta] = isControlled
+    ? [{ name, value, onChange, onBlur }, {}]
+    : useField(name);
 
-  const validationClass = meta.touched
-    ? meta.error || isEmpty
-      ? "is-invalid"
-      : ""
-    : "";
+  const isEmpty = isRequired && !(isControlled ? value : field.value);
+  const validationClass =
+    formik && meta.touched ? (meta.error || isEmpty ? "is-invalid" : "") : "";
 
   return (
     <FormGroup>
-      <Label>
+      <Label htmlFor={name}>
         {label} {isRequired && <span className="text-danger">*</span>}
       </Label>
-      <Field
-        as="textarea"
+      <textarea
+        id={name}
+        name={name}
         className={`form-control ${validationClass}`}
         placeholder={placeholder}
         readOnly={readOnly}
         rows={rows}
-        {...field}
+        dir={ar ? "rtl" : "ltr"}
+        value={isControlled ? value ?? "" : field.value}
+        onChange={isControlled ? onChange : field.onChange}
+        onBlur={isControlled ? onBlur : field.onBlur}
       />
-      <ErrorMessage name={name} component="div" className="invalid-feedback" />
+      {formik && meta.touched && meta.error && (
+        <div className="invalid-feedback">{meta.error}</div>
+      )}
     </FormGroup>
   );
 };
