@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
 import { Col, Row } from "reactstrap";
 import { withRequestTracking } from "@/utils/withRequestTracking";
+
 import { postMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
 import * as Yup from "yup";
@@ -30,7 +31,7 @@ const ActivateLanguageForm = ({
 
   const initialValues = {
     name: rowData?.name || "",
-    isInactive: rowData?.isInactive, 
+    isInactive: rowData?.isInactive,
   };
 
   const validationSchema = Yup.object().shape({
@@ -41,15 +42,11 @@ const ActivateLanguageForm = ({
     values: typeof initialValues,
     { setSubmitting }: FormikHelpers<typeof initialValues>
   ) => {
-
-    const transformedData = 
-      {
-        languageId: rowData.languageId,
-        name: String(rowData.name),
-        isInactive: values.isInactive, 
-      }
-    ;
-
+    const transformedData = {
+      languageId: rowData.languageId,
+      name: String(rowData.name),
+      isInactive: values.isInactive,
+    };
     await withRequestTracking(dispatch, () =>
       dispatch(
         postMobileRequest({
@@ -61,10 +58,10 @@ const ActivateLanguageForm = ({
     );
 
     setSubmitting(false);
-    if (onSuccessSubmit){   
+    if (onSuccessSubmit) {
       showToast("success");
-      onSuccessSubmit()
-    };
+      onSuccessSubmit();
+    }
   };
 
   return (
@@ -75,7 +72,6 @@ const ActivateLanguageForm = ({
       innerRef={formikRef}
     >
       {({ values, setFieldValue }) => {
-
         return (
           <Form>
             <Row>
@@ -89,7 +85,9 @@ const ActivateLanguageForm = ({
                 <SharedCheckbox
                   label={t("Active")}
                   checked={!values.isInactive}
-                  onChange={()=>setFieldValue("isInactive", !values.isInactive)}
+                  onChange={() =>
+                    setFieldValue("isInactive", !values.isInactive)
+                  }
                 />
               </Col>
             </Row>

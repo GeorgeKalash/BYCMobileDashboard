@@ -12,6 +12,7 @@ import { DashboardMobileRepository } from "@/Repositories/DashboardMobileReposit
 import { FormikProps } from "formik";
 import CustomSelect from "@/Shared/Components/CustomSelect";
 import { withRequestTracking } from "@/utils/withRequestTracking";
+
 import formatDate from "@/utils/DateFormatter";
 import RequestsForm from "./Form/RequestsForm";
 
@@ -26,7 +27,7 @@ const Requests = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [pageCount, setPageCount] = useState(1);
   const formikRef = useRef<FormikProps<any>>(null);
-  const pageSize = 30
+  const pageSize = 30;
 
   const fetchData = async (count = pageCount) => {
     if (eventType === null) return;
@@ -41,7 +42,7 @@ const Requests = () => {
     );
 
     const rows = result?.payload?.data?.list;
-    setTotalRows(result?.payload?.data?.count)
+    setTotalRows(result?.payload?.data?.count);
     setData(Array.isArray(rows) ? rows : []);
   };
 
@@ -77,7 +78,9 @@ const Requests = () => {
       name: t("clockStamp"),
       selector: (row: any) => row.clockStamp,
       cell: (row: any) =>
-        row.clockStamp ? formatDate(row.clockStamp, "dd/MM/yyyy HH:mm:ss") : "-",
+        row.clockStamp
+          ? formatDate(row.clockStamp, "dd/MM/yyyy HH:mm:ss")
+          : "-",
       sortable: true,
       id: "clockStamp",
     },
@@ -127,16 +130,16 @@ const Requests = () => {
     <Col xs="12">
       <Card>
         <CommonCardHeader title={t("Requests")}>
-         <div style={{ minWidth: 250, maxWidth: 400, width: "100%" }}>
-          <CustomSelect
-            name="eventType"
-            dataSetId={159}
-            valueKey="key"
-            labelKey="value"
-            value={eventType ?? ""}
-            onChange={handleLanguageChange}
-          />
-        </div>
+          <div style={{ minWidth: 250, maxWidth: 400, width: "100%" }}>
+            <CustomSelect
+              name="eventType"
+              dataSetId={159}
+              valueKey="key"
+              labelKey="value"
+              value={eventType ?? ""}
+              onChange={handleLanguageChange}
+            />
+          </div>
         </CommonCardHeader>
         <CardBody>
           <DataTable
@@ -157,16 +160,12 @@ const Requests = () => {
       <SharedModal
         visible={modalOpen}
         onClose={handleModalClose}
-        title={ t("Read Request")}
+        title={t("Read Request")}
         width="800px"
         height="80vh"
       >
-        <RequestsForm
-          rowData={selectedRow}
-          formikRef={formikRef}
-        />
+        <RequestsForm rowData={selectedRow} formikRef={formikRef} />
       </SharedModal>
-     
     </Col>
   );
 };

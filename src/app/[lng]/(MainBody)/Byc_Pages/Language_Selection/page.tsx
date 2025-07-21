@@ -11,6 +11,7 @@ import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
 import ActivateLanguageForm from "./Form/ActivateLanguageForm";
 import { withRequestTracking } from "@/utils/withRequestTracking";
+
 import { FormikProps } from "formik";
 
 const LanguageSelection = () => {
@@ -21,9 +22,11 @@ const LanguageSelection = () => {
   const [data, setData] = useState<any[]>([]);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"edit" | "delete" | null>(null);
+  const [modalAction, setModalAction] = useState<"edit" | "delete" | null>(
+    null
+  );
 
-  const formikRef = useRef<FormikProps<any>>(null); 
+  const formikRef = useRef<FormikProps<any>>(null);
 
   const fetchData = async () => {
     const result = await withRequestTracking(dispatch, () =>
@@ -111,12 +114,12 @@ const LanguageSelection = () => {
         title={t("Languages Page")}
         width="600px"
         height="60vh"
-        onSubmit={handleSubmit} 
+        onSubmit={handleSubmit}
       >
         <ActivateLanguageForm
           rowData={selectedRow}
           formikRef={formikRef}
-          onSuccessSubmit={handleModalClose} 
+          onSuccessSubmit={handleModalClose}
         />
       </SharedModal>
     </Col>

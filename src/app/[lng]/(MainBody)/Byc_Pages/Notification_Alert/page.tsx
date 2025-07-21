@@ -13,7 +13,7 @@ import CustomInput from "@/Shared/Components/CustomInput";
 import CustomSelect from "@/Shared/Components/CustomSelect";
 import SharedButton from "@/Shared/Components/SharedButton";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 
 const Notification_Alert = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);

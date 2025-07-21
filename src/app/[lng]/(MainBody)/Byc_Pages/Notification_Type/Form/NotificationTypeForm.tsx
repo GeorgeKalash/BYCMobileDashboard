@@ -55,52 +55,51 @@ const NotificationTypeForm: React.FC<NotificationFormProps> = ({
 
     const trimmedValue = values.value.trim();
 
-      if (modalAction === "edit") {
-        await withRequestTracking(dispatch, () =>
-          dispatch(
-            postMobileRequest({
-              extension: NotificationAlertRepository.NotificationTypes.update,
-              body: {
-                key: rowData?.key,
-                value: trimmedValue,
-              },
-              rawBody: true,
-            })
-          ).unwrap()
-        );
-      } else {
-        const result = await withRequestTracking(dispatch, () =>
-          dispatch(
-            getMobileRequest({
-              extension: NotificationAlertRepository.NotificationTypes.getAll,
-              parameters: "",
-            })
-          )
-        );
+    if (modalAction === "edit") {
+      await withRequestTracking(dispatch, () =>
+        dispatch(
+          postMobileRequest({
+            extension: NotificationAlertRepository.NotificationTypes.update,
+            body: {
+              key: rowData?.key,
+              value: trimmedValue,
+            },
+            rawBody: true,
+          })
+        ).unwrap()
+      );
+    } else {
+      const result = await withRequestTracking(dispatch, () =>
+        dispatch(
+          getMobileRequest({
+            extension: NotificationAlertRepository.NotificationTypes.getAll,
+            parameters: "",
+          })
+        )
+      );
 
-        const existing = Array.isArray(result?.payload?.data)
-          ? result.payload.data
-          : [];
+      const existing = Array.isArray(result?.payload?.data)
+        ? result.payload.data
+        : [];
 
-        const newKey =
-          Math.max(0, ...existing.map((item: any) => item.key ?? 0)) + 1;
+      const newKey =
+        Math.max(0, ...existing.map((item: any) => item.key ?? 0)) + 1;
 
-        const updatedPack = [...existing, { key: newKey, value: trimmedValue }];
+      const updatedPack = [...existing, { key: newKey, value: trimmedValue }];
 
-        await withRequestTracking(dispatch, () =>
-          dispatch(
-            postMobileRequest({
-              extension: NotificationAlertRepository.NotificationTypes.set,
-              body: updatedPack,
-              rawBody: true,
-            })
-          ).unwrap()
-        );
-      }
+      await withRequestTracking(dispatch, () =>
+        dispatch(
+          postMobileRequest({
+            extension: NotificationAlertRepository.NotificationTypes.set,
+            body: updatedPack,
+            rawBody: true,
+          })
+        ).unwrap()
+      );
+    }
 
-      showToast("success", t("Saved successfully"));
-      onSuccessSubmit?.();
-    
+    showToast("success", t("Saved successfully"));
+    onSuccessSubmit?.();
   };
 
   const handleKeyDown = (

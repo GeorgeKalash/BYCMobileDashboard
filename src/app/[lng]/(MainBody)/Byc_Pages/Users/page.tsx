@@ -10,6 +10,7 @@ import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
+
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import formatDate from "@/utils/DateFormatter";
 import UsersForm from "./Forms/UsersForm";
@@ -108,7 +109,7 @@ const UsersPage = () => {
       open: false,
       row: null,
     });
-    fetchData(paginationState.pageCount); 
+    fetchData(paginationState.pageCount);
   };
 
   const handleSubmit = () => {
@@ -153,8 +154,8 @@ const UsersPage = () => {
       >
         {modalState.row && (
           <UsersForm
-          userId={modalState.row.username.replace(/\+/g, "%2B")}
-          formikRef={formikRef}
+            userId={modalState.row.username.replace(/\+/g, "%2B")}
+            formikRef={formikRef}
             onSuccessSubmit={handleModalClose}
           />
         )}

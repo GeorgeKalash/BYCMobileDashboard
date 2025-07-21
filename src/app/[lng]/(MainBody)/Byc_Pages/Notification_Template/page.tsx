@@ -13,6 +13,7 @@ import {
 } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
+
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import formatDate from "@/utils/DateFormatter";
 import { showToast } from "@/Shared/Components/showToast";
@@ -64,7 +65,7 @@ const NotificationTemplatePage = () => {
   };
 
   useEffect(() => {
-      fetchData();
+    fetchData();
   }, [paginationState.searchTerm, paginationState.pageCount]);
 
   const columns = [
@@ -77,7 +78,7 @@ const NotificationTemplatePage = () => {
     {
       name: t("Date"),
       selector: (row: any) =>
-      row.date ? formatDate(row.date, "dd/MM/yyyy") : "",
+        row.date ? formatDate(row.date, "dd/MM/yyyy") : "",
       sortable: true,
       id: "date",
     },

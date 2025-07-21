@@ -10,6 +10,7 @@ import {
 } from "@/Redux/Reducers/RequestThunks";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import { withRequestTracking } from "@/utils/withRequestTracking";
+
 import { showToast } from "@/Shared/Components/showToast";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";
@@ -126,7 +127,7 @@ const NotificationTemplateForm = ({
         dispatch(
           getMobileRequest({
             extension: `${NotificationAlertRepository.NotificationTemplate.getPack}`,
-            parameters:`_recordId=${rowData.recordId}`
+            parameters: `_recordId=${rowData.recordId}`,
           })
         )
       );

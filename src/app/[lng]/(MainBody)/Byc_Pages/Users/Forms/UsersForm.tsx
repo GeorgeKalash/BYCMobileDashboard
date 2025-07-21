@@ -6,11 +6,15 @@ import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
 import { Col, Row } from "reactstrap";
-import { getMobileRequest, postMobileRequest } from "@/Redux/Reducers/RequestThunks";
+import {
+  getMobileRequest,
+  postMobileRequest,
+} from "@/Redux/Reducers/RequestThunks";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import * as Yup from "yup";
 import { showToast } from "@/Shared/Components/showToast";
 import { withRequestTracking } from "@/utils/withRequestTracking";
+
 import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";
 
@@ -54,13 +58,13 @@ const UsersForm = ({
 
       setInitialValues({
         username: result.data?.username || "",
-        isInactive: !!result.data?.isInactive||false,
+        isInactive: !!result.data?.isInactive || false,
         reason: result.data?.inactiveReason || "",
       });
     };
-  
+
     fetchUser();
-  }, [userId]);  
+  }, [userId]);
 
   const validationSchema = Yup.object().shape({
     username: Yup.string().required(),
@@ -68,9 +72,7 @@ const UsersForm = ({
     reason: Yup.string(),
   });
 
-  const handleSubmit = async (
-    values: FormValues,
-  ) => {
+  const handleSubmit = async (values: FormValues) => {
     await withRequestTracking(dispatch, () =>
       dispatch(
         postMobileRequest({
@@ -104,7 +106,7 @@ const UsersForm = ({
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
       innerRef={formikRef}
-      enableReinitialize 
+      enableReinitialize
     >
       {({ values, setFieldValue, submitForm }) => (
         <Form onKeyDown={(e) => handleKeyDown(e, submitForm)}>
@@ -118,9 +120,7 @@ const UsersForm = ({
                   name="isInactive"
                   label={t("isInactive")}
                   checked={values.isInactive}
-                  onChange={(checked) =>
-                    setFieldValue("isInactive", checked)
-                  }
+                  onChange={(checked) => setFieldValue("isInactive", checked)}
                 />
               </div>
             </Col>

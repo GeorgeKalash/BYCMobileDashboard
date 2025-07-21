@@ -16,17 +16,18 @@ import SharedFileUpload from "@/Shared/Components/SharedFileUpload";
 import { useAppDispatch } from "@/Redux/Hooks";
 import { BusinessPartnerRepository } from "@/Repositories/BusinessPartnerRepository";
 import { withRequestTracking } from "@/utils/withRequestTracking";
+
 import { getRequest } from "@/Redux/Reducers/RequestThunks";
 
 interface DocumentType {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
 const SamplePageContainer = () => {
-  const dispatch = useAppDispatch()
-  const [docType, setDocType] = useState<DocumentType | null>(null)
-  const [error, setError] = useState<string>('')
+  const dispatch = useAppDispatch();
+  const [docType, setDocType] = useState<DocumentType | null>(null);
+  const [error, setError] = useState<string>("");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [selectedOption, setSelectedOption] = useState("option1");
   const [darkMode, setDarkMode] = useState(false);
@@ -35,17 +36,19 @@ const SamplePageContainer = () => {
 
   const fetchDocumentType = async () => {
     const result = await withRequestTracking(dispatch, () =>
-      dispatch(getRequest({
-        extension: `${BusinessPartnerRepository.Group.page}`,
-        parameters: '_startAt=0&_pageSize=50&filter='
-      }))
-    )
-    console.log(result)
-  }
+      dispatch(
+        getRequest({
+          extension: `${BusinessPartnerRepository.Group.page}`,
+          parameters: "_startAt=0&_pageSize=50&filter=",
+        })
+      )
+    );
+    console.log(result);
+  };
 
   useEffect(() => {
-    fetchDocumentType()
-  }, [])
+    fetchDocumentType();
+  }, []);
 
   return (
     <div style={{ padding: 20 }}>

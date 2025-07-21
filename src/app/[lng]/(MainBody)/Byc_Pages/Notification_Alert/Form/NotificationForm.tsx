@@ -14,7 +14,7 @@ import { NotificationMobileRepository } from "@/Repositories/NotificationMobileR
 import CustomInput from "@/Shared/Components/CustomInput";
 import * as Yup from "yup";
 import { showToast } from "@/Shared/Components/showToast";
-import { withRequestTracking } from "@/utils/withRequestTracking ";
+import { withRequestTracking } from "@/utils/withRequestTracking";
 
 interface NotificationPayloadItem {
   templateId: number;
