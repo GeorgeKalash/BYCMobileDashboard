@@ -8,11 +8,21 @@ export const NotificationAlertRepository = {
   },
   NotificationTemplate: {
     getAll: service + "NotificationTemplate/page",
-
     update: service + "NotificationTemplate/update",
     set: service + "NotificationTemplate/create",
     setPack: service + "NotificationTemplate/createPack",
     getPack: service + "NotificationTemplate/getPack",
     delete: service + "NotificationTemplate/delete",
+  },
+  NotificationGroup: {
+    page: service + "NotificationGroup/page",
+    getpack: service + "NotificationGroup/getPack",
+    update: service + "NotificationGroup/update",
+    create: service + "NotificationGroup/create",
+    delete: service + "NotificationGroup/delete",
+    getAll: service + "notificationGroup/getAll",
+
+    addClient: service + "NotificationGroupClient/create",
+    deleteClient: service + "NotificationGroupClient/delete",
   },
 };

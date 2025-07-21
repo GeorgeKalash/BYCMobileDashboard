@@ -5,6 +5,6 @@ export const NotificationMobileRepository = {
     getAll: service + "pageNotificationAlerts",
     get: service + "getNotifications",
     create: service + "createNotification",
-    createPack: service + "createBroadcast",
+    createBroadcast: service + "createBroadcast",
   },
 };

@@ -12,20 +12,32 @@ import NotificationForm from "./Form/NotificationForm";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomSelect from "@/Shared/Components/CustomSelect";
 import SharedButton from "@/Shared/Components/SharedButton";
-import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
-import { withRequestTracking } from "@/utils/withRequestTracking";
+import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
+import {
+  getMobileRequest,
+  postMobileRequest,
+} from "@/Redux/Reducers/RequestThunks";
+import DataTableComponent from "@/Shared/Components/DataTable";
 
 const Notification_Alert = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
   const formikModalRef = useRef<FormikProps<any>>(null);
-
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const formikRef = useRef<FormikProps<any>>(null);
   const [selectedRow, setSelectedRow] = useState<any>({
     template: "",
   });
+  const [templateSelected, setTemplateSelected] = useState(false);
+
+  const [data, setData] = useState<any[]>([]);
+  const [paginationState, setPaginationState] = useState({
+    pageCount: 0,
+    totalRows: 0,
+  });
+  const pageSize = 20;
 
   const handleModalClose = () => {
     setModalOpen(false);
@@ -37,6 +49,98 @@ const Notification_Alert = () => {
       formikRef.current.submitForm();
     }
   };
+
+  const fetchData = async (page = 0) => {
+    const values = formikRef.current?.values;
+    const payload = {
+      startAt: page,
+      pageSize: pageSize,
+      filters: {
+        fromDate: null,
+        toDate: null,
+        username: values?.mobile || null,
+        nationalityId: values?.country?.toString() || null,
+        idNo: values?.idNumber || null,
+      },
+    };
+    const result = await dispatch(
+      postMobileRequest({
+        extension: DashboardMobileRepository.MobileUser.SearchEngine,
+        body: payload,
+        rawBody: true,
+      })
+    ).unwrap();
+
+    const list = result?.data;
+    setData(Array.isArray(list) ? list : []);
+    setPaginationState((prev) => ({
+      ...prev,
+      totalRows: Array.isArray(list) ? list.length : 0,
+    }));
+  };
+  const fetchDataByGroup = async (groupId: number) => {
+    try {
+      const result = await dispatch(
+        getMobileRequest({
+          extension: `${NotificationAlertRepository.NotificationGroup.getpack}?_recordId=${groupId}`,
+        })
+      ).unwrap();
+
+      const clients = result?.data?.clients || [];
+
+      const formattedData = clients.map((client: any) => ({
+        clientMaster: {
+          name: client?.name ?? "",
+          cellPhone: client?.username ?? "",
+          nationalityName: client?.nationality ?? "",
+        },
+        clientRemittance: {
+          idNo: client?.idNo ?? "",
+        },
+      }));
+
+      setData(formattedData);
+      setPaginationState((prev) => ({
+        ...prev,
+        totalRows: formattedData.length,
+      }));
+    } catch (error) {
+      console.error("Error fetching group data:", error);
+      setData([]);
+    }
+  };
+
+  const columns = [
+    {
+      name: t("Name"),
+      selector: (row: any) => row.clientMaster?.name ?? "",
+      sortable: true,
+      id: "name",
+    },
+    {
+      name: t("PhoneNumber"),
+      selector: (row: any) => row.clientMaster?.cellPhone ?? "",
+      sortable: true,
+      id: "phone",
+    },
+    {
+      name: t("Nationality"),
+      selector: (row: any) => row.clientMaster?.nationalityName ?? "",
+      sortable: true,
+      id: "nationality",
+    },
+    {
+      name: t("ID Number"),
+      selector: (row: any) => row.clientRemittance?.idNo ?? "",
+      sortable: true,
+      id: "idNo",
+    },
+  ];
+  useEffect(() => {
+    if (formikRef.current) {
+      fetchData(paginationState.pageCount);
+    }
+  }, [paginationState.pageCount]);
 
   return (
     <Col xs="12">
@@ -56,13 +160,91 @@ const Notification_Alert = () => {
           >
             {({ values, setFieldValue }) => (
               <Form>
+                <Row className="align-items-end">
+                  <Col md="3">
+                    <CustomSelect
+                      name="country"
+                      label={t("Country")}
+                      value={values.country}
+                      onChange={(val) => {
+                        setFieldValue("country", val);
+                      }}
+                      endpointId={DashboardMobileRepository.country.getall}
+                      labelKey="name"
+                      valueKey="recordId"
+                      isRequired={true}
+                    />
+                  </Col>
+                  <Col md="3">
+                    <CustomInput
+                      name="mobile"
+                      label={t("Phone Number")}
+                      placeholder={t("Search by phone")}
+                      value={values.mobile}
+                      onChange={(e) => {
+                        setFieldValue("mobile", e.target.value);
+                      }}
+                    />
+                  </Col>
+
+                  <Col md="3">
+                    <CustomInput
+                      name="idNumber"
+                      label={t("ID Number")}
+                      placeholder={t("Search by ID")}
+                      value={values.idNumber}
+                      onChange={(e) =>
+                        setFieldValue("idNumber", e.target.value)
+                      }
+                    />
+                  </Col>
+                  <Col
+                    md="3"
+                    className="d-flex justify-content-end align-items-end"
+                  >
+                    <SharedButton
+                      title={t("Filter")}
+                      onClick={() => {
+                        formikRef.current?.setFieldValue("group", "");
+                        fetchData(0);
+                      }}
+                    />
+                  </Col>
+                </Row>
                 <Row>
-                  <Col md="4">
+                  <Col md="3">
+                    <CustomSelect
+                      name="Group"
+                      label={t("Group")}
+                      value={values.group}
+                      onChange={async (val) => {
+                        if (val && !isNaN(Number(val))) {
+                          setFieldValue("group", val);
+                          setFieldValue("mobile", "");
+                          setFieldValue("idNumber", "");
+                          setFieldValue("country", "");
+                          await fetchDataByGroup(Number(val));
+                        }
+                      }}
+                      endpointId={
+                        NotificationAlertRepository.NotificationGroup.getAll
+                      }
+                      labelKey="name"
+                      valueKey="recordId"
+                      isRequired
+                    />
+                  </Col>
+                </Row>
+                <Row className="align-items-end mb-2">
+                  <Col md="3">
                     <CustomSelect
                       name="template"
                       label={t("Template")}
                       value={values.template}
-                      onChange={(val) => setFieldValue("template", val)}
+                      onChange={(val) => {
+                        setFieldValue("template", val);
+                        setTemplateSelected(!!val);
+                      }}
                       endpointId={
                         NotificationAlertRepository.NotificationTemplate.get
                       }
@@ -71,23 +253,43 @@ const Notification_Alert = () => {
                       isRequired
                     />
                   </Col>
+                  <Col
+                    md="9"
+                    className="d-flex justify-content-end align-items-end"
+                  >
+                    <SharedButton
+                      title={t("Next")}
+                      color="primary"
+                      size="sm"
+                      disabled={!templateSelected}
+                      onClick={() => {
+                        setSelectedRow(() => ({
+                          template: formikRef.current?.values.template,
+                        }));
+                        setModalOpen(true);
+                      }}
+                    />
+                  </Col>
                 </Row>
               </Form>
             )}
           </Formik>
-          <div className="d-flex justify-content-end mb-3">
-            <SharedButton
-              title={t("Preview Template")}
-              color="primary"
-              size="sm"
-              onClick={() => {
-                setSelectedRow(() => ({
-                  template: formikRef.current?.values.template,
-                }));
-                setModalOpen(true);
-              }}
-            />
-          </div>
+
+          <DataTableComponent
+            data={data}
+            columns={columns}
+            pagination
+            serverPagination
+            totalRows={paginationState.totalRows}
+            pageSize={pageSize}
+            onPageChange={(page) => {
+              setPaginationState((prev) => ({
+                ...prev,
+                pageCount: page,
+              }));
+              fetchData(page);
+            }}
+          />
         </CardBody>
       </Card>
 
@@ -101,9 +303,13 @@ const Notification_Alert = () => {
       >
         <NotificationForm
           templateId={formikRef.current?.values.template || null}
+          selectedUser={selectedUser}
+          selectedCountry={formikRef.current?.values.country || null}
+          selectedGroup={formikRef.current?.values.group || null}
+          idNumber={formikRef.current?.values.idNumber || null}
           formikRef={formikModalRef}
           onSuccessSubmit={handleModalClose}
-        />{" "}
+        />
       </SharedModal>
     </Col>
   );

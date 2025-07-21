@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Formik, Form, FormikHelpers, FormikProps } from "formik";
 import { Col, Row, Card, CardBody, CardTitle } from "reactstrap";
+import * as Yup from "yup";
+
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import {
@@ -11,8 +13,9 @@ import {
 } from "@/Redux/Reducers/RequestThunks";
 import { NotificationAlertRepository } from "@/Repositories/NotificatioAlert";
 import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
+
 import CustomInput from "@/Shared/Components/CustomInput";
-import * as Yup from "yup";
+import CustomTextarea from "@/Shared/Components/CustomTextarea";
 import { showToast } from "@/Shared/Components/showToast";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 
@@ -25,29 +28,41 @@ interface NotificationPayloadItem {
   title: string;
   body: string;
   isRead: boolean;
+  destination: string;
 }
 
 interface Props {
   templateId: number;
   formikRef?: React.Ref<FormikProps<any>>;
   onSuccessSubmit?: () => void;
+  selectedUser?: any;
+  selectedCountry?: any;
+  selectedGroup?: any;
+  idNumber?: any;
 }
 
 const NotificationForm = ({
   templateId,
   formikRef,
   onSuccessSubmit,
+  selectedUser,
+  selectedCountry,
+  selectedGroup,
+  idNumber,
 }: Props) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
 
-  const [initialValues, setInitialValues] = useState({
-    title_en: "",
-    message_en: "",
-    title_ar: "",
-    message_ar: "",
-  });
+  const [initialValues, setInitialValues] = useState<Record<string, string>>(
+    {}
+  );
+  const supportedLanguagesRef = useRef<
+    { id: number; titleKey: string; bodyKey: string }[]
+  >([
+    { id: 1, titleKey: "title", bodyKey: "body" },
+    { id: 2, titleKey: "title2", bodyKey: "body2" },
+  ]);
 
   useEffect(() => {
     const fetchTemplate = async () => {
@@ -60,65 +75,76 @@ const NotificationForm = ({
       );
 
       const data = res.payload.data;
+      const languagesFromApi = data?.languages || [];
+
+      supportedLanguagesRef.current = languagesFromApi.map(
+        (lang: any, index: number) => ({
+          id: lang.languageId,
+          titleKey: `title${index === 0 ? "" : index + 1}`,
+          bodyKey: `body${index === 0 ? "" : index + 1}`,
+        })
+      );
+
       const getLangField = (field: "title" | "description", langId: number) =>
         data?.languages?.find((lang: any) => lang.languageId === langId)?.[
           field
         ] ?? "";
 
-      setInitialValues({
-        title_en: getLangField("title", 1),
-        message_en: getLangField("description", 1),
-        title_ar: getLangField("title", 2),
-        message_ar: getLangField("description", 2),
-      });
+      const langValues = supportedLanguagesRef.current.reduce((acc, lang) => {
+        acc[lang.titleKey] = getLangField("title", lang.id);
+        acc[lang.bodyKey] = getLangField("description", lang.id);
+        return acc;
+      }, {} as Record<string, string>);
+
+      setInitialValues(langValues);
     };
 
     fetchTemplate();
-  }, [templateId]);
+  }, [templateId, dispatch]);
 
-  const validationSchema = Yup.object().shape({
-    title_en: Yup.string().required(t("required")),
-    message_en: Yup.string().required(t("required")),
-    title_ar: Yup.string().required(t("required")),
-    message_ar: Yup.string().required(t("required")),
-  });
+  const validationSchema = Yup.object().shape(
+    supportedLanguagesRef.current.reduce((acc, lang) => {
+      acc[lang.titleKey] = Yup.string().required(t("required"));
+      acc[lang.bodyKey] = Yup.string().required(t("required"));
+      return acc;
+    }, {} as Record<string, Yup.StringSchema>)
+  );
 
   const handleSubmit = async (
-    values: typeof initialValues,
-    { setSubmitting }: FormikHelpers<typeof initialValues>
+    values: Record<string, string>,
+    { setSubmitting }: FormikHelpers<Record<string, string>>
   ) => {
-    const payload: NotificationPayloadItem[] = [];
     const currentDate = new Date().toISOString();
 
-    payload.push({
-      templateId,
-      clientId: 0,
-      seqNo: 0,
-      languageId: 1,
-      date: currentDate,
-      title: values.title_en.trim(),
-      body: values.message_en.trim(),
-      isRead: false,
-    });
+    const payload: NotificationPayloadItem[] =
+      supportedLanguagesRef.current.map((lang) => ({
+        templateId,
+        clientId: 0,
+        seqNo: 0,
+        languageId: lang.id,
+        date: currentDate,
+        title: values[lang.titleKey]?.trim() ?? "",
+        body: values[lang.bodyKey]?.trim() ?? "",
+        isRead: false,
+        destination: "",
+      }));
 
-    payload.push({
-      templateId,
-      clientId: 0,
-      seqNo: 0,
-      languageId: 2,
-      date: currentDate,
-      title: values.title_ar.trim(),
-      body: values.message_ar.trim(),
-      isRead: false,
-    });
-
-    console.log("Submitting payload:", JSON.stringify(payload, null, 2));
+    const requestBody = {
+      notificationAlerts: payload,
+      filters: {
+        userName: selectedUser?.username || null,
+        nationalityId: selectedCountry || null,
+        idNo: idNumber || null,
+        notificationGroupId: selectedGroup || null,
+      },
+    };
 
     await withRequestTracking(dispatch, () =>
       dispatch(
         postMobileRequest({
-          extension: NotificationMobileRepository.Notification.createPack,
-          body: { notificationAlert: payload },
+          extension: NotificationMobileRepository.Notification.createBroadcast,
+
+          body: requestBody,
           rawBody: true,
         })
       ).unwrap()
@@ -140,49 +166,28 @@ const NotificationForm = ({
       {({ isSubmitting }) => (
         <Form>
           <Row className="gy-4">
-            <Col md="6">
-              <Card className="h-100">
-                <CardBody>
-                  <CardTitle tag="h5" className="mb-4">
-                    {t("English Section")}
-                  </CardTitle>
-                  <CustomInput
-                    name="title_en"
-                    label={t("Title (English)")}
-                    type="text"
-                    placeholder={t("Enter the title in English")}
-                  />
-                  <CustomInput
-                    name="message_en"
-                    label={t("Message (English)")}
-                    type="text"
-                    placeholder={t("Enter the message in English")}
-                  />
-                </CardBody>
-              </Card>
-            </Col>
-
-            <Col md="6">
-              <Card className="h-100">
-                <CardBody>
-                  <CardTitle tag="h5" className="mb-4">
-                    {t("Arabic Section")}
-                  </CardTitle>
-                  <CustomInput
-                    name="title_ar"
-                    label={t("Title (Arabic)")}
-                    type="text"
-                    placeholder={t("أدخل العنوان باللغة العربية")}
-                  />
-                  <CustomInput
-                    name="message_ar"
-                    label={t("Message (Arabic)")}
-                    type="text"
-                    placeholder={t("أدخل الرسالة باللغة العربية")}
-                  />
-                </CardBody>
-              </Card>
-            </Col>
+            {supportedLanguagesRef.current.map((lang) => (
+              <Col md="6" key={lang.id}>
+                <Card className="h-100">
+                  <CardBody>
+                    <CardTitle tag="h5" className="mb-4">
+                      {t(`Language ${lang.id}`)}
+                    </CardTitle>
+                    <CustomInput
+                      name={lang.titleKey}
+                      label={t(`Title (Language ${lang.id})`)}
+                      type="text"
+                      placeholder={t("Enter the title")}
+                    />
+                    <CustomTextarea
+                      name={lang.bodyKey}
+                      label={t(`Message (Language ${lang.id})`)}
+                      placeholder={t("Enter the message")}
+                    />
+                  </CardBody>
+                </Card>
+              </Col>
+            ))}
           </Row>
         </Form>
       )}

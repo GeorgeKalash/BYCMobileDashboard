@@ -25,5 +25,13 @@ export const DashboardMobileRepository = {
     page: service + "MobileUser/page",
     getById: service + "MobileUser/getById",
     changeUserStatus: service + "MobileUser/changeUserStatus",
+    SearchEngine: service + "MobileUser/SearchEngine/page",
+  },
+  mobileUser: {
+    get: service + "MobileUser/getById",
+    snapshot: service + "MobileUser/snapshot",
+  },
+  country: {
+    getall: service + "System/Country/getAll",
   },
 };
