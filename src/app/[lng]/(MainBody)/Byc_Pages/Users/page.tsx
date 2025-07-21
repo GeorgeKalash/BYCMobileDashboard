@@ -1,18 +1,27 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Card, CardBody, Col } from "reactstrap";
+import { Card, CardBody, Col, Row } from "reactstrap";
 import DataTable from "../../../../../Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedModal from "../../../../../Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
-import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
+import {
+  getMobileRequest,
+  postMobileRequest,
+} from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import formatDate from "@/utils/DateFormatter";
 import UsersForm, { UsersFormHandle } from "./Forms/UsersForm";
+import SharedButton from "@/Shared/Components/SharedButton";
+import CustomInput from "@/Shared/Components/CustomInput";
+import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
+import { format } from "date-fns";
+const lock = "/assets/images/icons/lock.png";
+const user = "/assets/images/icons/user.png";
 
 const UsersPage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -24,77 +33,70 @@ const UsersPage = () => {
     open: false,
     row: null as any,
   });
-
+  const handleOTPPress = () => {
+    formLogicRef.current?.openOtpModal();
+  };
   const [paginationState, setPaginationState] = useState({
     pageCount: 0,
     totalRows: 0,
   });
 
+  const [filters, setFilters] = useState({
+    fromDate: format(new Date(), "MM-dd-yyyy"),
+    toDate: format(new Date(), "MM-dd-yyyy"),
+    name: "",
+    phoneNumber: "",
+    nationality: "",
+  });
+
   const pageSize = 30;
   const formikRef = useRef<FormikProps<any>>(null);
+  const formLogicRef = useRef<UsersFormHandle>(null);
 
   const fetchData = async (page = 0) => {
+    const payload = {
+      fromDate: new Date(filters.fromDate).toISOString(),
+      toDate: new Date(filters.toDate).toISOString(),
+      username: filters.name || "",
+      nationalityId: filters.nationality ? Number(filters.nationality) : 0,
+      idNo: filters.phoneNumber || "",
+      _startAt: page,
+      _pageSize: pageSize,
+    };
+
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
-        getMobileRequest({
-          extension: DashboardMobileRepository.MobileUser.page,
-          parameters: `&_startAt=${page}&_pageSize=${pageSize}`,
+        postMobileRequest({
+          extension: DashboardMobileRepository.MobileUser.SearchEngine,
+          body: payload,
+          rawBody: true,
         })
-      )
+      ).unwrap()
     );
 
-    const list = result?.payload?.data?.list;
-    const total = result?.payload?.data?.count;
-
+    const list = result?.data;
     setData(Array.isArray(list) ? list : []);
-    if (typeof total === "number") {
-      setPaginationState((prev) => ({
-        ...prev,
-        totalRows: total,
-      }));
-    }
+
+    setPaginationState((prev) => ({
+      ...prev,
+      totalRows: Array.isArray(list) ? list.length : 0,
+    }));
   };
 
   useEffect(() => {
     fetchData(paginationState.pageCount);
   }, [paginationState.pageCount]);
 
-  const columns = [
-    {
-      name: t("Username"),
-      selector: (row: any) => row.username,
-      sortable: true,
-      id: "username",
-    },
-    {
-      name: t("Active"),
-      cell: (row: any) => (
-        <span
-          style={{
-            color: row.isInactive ? "red" : "green",
-            fontWeight: "bold",
-          }}
-        >
-          {row.isInactive ? t("Inactive") : t("Active")}
-        </span>
-      ),
-      sortable: true,
-      id: "isInactive",
-    },
-    {
-      name: t("emailValidTo"),
-      selector: (row: any) =>
-        row.emailValidTo ? formatDate(row.emailValidTo, "dd/MM/yyyy") : "",
-      sortable: true,
-      id: "emailValidTo",
-    },
-    {
-      name: t("deviceIMEI"),
-      selector: (row: any) => row.deviceIMEI,
-      sortable: true,
-      id: "deviceIMEI",
-    },
-  ];
+  const handleFilterChange = (field: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePageChange = (startAt: number) => {
+    setPaginationState((prev) => ({
+      ...prev,
+      pageCount: startAt,
+    }));
+  };
 
   const openModal = (row: any = null) => {
     setModalState({
@@ -111,10 +113,12 @@ const UsersPage = () => {
     fetchData(paginationState.pageCount);
   };
 
-  const formLogicRef = useRef<UsersFormHandle>(null);
-
   const handleInfoClick = () => {
     formLogicRef.current?.logFormValues();
+  };
+
+  const handleUserInfoPress = () => {
+    formLogicRef.current?.openUserInfoModal();
   };
 
   const handleSubmit = () => {
@@ -123,32 +127,147 @@ const UsersPage = () => {
     }
   };
 
-  const handlePageChange = (startAt: number) => {
-    setPaginationState((prev) => ({
-      ...prev,
-      pageCount: startAt,
-    }));
-  };
+  const columns = [
+    {
+      name: t("Name"),
+      selector: (row: any) => row.clientMaster?.name ?? "",
+      sortable: true,
+      id: "name",
+    },
+    {
+      name: t("PhoneNumber"),
+      selector: (row: any) => row.clientMaster?.cellPhone ?? "",
+      sortable: true,
+      id: "phone",
+    },
+    {
+      name: t("Nationality"),
+      selector: (row: any) => row.clientMaster?.nationalityName ?? "",
+      sortable: true,
+      id: "nationality",
+    },
+    {
+      name: t("ID Number"),
+      selector: (row: any) => row.clientRemittance?.idNo ?? "",
+      sortable: true,
+      id: "idNo",
+    },
+    {
+      name: t("City"),
+      selector: (row: any) => row.address?.city ?? "",
+      sortable: true,
+      id: "city",
+    },
+    {
+      name: t("District"),
+      selector: (row: any) => row.address?.cityDistrict ?? "",
+      sortable: true,
+      id: "district",
+    },
+    {
+      name: t("Street"),
+      selector: (row: any) => row.address?.street1 ?? "",
+      sortable: true,
+      id: "street",
+    },
+    {
+      name: t("Active"),
+      cell: (row: any) => (
+        <span
+          style={{
+            color: row.isInactive ? "red" : "green",
+            fontWeight: "bold",
+          }}
+        >
+          {row?.isInactive ? t("InActive") : t("Active")}
+        </span>
+      ),
+      sortable: true,
+      id: "isInactive",
+    },
+  ];
 
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Users")} />
+        <CommonCardHeader title={t("Users")}>
+          <Row className="w-100">
+            <Col md="2">
+              <CustomDatePicker
+                name="fromDate"
+                label={t("From Date")}
+                value={filters.fromDate}
+                onChange={(val) =>
+                  val && setFilters((prev) => ({ ...prev, fromDate: val }))
+                }
+              />
+            </Col>
+            <Col md="2">
+              <CustomDatePicker
+                name="toDate"
+                label={t("To Date")}
+                value={filters.toDate}
+                onChange={(val) =>
+                  val && setFilters((prev) => ({ ...prev, toDate: val }))
+                }
+              />
+            </Col>
+            <Col md="2">
+              <CustomInput
+                name="name"
+                label={t("Name")}
+                placeholder={t("Search by name")}
+                value={filters.name}
+                onChange={(e) => handleFilterChange("name", e.target.value)}
+              />
+            </Col>
+            <Col md="2">
+              <CustomInput
+                name="phoneNumber"
+                label={t("Phone Number")}
+                placeholder={t("Search by phone")}
+                value={filters.phoneNumber}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "phoneNumber",
+                    e.target.value.replace(/\D/g, "")
+                  )
+                }
+              />
+            </Col>
+            <Col md="2">
+              <CustomInput
+                name="nationality"
+                label={t("Nationality")}
+                placeholder={t("Search by nationality")}
+                value={filters.nationality}
+                onChange={(e) =>
+                  handleFilterChange("nationality", e.target.value)
+                }
+              />
+            </Col>
+            <Col md="2" className="d-flex align-items-center">
+              <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
+            </Col>
+          </Row>
+        </CommonCardHeader>
+
         <CardBody>
           <DataTable
             title={t("Users")}
             data={data}
             columns={columns}
             pagination
-            serverPagination={true}
+            serverPagination
             totalRows={paginationState.totalRows}
             pageSize={pageSize}
             onPageChange={handlePageChange}
-            showActions={true}
+            showActions
             onEdit={(row) => openModal(row)}
           />
         </CardBody>
       </Card>
+
       <SharedModal
         visible={modalState.open}
         onClose={handleModalClose}
@@ -157,11 +276,29 @@ const UsersPage = () => {
         height="70vh"
         onSubmit={handleSubmit}
         onInfoClick={handleInfoClick}
+        footerActions={
+          <>
+            <SharedButton
+              logo={user}
+              color="secondary"
+              title={t("UserInfo")}
+              onClick={handleUserInfoPress}
+              tooltip={t("UserInfo")}
+            />
+            <SharedButton
+              logo={lock}
+              color="warning"
+              title={t("OTP")}
+              onClick={handleOTPPress}
+              tooltip={t("OTP")}
+            />
+          </>
+        }
       >
         {modalState.row && (
           <UsersForm
             ref={formLogicRef}
-            userId={modalState.row.username.replace(/\+/g, "%2B")}
+            user={modalState.row}
             formikRef={formikRef}
             onSuccessSubmit={handleModalClose}
           />

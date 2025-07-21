@@ -13,10 +13,7 @@ import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
 import { Col, Row } from "reactstrap";
-import {
-  getMobileRequest,
-  postMobileRequest,
-} from "@/Redux/Reducers/RequestThunks";
+import { postMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import * as Yup from "yup";
 import { showToast } from "@/Shared/Components/showToast";
@@ -24,6 +21,10 @@ import { withRequestTracking } from "@/utils/withRequestTracking";
 import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";
 import TransactionLogForm from "./TransactionLogForm";
+import SharedModal from "@/Shared/Components/SharedModal";
+import UserInfoForm from "./UserInfoForm";
+import OTPForm from "./OTPForm";
+
 interface FormValues {
   username: string;
   isInactive: boolean;
@@ -32,50 +33,49 @@ interface FormValues {
 
 export interface UsersFormHandle {
   logFormValues: () => void;
+  openUserInfoModal: () => void;
+  openOtpModal: () => void;
 }
 
 const UsersForm = forwardRef<
   UsersFormHandle,
   {
-    userId: string;
+    user: any;
     formikRef?: React.Ref<FormikProps<FormValues>>;
     onSuccessSubmit?: () => void;
   }
->(({ userId, formikRef, onSuccessSubmit }, ref) => {
+>(({ user, formikRef, onSuccessSubmit }, ref) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
   const [showMoreInfoModal, setShowMoreInfoModal] = useState(false);
+  const [showUserInfoModal, setShowUserInfoModal] = useState(false);
 
   const [initialValues, setInitialValues] = useState<FormValues | null>(null);
   const internalFormikRef = useRef<FormikProps<FormValues> | null>(null);
-
+  const [showOtpModal, setShowOtpModal] = useState(false);
   useEffect(() => {
-    const fetchUser = async () => {
-      const result = await withRequestTracking(dispatch, () =>
-        dispatch(
-          getMobileRequest({
-            extension: DashboardMobileRepository.MobileUser.getById,
-            parameters: `_username=${userId}`,
-          })
-        ).unwrap()
-      );
+    if (!user) return;
 
-      setInitialValues({
-        username: result.data?.username || "",
-        isInactive: !!result.data?.isInactive || false,
-        reason: result.data?.inactiveReason || "",
-      });
-    };
-
-    fetchUser();
-  }, [userId]);
+    setInitialValues({
+      username: user?.clientMaster?.cellPhone ?? "",
+      isInactive: user?.clientMaster?.status === 0,
+      reason: user?.clientMaster?.inactiveReason ?? "",
+    });
+  }, [user]);
 
   useImperativeHandle(ref, () => ({
     logFormValues: () => {
       setShowMoreInfoModal(true);
     },
+    openUserInfoModal: () => {
+      setShowUserInfoModal(true);
+    },
+    openOtpModal: () => {
+      setShowOtpModal(true);
+    },
   }));
+
   const validationSchema = Yup.object().shape({
     username: Yup.string().required(),
     isInactive: Yup.boolean(),
@@ -144,7 +144,7 @@ const UsersForm = forwardRef<
                   <SharedCheckbox
                     name="isInactive"
                     label={t("isInactive")}
-                    checked={values.isInactive}
+                    checked={user.isInactive}
                     onChange={(checked) => setFieldValue("isInactive", checked)}
                   />
                 </div>
@@ -156,9 +156,22 @@ const UsersForm = forwardRef<
           </Form>
         )}
       </Formik>
+
       <TransactionLogForm
         visible={showMoreInfoModal}
         onClose={() => setShowMoreInfoModal(false)}
+        phoneNumber={initialValues?.username}
+      />
+
+      <UserInfoForm
+        visible={showUserInfoModal}
+        onClose={() => setShowUserInfoModal(false)}
+        phoneNumber={initialValues?.username}
+        LocaluserData={user}
+      />
+      <OTPForm
+        visible={showOtpModal}
+        onClose={() => setShowOtpModal(false)}
         phoneNumber={initialValues?.username}
       />
     </>

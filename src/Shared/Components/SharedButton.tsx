@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { Button, Tooltip } from 'reactstrap';
+import React, { useEffect, useState } from "react";
+import { Button, Tooltip } from "reactstrap";
 
 type SharedButtonProps = {
   title?: string;
   color?: string;
-  size?: 'sm' | 'lg' | 'md' | '';
+  size?: "sm" | "lg" | "md" | "";
   outline?: boolean;
   disabled?: boolean;
   active?: boolean;
@@ -15,39 +15,40 @@ type SharedButtonProps = {
   tooltip?: string;
   onClick?: () => void;
   logo?: string;
-  type?: 'button' | 'submit' | 'reset'; 
-}
+  type?: "button" | "submit" | "reset";
+};
 
 const SharedButton: React.FC<SharedButtonProps> = ({
   title,
-  color = 'primary',
-  size = '',
+  color = "primary",
+  size = "",
   outline = false,
   disabled = false,
   active = false,
-  className = '',
+  className = "",
   id,
   onClick,
   tooltip,
   logo,
-  type = 'button', 
+  type = "button",
 }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
-  const [tooltipTargetId, setTooltipTargetId] = useState<string>('');
+  const [tooltipTargetId, setTooltipTargetId] = useState<string>("");
   const [hover, setHover] = useState(false);
 
   useEffect(() => {
-    const generatedId = id || `btn-${Math.random().toString(36).substring(2, 9)}`;
+    const generatedId =
+      id || `btn-${Math.random().toString(36).substring(2, 9)}`;
     setTooltipTargetId(generatedId);
   }, [id]);
 
   const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
 
   return (
-    <>
+    <div>
       <Button
         id={tooltipTargetId}
-        type={type} 
+        type={type}
         color={color}
         size={size}
         outline={outline}
@@ -58,11 +59,11 @@ const SharedButton: React.FC<SharedButtonProps> = ({
         onMouseLeave={() => setHover(false)}
         className={`${className} d-flex align-items-center justify-content-center`}
         style={{
-          padding: logo ? '6px 10px' : undefined,
-          minWidth: logo ? '40px' : undefined,
-          height: logo ? '40px' : undefined,
-          filter: hover ? 'brightness(80%)' : undefined,
-          transition: 'filter 0.2s ease',
+          padding: logo ? "6px 10px" : undefined,
+          minWidth: logo ? "40px" : undefined,
+          height: logo ? "40px" : undefined,
+          filter: hover ? "brightness(80%)" : undefined,
+          transition: "filter 0.2s ease",
         }}
       >
         {logo ? (
@@ -70,9 +71,9 @@ const SharedButton: React.FC<SharedButtonProps> = ({
             src={logo}
             alt="logo"
             style={{
-              width: '20px',
-              height: '20px',
-              objectFit: 'contain',
+              width: "23px",
+              height: "23px",
+              objectFit: "contain",
             }}
           />
         ) : (
@@ -86,11 +87,12 @@ const SharedButton: React.FC<SharedButtonProps> = ({
           isOpen={tooltipOpen}
           target={tooltipTargetId}
           toggle={toggleTooltip}
+          container="inline"
         >
           {tooltip}
         </Tooltip>
       )}
-    </>
+    </div>
   );
 };
 
