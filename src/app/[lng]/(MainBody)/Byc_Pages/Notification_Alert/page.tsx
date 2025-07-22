@@ -18,6 +18,7 @@ import {
   postMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
 import DataTableComponent from "@/Shared/Components/DataTable";
+import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 
 const Notification_Alert = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -56,8 +57,12 @@ const Notification_Alert = () => {
       startAt: page,
       pageSize: pageSize,
       filters: {
-        fromDate: null,
-        toDate: null,
+        fromBirthDate: values?.fromBirthDate
+          ? new Date(values.fromBirthDate).toISOString()
+          : null,
+        toBirthDate: values?.toBirthDate
+          ? new Date(values.toBirthDate).toISOString()
+          : null,
         username: values?.mobile || null,
         nationalityId: values?.country?.toString() || null,
         idNo: values?.idNumber || null,
@@ -153,6 +158,8 @@ const Notification_Alert = () => {
               fullName: selectedRow?.fullName || "",
               mobile: selectedRow?.mobile || "",
               template: selectedRow?.template || "",
+              fromBirthDate: "",
+              toBirthDate: "",
             }}
             enableReinitialize
             onSubmit={() => {}}
@@ -161,10 +168,30 @@ const Notification_Alert = () => {
             {({ values, setFieldValue }) => (
               <Form>
                 <Row className="align-items-end">
-                  <Col md="3">
+                  <Col md="2">
+                    <CustomDatePicker
+                      name="fromBirthDate"
+                      label={t("From Birth Date")}
+                      value={values.fromBirthDate}
+                      onChange={(val) => setFieldValue("fromBirthDate", val)}
+                      selectYear={true}
+                    />
+                  </Col>
+
+                  <Col md="2">
+                    <CustomDatePicker
+                      name="toBirthDate"
+                      label={t("To Birth Date")}
+                      value={values.toBirthDate}
+                      onChange={(val) => setFieldValue("toBirthDate", val)}
+                      selectYear={true}
+                    />
+                  </Col>
+
+                  <Col md="2">
                     <CustomSelect
-                      name="country"
-                      label={t("Country")}
+                      name="Nationality"
+                      label={t("Nationality")}
                       value={values.country}
                       onChange={(val) => {
                         setFieldValue("country", val);
@@ -175,7 +202,7 @@ const Notification_Alert = () => {
                       isRequired={true}
                     />
                   </Col>
-                  <Col md="3">
+                  <Col md="2">
                     <CustomInput
                       name="mobile"
                       label={t("Phone Number")}
@@ -187,7 +214,7 @@ const Notification_Alert = () => {
                     />
                   </Col>
 
-                  <Col md="3">
+                  <Col md="2">
                     <CustomInput
                       name="idNumber"
                       label={t("ID Number")}
@@ -199,7 +226,7 @@ const Notification_Alert = () => {
                     />
                   </Col>
                   <Col
-                    md="3"
+                    md="2"
                     className="d-flex justify-content-end align-items-end"
                   >
                     <SharedButton
@@ -212,7 +239,7 @@ const Notification_Alert = () => {
                   </Col>
                 </Row>
                 <Row>
-                  <Col md="3">
+                  <Col md="2">
                     <CustomSelect
                       name="Group"
                       label={t("Group")}
@@ -236,7 +263,7 @@ const Notification_Alert = () => {
                   </Col>
                 </Row>
                 <Row className="align-items-end mb-2">
-                  <Col md="3">
+                  <Col md="2">
                     <CustomSelect
                       name="template"
                       label={t("Template")}
@@ -254,7 +281,7 @@ const Notification_Alert = () => {
                     />
                   </Col>
                   <Col
-                    md="9"
+                    md="12"
                     className="d-flex justify-content-end align-items-end"
                   >
                     <SharedButton
@@ -307,6 +334,8 @@ const Notification_Alert = () => {
           selectedCountry={formikRef.current?.values.country || null}
           selectedGroup={formikRef.current?.values.group || null}
           idNumber={formikRef.current?.values.idNumber || null}
+          fromBirthDate={formikRef.current?.values.fromBirthDate || null}
+          toBirthDate={formikRef.current?.values.toBirthDate || null}
           formikRef={formikModalRef}
           onSuccessSubmit={handleModalClose}
         />

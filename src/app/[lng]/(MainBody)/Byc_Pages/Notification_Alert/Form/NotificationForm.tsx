@@ -39,6 +39,8 @@ interface Props {
   selectedCountry?: any;
   selectedGroup?: any;
   idNumber?: any;
+  fromBirthDate?: string | null;
+  toBirthDate?: string | null;
 }
 
 const NotificationForm = ({
@@ -49,6 +51,8 @@ const NotificationForm = ({
   selectedCountry,
   selectedGroup,
   idNumber,
+  fromBirthDate,
+  toBirthDate,
 }: Props) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
@@ -136,6 +140,10 @@ const NotificationForm = ({
         nationalityId: selectedCountry || null,
         idNo: idNumber || null,
         notificationGroupId: selectedGroup || null,
+        fromBirthDate: fromBirthDate
+          ? new Date(fromBirthDate).toISOString()
+          : null,
+        toBirthDate: toBirthDate ? new Date(toBirthDate).toISOString() : null,
       },
     };
 
