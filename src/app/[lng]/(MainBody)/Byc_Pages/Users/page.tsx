@@ -19,6 +19,8 @@ import UsersForm, { UsersFormHandle } from "./Forms/UsersForm";
 import SharedButton from "@/Shared/Components/SharedButton";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
+import CustomSelect from "@/Shared/Components/CustomSelect";
+
 import { format } from "date-fns";
 const lock = "/assets/images/icons/lock.png";
 const user = "/assets/images/icons/user.png";
@@ -87,7 +89,7 @@ const UsersPage = () => {
     fetchData(paginationState.pageCount);
   }, [paginationState.pageCount]);
 
-  const handleFilterChange = (field: string, value: string) => {
+  const handleFilterChange = (field: string, value: string | number) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -236,16 +238,20 @@ const UsersPage = () => {
               />
             </Col>
             <Col md="2">
-              <CustomInput
+              <CustomSelect
                 name="nationality"
                 label={t("Nationality")}
-                placeholder={t("Search by nationality")}
                 value={filters.nationality}
-                onChange={(e) =>
-                  handleFilterChange("nationality", e.target.value)
-                }
+                onChange={(val) => {
+                  handleFilterChange("nationality", val ?? "");
+                }}
+                endpointId={DashboardMobileRepository.country.getall}
+                labelKey="name"
+                valueKey="recordId"
+                isRequired={false}
               />
             </Col>
+
             <Col md="2" className="d-flex align-items-center">
               <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
             </Col>

@@ -42,4 +42,7 @@ export const DashboardMobileRepository = {
     update: service + "ClientExtraInfo/update",
     validate: service + "ClientExtraInfo/validate",
   },
+  country: {
+    getall: service + "System/Country/getAll",
+  },
 };
