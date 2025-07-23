@@ -58,6 +58,7 @@ const TransactionLog = ({
             value={phoneNumber}
             onChange={(val) => {
               setPhoneNumber(val?.toString() || "");
+              setSelectedTransaction(null);
               onSearchChange?.(val?.toString() || "");
             }}
             isRequired={true}

@@ -21,6 +21,7 @@ interface UserInfoFormProps {
   onClose: () => void;
   phoneNumber?: string;
   LocaluserData?: any;
+  userData?: any;
 }
 
 type QuestionWithType = {
@@ -38,12 +39,12 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
   onClose,
   phoneNumber,
   LocaluserData,
+  userData,
 }) => {
   const reduxLangId = useAppSelector((state) => state.langSlice.i18LangStatus);
   const { t } = useTranslation(reduxLangId);
   const dispatch = useAppDispatch();
 
-  const [userData, setUserData] = useState<any | null>(null);
   const [questionsWithType, setQuestionsWithType] = useState<
     QuestionWithType[]
   >([]);
@@ -54,83 +55,48 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
     parseInt(localStorage.getItem("languageId") || "1", 10);
 
   useEffect(() => {
-    if (visible) {
-      if (phoneNumber) fetchUserData();
-
-      fetchAdditionalInfo();
+    if (visible && userData?.clientId) {
+      fetchAllData();
     }
-  }, [visible, phoneNumber]);
+  }, [visible, userData]);
 
-  useEffect(() => {
-    if (userData?.clientId) {
-      fetchClientExtraInfo(userData.clientId);
-    }
-  }, [userData]);
+  const fetchAllData = async () => {
+    const [questionsRes, extraInfoRes] = await Promise.all([
+      withRequestTracking(dispatch, () =>
+        dispatch(
+          getMobileRequest({
+            extension: DashboardMobileRepository.AdditionalInfo.getAll,
+            parameters: `_languageId=${langId}`,
+          })
+        )
+      ),
+      withRequestTracking(dispatch, () =>
+        dispatch(
+          getMobileRequest({
+            extension: DashboardMobileRepository.ExtraInfo.getAll,
+            parameters: `_clientId=${userData.clientId}`,
+          })
+        )
+      ),
+    ]);
 
-  const fetchUserData = async () => {
-    if (!phoneNumber) return;
+    const questions = questionsRes?.payload?.data || [];
+    const extraInfo = extraInfoRes?.payload?.data || [];
 
-    const result = await withRequestTracking(dispatch, () =>
-      dispatch(
-        getMobileRequest({
-          extension: DashboardMobileRepository.MobileUser.getById,
-          parameters: `_username=${phoneNumber.replace("+", "%2B")}`,
-        })
-      )
-    );
+    const merged = questions.map((item: any) => {
+      const match = extraInfo.find((x: any) => x.extraRowId === item.recordId);
+      return {
+        value: item.recordId,
+        label: item.question,
+        type: item.typeName,
+        typeId: item.type,
+        body: match?.body || "",
+        isRequested: !!match,
+        isValid: match?.isValid ?? false,
+      };
+    });
 
-    setUserData(result?.payload?.data || null);
-  };
-
-  const fetchAdditionalInfo = async () => {
-    const result = await withRequestTracking(dispatch, () =>
-      dispatch(
-        getMobileRequest({
-          extension: DashboardMobileRepository.AdditionalInfo.getAll,
-          parameters: `_languageId=${langId}`,
-        })
-      )
-    );
-
-    const data = result?.payload?.data || [];
-
-    const mapped = data.map((item: any) => ({
-      value: item.recordId,
-      label: item.question,
-      type: item.typeName,
-      typeId: item.type,
-    }));
-
-    setQuestionsWithType(mapped);
-  };
-
-  const fetchClientExtraInfo = async (clientId: number) => {
-    const result = await withRequestTracking(dispatch, () =>
-      dispatch(
-        getMobileRequest({
-          extension: DashboardMobileRepository.ExtraInfo.getAll,
-          parameters: `_clientId=${clientId}`,
-        })
-      )
-    );
-
-    const extraInfoData = result?.payload?.data || [];
-
-    setQuestionsWithType((prev) =>
-      prev.map((q) => {
-        const match = extraInfoData.find(
-          (item: any) => item.extraRowId === q.value
-        );
-        return match
-          ? {
-              ...q,
-              body: match.body,
-              isRequested: true,
-              isValid: match.isValid,
-            }
-          : q;
-      })
-    );
+    setQuestionsWithType(merged);
   };
 
   const handleRequest = async (field: QuestionWithType) => {
@@ -160,7 +126,6 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
         isValid: false,
         isActive: true,
       };
-
       updatedPack = [...otherRequestedItems, newField];
     }
 
@@ -175,14 +140,7 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
       ).unwrap()
     );
 
-    setQuestionsWithType((prev) =>
-      prev.map((q) =>
-        q.value === field.value
-          ? { ...q, isRequested: !field.isRequested, isValid: false }
-          : q
-      )
-    );
-    await fetchClientExtraInfo(userData.clientId);
+    await fetchAllData();
 
     showToast(
       "success",
@@ -204,12 +162,7 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
       ).unwrap()
     );
 
-    setQuestionsWithType((prev) =>
-      prev.map((q) =>
-        q.value === field.value ? { ...q, isValid: newStatus } : q
-      )
-    );
-    await fetchClientExtraInfo(userData.clientId);
+    await fetchAllData();
 
     showToast(
       "success",
@@ -226,94 +179,6 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
       width="80vw"
     >
       <div style={{ maxHeight: "70vh", overflowY: "auto" }}>
-        <Card className="mb-4">
-          <CardHeader>{t("User Information")}</CardHeader>
-          <CardBody>
-            <Row>
-              <Col md="6">
-                <CustomInput
-                  name="name"
-                  label={t("Name")}
-                  value={LocaluserData?.clientMaster?.name || ""}
-                  readOnly
-                  onChange={() => {}}
-                  onBlur={() => {}}
-                />
-              </Col>
-              <Col md="6">
-                <CustomInput
-                  name="cellPhone"
-                  label={t("Phone Number")}
-                  value={LocaluserData?.clientMaster?.cellPhone || ""}
-                  readOnly
-                  onChange={() => {}}
-                  onBlur={() => {}}
-                />
-              </Col>
-              <Col md="6">
-                <CustomInput
-                  name="nationality"
-                  label={t("Nationality")}
-                  value={LocaluserData?.clientMaster?.nationalityName || ""}
-                  readOnly
-                  onChange={() => {}}
-                  onBlur={() => {}}
-                />
-              </Col>
-              <Col md="6">
-                <CustomInput
-                  name="idNo"
-                  label={t("ID Number")}
-                  value={LocaluserData?.clientRemittance?.idNo || ""}
-                  readOnly
-                  onChange={() => {}}
-                  onBlur={() => {}}
-                />
-              </Col>
-              <Col md="6">
-                <CustomInput
-                  name="city"
-                  label={t("City")}
-                  value={LocaluserData?.address?.city || ""}
-                  readOnly
-                  onChange={() => {}}
-                  onBlur={() => {}}
-                />
-              </Col>
-              <Col md="6">
-                <CustomInput
-                  name="district"
-                  label={t("District")}
-                  value={LocaluserData?.address?.cityDistrict || ""}
-                  readOnly
-                  onChange={() => {}}
-                  onBlur={() => {}}
-                />
-              </Col>
-              <Col md="6">
-                <CustomInput
-                  name="street"
-                  label={t("Street")}
-                  value={LocaluserData?.address?.street1 || ""}
-                  readOnly
-                  onChange={() => {}}
-                  onBlur={() => {}}
-                />
-              </Col>
-              <Col md="6">
-                <CustomInput
-                  name="status"
-                  label={t("Status")}
-                  value={LocaluserData?.clientMaster?.statusName || ""}
-                  readOnly
-                  onChange={() => {}}
-                  onBlur={() => {}}
-                />
-              </Col>
-            </Row>
-          </CardBody>
-        </Card>
-
         <Card>
           <CardHeader>{t("Extra Information")}</CardHeader>
           <CardBody>
@@ -353,7 +218,7 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
                   <SharedButton
                     title={q.isValid ? t("Revoke") : t("Validate")}
                     onClick={() => handleValidate(q)}
-                    disabled={!q.isRequested}
+                    disabled={!q.isRequested || !q.body?.trim()}
                   />
                 </Col>
               </Row>

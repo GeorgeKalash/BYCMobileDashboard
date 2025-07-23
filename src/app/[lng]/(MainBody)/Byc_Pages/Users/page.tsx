@@ -24,7 +24,7 @@ import CustomSelect from "@/Shared/Components/CustomSelect";
 import { format } from "date-fns";
 const lock = "/assets/images/icons/lock.png";
 const user = "/assets/images/icons/user.png";
-
+const userControl = "/assets/images/icons/userControl.png";
 const UsersPage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
@@ -123,10 +123,8 @@ const UsersPage = () => {
     formLogicRef.current?.openUserInfoModal();
   };
 
-  const handleSubmit = () => {
-    if (formikRef.current) {
-      formikRef.current.submitForm();
-    }
+  const handleUserControlPress = () => {
+    formLogicRef.current?.openUserControlModal();
   };
 
   const columns = [
@@ -177,11 +175,11 @@ const UsersPage = () => {
       cell: (row: any) => (
         <span
           style={{
-            color: row.isInactive ? "red" : "green",
+            color: row.user?.isInactive ? "red" : "green",
             fontWeight: "bold",
           }}
         >
-          {row?.isInactive ? t("InActive") : t("Active")}
+          {row.user?.isInactive ? t("InActive") : t("Active")}
         </span>
       ),
       sortable: true,
@@ -280,10 +278,16 @@ const UsersPage = () => {
         title={t("User")}
         width="50vw"
         height="70vh"
-        onSubmit={handleSubmit}
         onInfoClick={handleInfoClick}
         footerActions={
           <>
+            <SharedButton
+              logo={userControl}
+              color="secondary"
+              title={t("UserControl")}
+              onClick={handleUserControlPress}
+              tooltip={t("UserControl")}
+            />
             <SharedButton
               logo={user}
               color="secondary"
