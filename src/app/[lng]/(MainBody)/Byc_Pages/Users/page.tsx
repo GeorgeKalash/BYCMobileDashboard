@@ -48,6 +48,7 @@ const UsersPage = () => {
     toDate: format(new Date(), "MM-dd-yyyy"),
     name: "",
     phoneNumber: "",
+    idNumber: "",
     nationality: "",
   });
 
@@ -57,15 +58,16 @@ const UsersPage = () => {
 
   const fetchData = async (page = 0) => {
     const payload = {
-      fromDate: new Date(filters.fromDate).toISOString(),
-      toDate: new Date(filters.toDate).toISOString(),
-      username: filters.name || "",
-      nationalityId: filters.nationality ? Number(filters.nationality) : 0,
-      idNo: filters.phoneNumber || "",
-      _startAt: page,
-      _pageSize: pageSize,
+      startAt: page,
+      pageSize: pageSize,
+      filters: {
+        fromDate: new Date(filters.fromDate).toISOString(),
+        toDate: new Date(filters.toDate).toISOString(),
+        username: filters.phoneNumber || "",
+        nationalityId: filters.nationality ? Number(filters.nationality) : null,
+        idNo: filters.idNumber || "",
+      },
     };
-
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         postMobileRequest({
@@ -212,24 +214,30 @@ const UsersPage = () => {
                 }
               />
             </Col>
-            <Col md="2">
-              <CustomInput
-                name="name"
-                label={t("Name")}
-                placeholder={t("Search by name")}
-                value={filters.name}
-                onChange={(e) => handleFilterChange("name", e.target.value)}
-              />
-            </Col>
+
             <Col md="2">
               <CustomInput
                 name="phoneNumber"
                 label={t("Phone Number")}
-                placeholder={t("Search by phone")}
+                placeholder={t("Search by Phone Number")}
                 value={filters.phoneNumber}
                 onChange={(e) =>
                   handleFilterChange(
                     "phoneNumber",
+                    e.target.value.replace(/\D/g, "")
+                  )
+                }
+              />
+            </Col>
+            <Col md="2">
+              <CustomInput
+                name="idNumber"
+                label={t("ID Number")}
+                placeholder={t("Search by ID Number")}
+                value={filters.idNumber}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "idNumber",
                     e.target.value.replace(/\D/g, "")
                   )
                 }
