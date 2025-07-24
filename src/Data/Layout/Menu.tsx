@@ -55,6 +55,12 @@ export const MenuList: MenuItem[] | undefined = [
         icon: "ui-kits",
       },
       {
+        path: "/Byc_Pages/Payments_History",
+        type: "link",
+        title: "Payments History",
+        icon: "ui-kits",
+      },
+      {
         path: "/Byc_Pages/Requests",
         type: "link",
         title: "Requests",
