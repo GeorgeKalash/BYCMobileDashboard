@@ -36,7 +36,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   readOnly = false,
   minDate,
   maxDate,
-  placeholder = "Select a date...",
+  placeholder = "Select a date",
 }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(
     parseDate(value)

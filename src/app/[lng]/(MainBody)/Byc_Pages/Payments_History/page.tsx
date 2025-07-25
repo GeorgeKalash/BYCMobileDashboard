@@ -4,37 +4,37 @@ import React, { useEffect, useState, useRef } from "react";
 import { Card, CardBody, Col, Row } from "reactstrap";
 import DataTable from "../../../../../Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
-import SharedModal from "../../../../../Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
-import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
-import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import formatDate from "@/utils/DateFormatter";
-import UsersForm from "./Forms/UsersForm";
 import { PaymentGatewayRepository } from "@/Repositories/PaymentGatewayRepository";
 import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 import SharedButton from "@/Shared/Components/SharedButton";
-import { format } from "date-fns";
+import CustomInput from "@/Shared/Components/CustomInput";
+import CustomSelect from "@/Shared/Components/CustomSelect";
+import { DashboardKVSRepository } from "@/Repositories/DashboardKVSRepository";
 
 const PaymentsHistoryPage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
-  const formikRef = useRef<FormikProps<any>>(null);
-
+  const reduxLangId = useAppSelector((state) => state.authSlice.languageId);
+  const langId =
+    reduxLangId || parseInt(localStorage.getItem("languageId") || "1", 10);
   const [filters, setFilters] = useState({
     fromDate: "",
     toDate: "",
+    paymentGatewayId: "",
+    numberID: "",
   });
 
   const [data, setData] = useState<{ key: string; value: string }[]>([]);
-  const [modalState, setModalState] = useState({
-    open: false,
-    row: null as any,
-  });
 
+  const parseBody = (body: string | null) => {
+    return body ? JSON.parse(body) : {};
+  };
   const [paginationState, setPaginationState] = useState({
     pageCount: 0,
     totalRows: 0,
@@ -43,20 +43,19 @@ const PaymentsHistoryPage = () => {
   const pageSize = 30;
 
   const fetchData = async (page = 0) => {
-    let query = `_startAt=${page}&_pageSize=${pageSize}`;
+    const params = new URLSearchParams();
+    params.append("_startAt", page.toString());
+    params.append("_pageSize", pageSize.toString());
 
-    if (filters.fromDate) {
-      query += `&_fromTrxDate=${filters.fromDate}`;
-    }
-    if (filters.toDate) {
-      query += `&_toTrxDate=${filters.toDate}`;
-    }
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) params.append(`_${key}`, value);
+    });
 
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
           extension: PaymentGatewayRepository.Transactions.GetAll,
-          parameters: query,
+          parameters: params.toString(),
         })
       )
     );
@@ -84,27 +83,6 @@ const PaymentsHistoryPage = () => {
     }));
   };
 
-  const openModal = (row: any = null) => {
-    setModalState({
-      open: true,
-      row,
-    });
-  };
-
-  const handleModalClose = () => {
-    setModalState({
-      open: false,
-      row: null,
-    });
-    fetchData(paginationState.pageCount);
-  };
-
-  const handleSubmit = () => {
-    if (formikRef.current) {
-      formikRef.current.submitForm();
-    }
-  };
-
   const columns = [
     {
       name: t("Client Name"),
@@ -119,6 +97,22 @@ const PaymentsHistoryPage = () => {
       id: "cellPhone",
     },
     {
+      name: t("Transaction Date"),
+      selector: (row: any) =>
+        row.transactionDate
+          ? formatDate(row.transactionDate, "dd/MM/yyyy")
+          : "",
+      sortable: true,
+      id: "TransactionDate",
+    },
+    {
+      name: t("Payment Date"),
+      selector: (row: any) => parseBody(row.body)?.source?.createdAt ?? " ",
+      sortable: true,
+      id: "PaymentDate",
+    },
+
+    {
       name: t("Amount"),
       selector: (row: any) => `${(row.amount / 100).toFixed(2)} SAR`,
       sortable: true,
@@ -129,19 +123,6 @@ const PaymentsHistoryPage = () => {
       selector: (row: any) => row.bankName,
       sortable: true,
       id: "bankName",
-    },
-    {
-      name: t("IBAN"),
-      selector: (row: any) => row.iban,
-      sortable: true,
-      id: "iban",
-    },
-    {
-      name: t("Payment Status"),
-      selector: (row: any) =>
-        row.paymentStatus === 1 ? t("Success") : t("Pending"),
-      sortable: true,
-      id: "paymentStatus",
     },
     {
       name: t("Gateway Type"),
@@ -155,19 +136,55 @@ const PaymentsHistoryPage = () => {
       id: "paymentGatewayType",
     },
     {
+      name: t("IBAN"),
+      selector: (row: any) => row.iban,
+      sortable: true,
+      id: "iban",
+    },
+    {
+      name: t("currency"),
+      selector: (row: any) => row.currency,
+      sortable: true,
+      id: "currency",
+    },
+
+    {
+      name: t("Payment Status"),
+      selector: (row: any) => row.statusName,
+      sortable: true,
+      id: "paymentStatus",
+    },
+
+    {
+      name: t("Payment Brand"),
+      selector: (row: any) => row.network ?? " ",
+      sortable: true,
+      id: "network",
+    },
+    {
+      name: t("Receipt Ref"),
+      selector: (row: any) => row.receiptRef ?? " ",
+      sortable: true,
+      id: "receiptRef",
+    },
+    {
+      name: t("owo Ref"),
+      selector: (row: any) => row.owoRef ?? "",
+      sortable: true,
+      id: "owoRef",
+    },
+
+    {
       name: t("Transaction ID"),
       selector: (row: any) => row.transactionId ?? "",
       sortable: true,
       id: "transactionId",
     },
     {
-      name: t("Transaction Date"),
-      selector: (row: any) =>
-        row.transactionDate
-          ? formatDate(row.transactionDate, "dd/MM/yyyy")
-          : "",
+      name: t("Transaction Ref"),
+      selector: (row: any) => row.transactionRef ?? "",
       sortable: true,
-      id: "transactionDate",
+      id: "transactionId",
     },
   ];
 
@@ -196,6 +213,35 @@ const PaymentsHistoryPage = () => {
               }
             />
           </Col>
+
+          <Col md="3">
+            <CustomInput
+              name="numberID"
+              label={t("Number ID")}
+              placeholder={t("Search by ID")}
+              value={filters.numberID}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, numberID: e.target.value }))
+              }
+            />
+          </Col>
+          <Col md="3">
+            <CustomSelect
+              name="paymentGatewayId"
+              label={t("Payment Gateway")}
+              endpointId={`${DashboardKVSRepository.KVS.GetAll}?_dataset=2&_language=${langId}`}
+              valueKey="key"
+              labelKey="value"
+              value={filters.paymentGatewayId || undefined}
+              onChange={(val) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  paymentGatewayId: val?.toString() ?? "",
+                }))
+              }
+            />
+          </Col>
+
           <Col md="2" className="d-flex align-items-center">
             <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
           </Col>
@@ -211,27 +257,9 @@ const PaymentsHistoryPage = () => {
             pageSize={pageSize}
             onPageChange={handlePageChange}
             showActions={true}
-            onEdit={(row) => openModal(row)}
           />
         </CardBody>
       </Card>
-
-      <SharedModal
-        visible={modalState.open}
-        onClose={handleModalClose}
-        title={t("User")}
-        width="30vw"
-        height="70vh"
-        onSubmit={handleSubmit}
-      >
-        {modalState.row && (
-          <UsersForm
-            userId={modalState.row.username.replace(/\+/g, "%2B")}
-            formikRef={formikRef}
-            onSuccessSubmit={handleModalClose}
-          />
-        )}
-      </SharedModal>
     </Col>
   );
 };
