@@ -291,17 +291,17 @@ const UsersPage = () => {
           <>
             <SharedButton
               logo={userControl}
-              color="secondary"
+              color="primary"
               title={t("UserControl")}
               onClick={handleUserControlPress}
               tooltip={t("UserControl")}
             />
             <SharedButton
               logo={user}
-              color="secondary"
-              title={t("UserInfo")}
+              color="tertiary"
+              title={t("AdditionalInfo")}
               onClick={handleUserInfoPress}
-              tooltip={t("UserInfo")}
+              tooltip={t("AdditionalInfo")}
             />
             <SharedButton
               logo={lock}

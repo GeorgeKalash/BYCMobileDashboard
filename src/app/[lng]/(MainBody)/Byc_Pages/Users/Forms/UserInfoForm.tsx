@@ -212,6 +212,7 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
                   <SharedButton
                     title={q.isRequested ? t("Cancel") : t("Request")}
                     onClick={() => handleRequest(q)}
+                    color={q.isRequested ? "danger" : "success"}
                   />
                 </Col>
                 <Col xs="3">
@@ -219,6 +220,7 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
                     title={q.isValid ? t("Revoke") : t("Validate")}
                     onClick={() => handleValidate(q)}
                     disabled={!q.isRequested || !q.body?.trim()}
+                    color={q.isValid ? "warning" : "primary"}
                   />
                 </Col>
               </Row>

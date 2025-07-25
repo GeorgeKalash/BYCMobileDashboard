@@ -111,7 +111,6 @@ const UsersForm = forwardRef<
   return (
     <>
       <Card className="mb-4">
-        <CardHeader>{t("User Information")}</CardHeader>
         <CardBody>
           <Row>
             <Col md="6">
