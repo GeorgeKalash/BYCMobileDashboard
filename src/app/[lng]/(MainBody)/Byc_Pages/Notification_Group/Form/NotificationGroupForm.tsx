@@ -100,28 +100,6 @@ const NotificationGroupForm = ({
     }
   };
 
-  const handleAddMember = async () => {
-    if (!phoneNumber) {
-      return;
-    }
-    await withRequestTracking(dispatch, () =>
-      dispatch(
-        postMobileRequest({
-          extension: NotificationAlertRepository.NotificationGroup.addClient,
-          body: {
-            notificationGroupId: rowData?.recordId,
-            username: phoneNumber,
-          },
-          rawBody: true,
-        })
-      ).unwrap()
-    );
-    showToast("success", t("User added successfully"));
-    await fetchGroupMembers();
-    setPhoneNumber("");
-    setShowModal(false);
-  };
-
   useEffect(() => {
     fetchGroupMembers();
   }, [dispatch, modalAction, rowData]);

@@ -163,16 +163,18 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
             }}
             autoComplete="off"
           />
-          <i
-            className="fa fa-search position-absolute"
-            style={{
-              right: "10px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              pointerEvents: "none",
-              color: "#aaa",
-            }}
-          />
+          {!isFieldInvalid && (
+            <i
+              className="fa fa-search position-absolute"
+              style={{
+                right: "10px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                pointerEvents: "none",
+                color: "#aaa",
+              }}
+            />
+          )}
           {isFieldInvalid && (
             <div className="invalid-feedback d-block">
               {t("This field is required")}

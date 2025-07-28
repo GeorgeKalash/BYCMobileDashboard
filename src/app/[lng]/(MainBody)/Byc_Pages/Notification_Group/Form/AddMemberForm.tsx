@@ -41,7 +41,6 @@ const AddMemberForm: React.FC<AddMemberFormProps> = ({
                 label={t("Phone Number")}
                 endpoint={DashboardMobileRepository.mobileUser.snapshot}
                 searchParamKey="_username"
-                parameters={{}}
                 columns={[{ key: "username", label: "Phone Number" }]}
                 minChars={3}
                 onChange={(selectedUser) => {
