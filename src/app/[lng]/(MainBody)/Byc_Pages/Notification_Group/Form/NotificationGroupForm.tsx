@@ -19,8 +19,7 @@ import DataTableComponent from "@/Shared/Components/DataTable";
 import CustomInput from "@/Shared/Components/CustomInput";
 import SharedModal from "@/Shared/Components/SharedModal";
 import SharedButton from "@/Shared/Components/SharedButton";
-import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
-import ResourceLookup from "@/Shared/Components/ResourceLookup";
+import AddMemberForm from "./AddMemberForm";
 interface NotificationGroupFormProps {
   rowData: any;
   formikRef?: React.Ref<FormikProps<any>>;
@@ -41,6 +40,7 @@ const NotificationGroupForm = ({
   const [phoneNumber, setPhoneNumber] = useState("");
   const localFormikRef = useRef<FormikProps<any>>(null);
   const formikReference = formikRef || localFormikRef;
+  const memberFormikRef = useRef<FormikProps<any>>(null);
 
   const initialValues = {
     recordId: rowData?.recordId ?? 0,
@@ -82,7 +82,8 @@ const NotificationGroupForm = ({
       const result = await withRequestTracking(dispatch, () =>
         dispatch(
           getMobileRequest({
-            extension: `${NotificationAlertRepository.NotificationGroup.getpack}?_recordId=${rowData.recordId}`,
+            extension: NotificationAlertRepository.NotificationGroup.getpack,
+            parameters: `_recordId=${rowData.recordId}`,
           })
         )
       );
@@ -101,7 +102,6 @@ const NotificationGroupForm = ({
 
   const handleAddMember = async () => {
     if (!phoneNumber) {
-      showToast("error", t("Please select a phone number"));
       return;
     }
     await withRequestTracking(dispatch, () =>
@@ -204,28 +204,34 @@ const NotificationGroupForm = ({
                   onClose={() => setShowModal(false)}
                   title={t("Add Member")}
                   height={"40vh"}
-                  onSubmit={handleAddMember}
+                  onSubmit={() => {
+                    if (memberFormikRef.current) {
+                      memberFormikRef.current.submitForm();
+                    }
+                  }}
                 >
-                  <FormGroup>
-                    <Col md={12} className="mt-3">
-                      <ResourceLookup
-                        name="phoneNumberLookup"
-                        label={t("Phone Number")}
-                        endpoint={DashboardMobileRepository.mobileUser.snapshot}
-                        searchParamKey="_username"
-                        parameters={{}}
-                        columns={[{ key: "username", label: "Phone Number" }]}
-                        minChars={3}
-                        onChange={(selectedUser) => {
-                          if (selectedUser) {
-                            setPhoneNumber(selectedUser.username);
-                            console.log("Selected user:", selectedUser);
-                          }
-                        }}
-                        value={phoneNumber}
-                      />
-                    </Col>
-                  </FormGroup>
+                  <AddMemberForm
+                    formikRef={memberFormikRef}
+                    onSubmit={async (phoneNumber) => {
+                      await withRequestTracking(dispatch, () =>
+                        dispatch(
+                          postMobileRequest({
+                            extension:
+                              NotificationAlertRepository.NotificationGroup
+                                .addClient,
+                            body: {
+                              notificationGroupId: rowData?.recordId,
+                              username: phoneNumber,
+                            },
+                            rawBody: true,
+                          })
+                        ).unwrap()
+                      );
+                      showToast("success", t("User added successfully"));
+                      await fetchGroupMembers();
+                      setShowModal(false);
+                    }}
+                  />
                 </SharedModal>
               )}
             </CardBody>

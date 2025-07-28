@@ -49,14 +49,13 @@ const Notification_Group = () => {
       )
     );
 
-    const list = result?.payload?.data?.list;
-    const total = result?.payload?.data?.count;
-
-    setData(Array.isArray(list) ? list : []);
-    if (typeof total === "number") {
+    setData(
+      Array.isArray(result?.payload?.data?.list) ? result.payload.data.list : []
+    );
+    if (typeof result?.payload?.data?.count === "number") {
       setPaginationState((prev) => ({
         ...prev,
-        totalRows: total,
+        totalRows: result.payload.data.count,
       }));
     }
   };
@@ -66,7 +65,8 @@ const Notification_Group = () => {
     await withRequestTracking(dispatch, () =>
       dispatch(
         deleteMobileRequest({
-          extension: `${NotificationAlertRepository.NotificationGroup.delete}?_recordId=${row.recordId}`,
+          extension: NotificationAlertRepository.NotificationGroup.delete,
+          parameters: `?_recordId=${row.recordId}`,
           rawBody: false,
         })
       ).unwrap()

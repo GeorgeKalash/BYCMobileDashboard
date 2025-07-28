@@ -50,6 +50,7 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [touched, setTouched] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -125,6 +126,8 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
     }));
   }, [columns]);
 
+  const isFieldInvalid = isRequired && touched && !inputValue;
+
   return (
     <div ref={containerRef} style={{ position: "relative" }}>
       <FormGroup>
@@ -141,9 +144,7 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
             placeholder={placeholder}
             value={inputValue}
             disabled={disabled}
-            className={`form-control ${
-              isRequired && !inputValue ? "is-invalid" : ""
-            }`}
+            className={`form-control ${isFieldInvalid ? "is-invalid" : ""}`}
             style={{
               paddingRight: "2rem",
               cursor: disabled ? "not-allowed" : "pointer",
@@ -152,8 +153,10 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
               const val = e.target.value;
               setInputValue(val);
               fetchData(val);
+              setTouched(true);
             }}
             onClick={() => {
+              setTouched(true);
               if (inputValue.length >= minChars && results.length > 0) {
                 setShowDropdown(true);
               }
@@ -170,6 +173,11 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
               color: "#aaa",
             }}
           />
+          {isFieldInvalid && (
+            <div className="invalid-feedback d-block">
+              {t("This field is required")}
+            </div>
+          )}
         </div>
       </FormGroup>
 
