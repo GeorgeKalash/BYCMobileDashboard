@@ -66,7 +66,7 @@ const Notification_Group = () => {
       dispatch(
         deleteMobileRequest({
           extension: NotificationAlertRepository.NotificationGroup.delete,
-          parameters: `?_recordId=${row.recordId}`,
+          parameters: `_recordId=${row.recordId}`,
           rawBody: false,
         })
       ).unwrap()
