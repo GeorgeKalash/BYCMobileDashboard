@@ -22,7 +22,7 @@ import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
 const validationSchema = Yup.object({
   brands: Yup.array().of(
     Yup.object().shape({
-      name: Yup.string().required("Required"),
+      typeName: Yup.string().required("Required"),
       isInactive: Yup.boolean(),
     })
   ),
@@ -34,7 +34,7 @@ const Payment = () => {
   const dispatch = useAppDispatch();
 
   const [paymentType, setPaymentType] = useState<1 | 2 | null>(1);
-  const [initialValues, setInitialValues] = useState<{ brands: { id: number; name: string; isInactive: boolean }[] }>({ brands: [] });
+  const [initialValues, setInitialValues] = useState<{ brands: { id: number; typeName: string; isInactive: boolean }[] }>({ brands: [] });
 
   const handlePaymentChange = (e: string | number | null) => {
     const num = Number(e);
@@ -46,8 +46,8 @@ const Payment = () => {
       const result = await withRequestTracking(dispatch, () =>
         dispatch(
           getMobileRequest({
-            extension: PaymentGatewayRepository.PaymentBrand.getAll,
-            parameters: "",
+            extension: PaymentGatewayRepository.PaymentSupport.getAll,
+            parameters: `_paymentGatewayId=${paymentType}`,
           })
         ).unwrap()
       );
@@ -58,15 +58,15 @@ const Payment = () => {
     };
 
     fetchBrands();
-  }, []);
+  }, [paymentType]);
 
   const handleSubmit = async (values: typeof initialValues) => {
 
     await withRequestTracking(dispatch, () =>
       dispatch(
         postMobileRequest({
-          extension: PaymentGatewayRepository.PaymentBrand.update,
-          body: values.brands,
+          extension: PaymentGatewayRepository.PaymentSupport.setPack,
+          body: {paymentGatewayId:paymentType,brands:values.brands},
           rawBody: true,
         })
       ).unwrap()
@@ -82,12 +82,13 @@ const Payment = () => {
           <div style={{ minWidth: 250, maxWidth: 400, width: "100%" }}>
             <CustomSelect
               name="paymentType"
-              dataSetId={2}
+              label={t("paymentType")}
+              dashboardDatasetId={2}
               valueKey="key"
               labelKey="value"
               value={paymentType ?? ""}
               onChange={handlePaymentChange}
-            />
+             />
           </div>
         </CommonCardHeader>
         <CardBody>
@@ -108,7 +109,7 @@ const Payment = () => {
                             <CustomInput
                               name={`brands.${index}.name`}
                               label={`${t("Name")}`}
-                              value={brand.name}
+                              value={brand.typeName}
                               readOnly
                             />
                           </Col>

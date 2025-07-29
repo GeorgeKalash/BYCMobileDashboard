@@ -143,7 +143,7 @@ const Defaults = () => {
                       <CustomSelect
                         name="default_payment_method"
                         label={t("Enable Payment method")}
-                        endpointId={`/api/KVS/Dashboard/getAllKVS?_dataset=2&_language=1`}
+                        dashboardDatasetId={2}
                         valueKey="key"
                         labelKey="value"
                         value={Number(values["default_payment_method"])}

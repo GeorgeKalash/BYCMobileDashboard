@@ -1,8 +1,12 @@
-const service = '/api/PaymentGateway/PaymentBrands/'
+const service = '/api/PaymentGateway/'
 
 export const PaymentGatewayRepository = {
   PaymentBrand: {
-    getAll: service + 'getAllPaymentBrands',
-    update: service + 'updatePaymentBrands',
+    getAll: service + 'PaymentBrands/getAllPaymentBrands',
+    update: service + 'PaymentBrands/updatePaymentBrands',
   },
+   PaymentSupport: {
+    getAll: service + 'PaymentSupport/getAll',
+    setPack: service + 'PaymentSupport/setPack',
+  }
 }
