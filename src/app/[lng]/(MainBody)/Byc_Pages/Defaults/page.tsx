@@ -52,7 +52,7 @@ const validationSchema = Yup.object({
   TERMS_LAST_UPDATED: Yup.string().required("Required"),
 });
 
-const MobileVerificationForm = () => {
+const Defaults = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
@@ -143,7 +143,7 @@ const MobileVerificationForm = () => {
                       <CustomSelect
                         name="default_payment_method"
                         label={t("Enable Payment method")}
-                        endpointId={`/api/KVS/Dashboard/getAllKVS?_dataset=2&_language=1`}
+                        dashboardDatasetId={2}
                         valueKey="key"
                         labelKey="value"
                         value={Number(values["default_payment_method"])}
@@ -319,4 +319,4 @@ const MobileVerificationForm = () => {
   );
 };
 
-export default MobileVerificationForm;
+export default Defaults;

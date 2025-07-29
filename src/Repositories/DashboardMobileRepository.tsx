@@ -5,6 +5,10 @@ export const DashboardMobileRepository = {
     get: service + "requestLogs",
   },
 
+  mobileUser: {
+    get: service + "MobileUser/getById",
+    snapshot: service + "MobileUser/snapshot",
+  },
   OTP: {
     getPack: service + "Otp/OtpLimit/getAll",
     setPack: service + "Otp/OtpLimit/setPack",

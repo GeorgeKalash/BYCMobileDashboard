@@ -49,9 +49,16 @@ export const MenuList: MenuItem[] | undefined = [
         icon: "ui-kits",
       },
       {
+        path: "/Byc_Pages/Notification_Group",
+        type: "link",
+        title: "Notification Group",
+        icon: "ui-kits",
+      },
+      {
         path: "/Byc_Pages/OTP_Control",
         type: "link",
         title: "OTP Control",
+
         icon: "ui-kits",
       },
       {
@@ -61,21 +68,27 @@ export const MenuList: MenuItem[] | undefined = [
         icon: "ui-kits",
       },
       {
+        path: "/Byc_Pages/Slider_Image_Attachment",
+        type: "link",
+        title: "Image Attechment",
+        icon: "ui-kits",
+      },
+      {
         path: "/Byc_Pages/FAQ",
         type: "link",
         title: "FAQ",
         icon: "ui-kits",
       },
       {
-        path: "/Byc_Pages/Slider_Image_Attachment",
-        type: "link",
-        title: "Slider Image Attachment",
-        icon: "ui-kits",
-      },
-      {
         path: "/Byc_Pages/Users",
         type: "link",
         title: "Users",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/Payment",
+        type: "link",
+        title: "Payment",
         icon: "ui-kits",
       },
     ],
