@@ -75,7 +75,6 @@ const ActivateLanguageForm = ({
       innerRef={formikRef}
     >
       {({ values, setFieldValue }) => {
-
         return (
           <Form>
             <Row>
