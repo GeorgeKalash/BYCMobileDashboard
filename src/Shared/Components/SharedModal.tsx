@@ -4,9 +4,6 @@ import SharedButton from "./SharedButton";
 import { useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "react-i18next";
 
-const infoLogo = "/assets/images/icons/info.png";
-const saveLogo = "/assets/images/icons/save.png";
-
 interface SharedModalProps {
   visible: boolean;
   onClose: () => void;
@@ -55,7 +52,7 @@ const SharedModal: React.FC<SharedModalProps> = ({
 
         {typeof onInfoClick === "function" && (
           <SharedButton
-            logo={infoLogo}
+            logo="/assets/images/icons/info.png"
             color="info"
             tooltip={t("More info")}
             onClick={onInfoClick}
@@ -64,7 +61,7 @@ const SharedModal: React.FC<SharedModalProps> = ({
 
         {typeof onSubmit === "function" && (
           <SharedButton
-            logo={saveLogo}
+            logo="/assets/images/icons/save.png"
             color="primary"
             onClick={onSubmit}
             tooltip={t("Submit")}

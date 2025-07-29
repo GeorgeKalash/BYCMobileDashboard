@@ -6,13 +6,12 @@ import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { postMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
-import { Card, CardBody, CardHeader, Col, Row } from "reactstrap";
+import { Col, Row } from "reactstrap";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";
-import SharedButton from "@/Shared/Components/SharedButton";
 import { showToast } from "@/Shared/Components/showToast";
 import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
-import { Formik, Form, FormikProps } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 
 interface UserControlFormProps {
@@ -45,7 +44,6 @@ const UserControlForm: React.FC<UserControlFormProps> = ({
       dispatch(
         postMobileRequest({
           extension: DashboardMobileRepository.MobileUser.changeUserStatus,
-          parameters: ``,
           body: values,
           rawBody: true,
         })

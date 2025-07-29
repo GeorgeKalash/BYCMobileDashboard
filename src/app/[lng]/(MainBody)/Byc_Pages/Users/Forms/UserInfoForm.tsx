@@ -19,8 +19,7 @@ import { showToast } from "@/Shared/Components/showToast";
 interface UserInfoFormProps {
   visible: boolean;
   onClose: () => void;
-  phoneNumber?: string;
-  LocaluserData?: any;
+
   userData?: any;
 }
 
@@ -37,8 +36,7 @@ type QuestionWithType = {
 const UserInfoForm: React.FC<UserInfoFormProps> = ({
   visible,
   onClose,
-  phoneNumber,
-  LocaluserData,
+
   userData,
 }) => {
   const reduxLangId = useAppSelector((state) => state.langSlice.i18LangStatus);
@@ -174,13 +172,12 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
     <SharedModal
       visible={visible}
       onClose={onClose}
-      title={t("User Info")}
+      title={t("Additional Data")}
       height="80vh"
       width="80vw"
     >
       <div style={{ maxHeight: "70vh", overflowY: "auto" }}>
         <Card>
-          <CardHeader>{t("Extra Information")}</CardHeader>
           <CardBody>
             {questionsWithType.map((q) => (
               <Row key={q.value} className="align-items-center mb-3">
@@ -192,8 +189,6 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
                       type="text"
                       value={q.body || ""}
                       readOnly={!!q.isRequested}
-                      onChange={() => {}}
-                      onBlur={() => {}}
                     />
                   ) : q.type === "PDF" ? (
                     <CustomPdfDisplayInput

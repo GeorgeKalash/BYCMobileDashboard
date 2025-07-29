@@ -59,7 +59,6 @@ const OTPForm: React.FC<OTPFormProps> = ({ visible, onClose, phoneNumber }) => {
       dispatch(
         postMobileRequest({
           extension: DashboardMobileRepository.OTP.reset,
-          parameters: ``,
           body,
           rawBody: true,
         })
@@ -74,7 +73,7 @@ const OTPForm: React.FC<OTPFormProps> = ({ visible, onClose, phoneNumber }) => {
     <SharedModal
       visible={visible}
       onClose={onClose}
-      title={t("User Info")}
+      title={t("OTP Control")}
       height="80vh"
       width="80vw"
     >
@@ -90,8 +89,6 @@ const OTPForm: React.FC<OTPFormProps> = ({ visible, onClose, phoneNumber }) => {
                       name={`lastRequest-${item.resourceId}`}
                       label={t("Last Request")}
                       value={item.lastRequest?.split("T")[0] || ""}
-                      onChange={() => {}}
-                      onBlur={() => {}}
                       readOnly
                     />
                   </Col>
@@ -100,8 +97,6 @@ const OTPForm: React.FC<OTPFormProps> = ({ visible, onClose, phoneNumber }) => {
                       name={`count-${item.resourceId}`}
                       label={t("Request Count")}
                       value={item.count}
-                      onChange={() => {}}
-                      onBlur={() => {}}
                       readOnly
                     />
                   </Col>
@@ -110,8 +105,6 @@ const OTPForm: React.FC<OTPFormProps> = ({ visible, onClose, phoneNumber }) => {
                       name={`isInactive-${item.resourceId}`}
                       label={t("Inactive")}
                       value={item.isInactive === true ? t("Yes") : t("No")}
-                      onChange={() => {}}
-                      onBlur={() => {}}
                       readOnly
                     />
                   </Col>

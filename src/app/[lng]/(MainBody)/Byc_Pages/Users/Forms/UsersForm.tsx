@@ -8,23 +8,15 @@ import React, {
   useImperativeHandle,
   useRef,
 } from "react";
-import { Formik, Form, FormikProps } from "formik";
+import { FormikProps } from "formik";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
 import { Card, CardBody, CardHeader, Col, Row } from "reactstrap";
-import {
-  getMobileRequest,
-  postMobileRequest,
-} from "@/Redux/Reducers/RequestThunks";
+import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
-import * as Yup from "yup";
-import { showToast } from "@/Shared/Components/showToast";
 import { withRequestTracking } from "@/utils/withRequestTracking";
-import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
-import CustomTextarea from "@/Shared/Components/CustomTextarea";
 import TransactionLogForm from "./TransactionLogForm";
-import SharedModal from "@/Shared/Components/SharedModal";
 import UserInfoForm from "./UserInfoForm";
 import OTPForm from "./OTPForm";
 import UserControlForm from "./UserControlForm";
@@ -49,7 +41,7 @@ const UsersForm = forwardRef<
     formikRef?: React.Ref<FormikProps<FormValues>>;
     onSuccessSubmit?: () => void;
   }
->(({ user, formikRef, onSuccessSubmit }, ref) => {
+>(({ user }, ref) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
@@ -58,7 +50,6 @@ const UsersForm = forwardRef<
   const [showUserControlModal, setShowUserControlModal] = useState(false);
 
   const [initialValues, setInitialValues] = useState<FormValues | null>(null);
-  const internalFormikRef = useRef<FormikProps<FormValues> | null>(null);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [userData, setUserData] = useState<any | null>(null);
 
@@ -119,8 +110,6 @@ const UsersForm = forwardRef<
                 label={t("Name")}
                 value={user?.clientMaster?.name || ""}
                 readOnly
-                onChange={() => {}}
-                onBlur={() => {}}
               />
             </Col>
             <Col md="6">
@@ -129,8 +118,6 @@ const UsersForm = forwardRef<
                 label={t("Phone Number")}
                 value={user?.clientMaster?.cellPhone || ""}
                 readOnly
-                onChange={() => {}}
-                onBlur={() => {}}
               />
             </Col>
             <Col md="6">
@@ -139,8 +126,6 @@ const UsersForm = forwardRef<
                 label={t("Nationality")}
                 value={user?.clientMaster?.nationalityName || ""}
                 readOnly
-                onChange={() => {}}
-                onBlur={() => {}}
               />
             </Col>
             <Col md="6">
@@ -149,8 +134,6 @@ const UsersForm = forwardRef<
                 label={t("ID Number")}
                 value={user?.clientRemittance?.idNo || ""}
                 readOnly
-                onChange={() => {}}
-                onBlur={() => {}}
               />
             </Col>
             <Col md="6">
@@ -159,8 +142,6 @@ const UsersForm = forwardRef<
                 label={t("City")}
                 value={user?.address?.city || ""}
                 readOnly
-                onChange={() => {}}
-                onBlur={() => {}}
               />
             </Col>
             <Col md="6">
@@ -169,8 +150,6 @@ const UsersForm = forwardRef<
                 label={t("District")}
                 value={user?.address?.cityDistrict || ""}
                 readOnly
-                onChange={() => {}}
-                onBlur={() => {}}
               />
             </Col>
             <Col md="6">
@@ -179,8 +158,6 @@ const UsersForm = forwardRef<
                 label={t("Street")}
                 value={user?.address?.street1 || ""}
                 readOnly
-                onChange={() => {}}
-                onBlur={() => {}}
               />
             </Col>
             <Col md="6">
@@ -189,8 +166,6 @@ const UsersForm = forwardRef<
                 label={t("Status")}
                 value={user?.clientMaster?.statusName || ""}
                 readOnly
-                onChange={() => {}}
-                onBlur={() => {}}
               />
             </Col>
           </Row>
@@ -206,8 +181,6 @@ const UsersForm = forwardRef<
       <UserInfoForm
         visible={showUserInfoModal}
         onClose={() => setShowUserInfoModal(false)}
-        phoneNumber={initialValues?.username}
-        LocaluserData={user}
         userData={userData}
       />
       <UserControlForm

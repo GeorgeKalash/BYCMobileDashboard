@@ -79,7 +79,7 @@ const TransactionLogForm: React.FC<TransactionLogFormProps> = ({
     <SharedModal
       visible={visible}
       onClose={onClose}
-      title="User Info"
+      title={t("Transaction Log")}
       height="80vh"
       width="60vw"
     >

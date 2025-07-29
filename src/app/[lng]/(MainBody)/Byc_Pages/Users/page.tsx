@@ -7,14 +7,10 @@ import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedModal from "../../../../../Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
-import {
-  getMobileRequest,
-  postMobileRequest,
-} from "@/Redux/Reducers/RequestThunks";
+import { postMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
-import formatDate from "@/utils/DateFormatter";
 import UsersForm, { UsersFormHandle } from "./Forms/UsersForm";
 import SharedButton from "@/Shared/Components/SharedButton";
 import CustomInput from "@/Shared/Components/CustomInput";
@@ -22,9 +18,7 @@ import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 import CustomSelect from "@/Shared/Components/CustomSelect";
 
 import { format } from "date-fns";
-const lock = "/assets/images/icons/lock.png";
-const user = "/assets/images/icons/user.png";
-const userControl = "/assets/images/icons/userControl.png";
+
 const UsersPage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
@@ -63,9 +57,9 @@ const UsersPage = () => {
       filters: {
         fromDate: new Date(filters.fromDate).toISOString(),
         toDate: new Date(filters.toDate).toISOString(),
-        username: filters.phoneNumber || "",
+        username: filters.phoneNumber || null,
         nationalityId: filters.nationality ? Number(filters.nationality) : null,
-        idNo: filters.idNumber || "",
+        idNo: filters.idNumber || null,
       },
     };
     const result = await withRequestTracking(dispatch, () =>
@@ -139,37 +133,31 @@ const UsersPage = () => {
     {
       name: t("PhoneNumber"),
       selector: (row: any) => row.clientMaster?.cellPhone ?? "",
-      sortable: true,
       id: "phone",
     },
     {
       name: t("Nationality"),
       selector: (row: any) => row.clientMaster?.nationalityName ?? "",
-      sortable: true,
       id: "nationality",
     },
     {
       name: t("ID Number"),
       selector: (row: any) => row.clientRemittance?.idNo ?? "",
-      sortable: true,
       id: "idNo",
     },
     {
       name: t("City"),
       selector: (row: any) => row.address?.city ?? "",
-      sortable: true,
       id: "city",
     },
     {
       name: t("District"),
       selector: (row: any) => row.address?.cityDistrict ?? "",
-      sortable: true,
       id: "district",
     },
     {
       name: t("Street"),
       selector: (row: any) => row.address?.street1 ?? "",
-      sortable: true,
       id: "street",
     },
     {
@@ -254,7 +242,6 @@ const UsersPage = () => {
                 endpointId={DashboardMobileRepository.country.getall}
                 labelKey="name"
                 valueKey="recordId"
-                isRequired={false}
               />
             </Col>
 
@@ -290,21 +277,21 @@ const UsersPage = () => {
         footerActions={
           <>
             <SharedButton
-              logo={userControl}
+              logo="/assets/images/icons/userControl.png"
               color="primary"
               title={t("UserControl")}
               onClick={handleUserControlPress}
               tooltip={t("UserControl")}
             />
             <SharedButton
-              logo={user}
+              logo="/assets/images/icons/user.png"
               color="tertiary"
               title={t("AdditionalInfo")}
               onClick={handleUserInfoPress}
               tooltip={t("AdditionalInfo")}
             />
             <SharedButton
-              logo={lock}
+              logo="/assets/images/icons/lock.png"
               color="warning"
               title={t("OTP")}
               onClick={handleOTPPress}
