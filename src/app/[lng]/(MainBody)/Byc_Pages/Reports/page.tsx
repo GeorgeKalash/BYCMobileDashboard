@@ -15,7 +15,7 @@ import { format } from "date-fns";
 import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 import SimpleStatsGrid from "@/Shared/Components/SimpleStatsGrid";
 
-const Defaults = () => {
+const Reports = () => {
   type Filters = {
     fromDate: string;
     toDate: string;
@@ -124,4 +124,4 @@ const Defaults = () => {
   );
 };
 
-export default Defaults;
+export default Reports;
