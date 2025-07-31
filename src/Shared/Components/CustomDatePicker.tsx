@@ -55,23 +55,30 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   const CustomInput = forwardRef<HTMLDivElement, any>(
     ({ value, onClick }, ref) => (
       <div
-        className="form-control form-select d-flex align-items-center justify-content-between"
+        className="form-control d-flex align-items-center justify-content-between"
+        style={{
+          height: "38px",
+          padding: "6px 12px",
+          borderRadius: ".25rem",
+          fontSize: "0.875rem",
+          cursor: readOnly ? "not-allowed" : "pointer",
+        }}
         onClick={onClick}
         ref={ref}
-        style={{ cursor: readOnly ? "not-allowed" : "pointer" }}
       >
-        <span>
+        <span style={{ fontSize: 15 }}>
           {selectedDate
             ? selectedDate.toLocaleDateString("en-GB")
             : placeholder}
         </span>
+
         <Calendar size={16} />
       </div>
     )
   );
 
   return (
-    <FormGroup>
+    <FormGroup style={{ display: "flex", flexDirection: "column" }}>
       {label && (
         <Label>
           {label} {isRequired && <span className="text-danger">*</span>}
