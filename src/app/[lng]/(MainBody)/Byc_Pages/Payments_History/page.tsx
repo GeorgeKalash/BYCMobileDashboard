@@ -85,15 +85,21 @@ const PaymentsHistoryPage = () => {
 
   const columns = [
     {
+      name: t("Record ID"),
+      selector: (row: any) => row.recordId,
+
+      id: "RecordID",
+    },
+    {
       name: t("Client Name"),
       selector: (row: any) => row.clientName,
-      sortable: true,
+
       id: "clientName",
     },
     {
       name: t("Phone Number"),
       selector: (row: any) => row.cellPhone,
-      sortable: true,
+
       id: "cellPhone",
     },
     {
@@ -102,26 +108,26 @@ const PaymentsHistoryPage = () => {
         row.transactionDate
           ? formatDate(row.transactionDate, "dd/MM/yyyy")
           : "",
-      sortable: true,
+
       id: "TransactionDate",
     },
     {
       name: t("Payment Date"),
       selector: (row: any) => parseBody(row.body)?.source?.createdAt ?? " ",
-      sortable: true,
+
       id: "PaymentDate",
     },
 
     {
       name: t("Amount"),
-      selector: (row: any) => `${(row.amount / 100).toFixed(2)} SAR`,
-      sortable: true,
+      selector: (row: any) => row.amount ?? " ",
+
       id: "amount",
     },
     {
       name: t("Bank Name"),
       selector: (row: any) => row.bankName,
-      sortable: true,
+
       id: "bankName",
     },
     {
@@ -132,58 +138,58 @@ const PaymentsHistoryPage = () => {
           : row.paymentGatewayType === 2
           ? "Moyasar"
           : "Unknown",
-      sortable: true,
+
       id: "paymentGatewayType",
     },
     {
       name: t("IBAN"),
       selector: (row: any) => row.iban,
-      sortable: true,
+
       id: "iban",
     },
     {
       name: t("currency"),
       selector: (row: any) => row.currency,
-      sortable: true,
+
       id: "currency",
     },
 
     {
       name: t("Payment Status"),
-      selector: (row: any) => row.statusName,
-      sortable: true,
+      selector: (row: any) => row.psName,
+
       id: "paymentStatus",
     },
 
     {
       name: t("Payment Brand"),
       selector: (row: any) => row.network ?? " ",
-      sortable: true,
+
       id: "network",
     },
     {
       name: t("Receipt Ref"),
       selector: (row: any) => row.receiptRef ?? " ",
-      sortable: true,
+
       id: "receiptRef",
     },
     {
       name: t("owo Ref"),
       selector: (row: any) => row.owoRef ?? "",
-      sortable: true,
+
       id: "owoRef",
     },
 
     {
       name: t("Transaction ID"),
       selector: (row: any) => row.transactionId ?? "",
-      sortable: true,
+
       id: "transactionId",
     },
     {
       name: t("Transaction Ref"),
       selector: (row: any) => row.transactionRef ?? "",
-      sortable: true,
+
       id: "transactionId",
     },
   ];
@@ -256,7 +262,6 @@ const PaymentsHistoryPage = () => {
             totalRows={paginationState.totalRows}
             pageSize={pageSize}
             onPageChange={handlePageChange}
-            showActions={true}
           />
         </CardBody>
       </Card>
