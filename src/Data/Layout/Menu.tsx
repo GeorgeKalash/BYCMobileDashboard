@@ -91,6 +91,12 @@ export const MenuList: MenuItem[] | undefined = [
         title: "Payment",
         icon: "ui-kits",
       },
+      {
+        path: "/Byc_Pages/Reports",
+        type: "link",
+        title: "Reports",
+        icon: "ui-kits",
+      },
     ],
   },
 ];
