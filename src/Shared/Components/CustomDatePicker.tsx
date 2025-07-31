@@ -2,7 +2,7 @@ import React, { useEffect, useState, forwardRef } from "react";
 import { FormGroup, Label } from "reactstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Calendar } from "react-feather";
+import { Calendar, XCircle } from "react-feather";
 
 interface CustomDatePickerProps {
   name: string;
@@ -72,7 +72,33 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
             : placeholder}
         </span>
 
-        <Calendar size={16} />
+        {!readOnly && selectedDate && (
+          <XCircle
+            size={16}
+            className="text-danger"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDateChange(null);
+            }}
+            style={{
+              position: "absolute",
+              right: "2rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+              cursor: "pointer",
+            }}
+          />
+        )}
+
+        <Calendar
+          size={16}
+          style={{
+            position: "absolute",
+            right: "0.75rem",
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        />
       </div>
     )
   );

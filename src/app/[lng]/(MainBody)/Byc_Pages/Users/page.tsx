@@ -1,18 +1,23 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Card, CardBody, Col } from "reactstrap";
+import { Card, CardBody, Col, Row } from "reactstrap";
 import DataTable from "../../../../../Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedModal from "../../../../../Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
-import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
+import { postMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
-import formatDate from "@/utils/DateFormatter";
-import UsersForm from "./Forms/UsersForm";
+import UsersForm, { UsersFormHandle } from "./Forms/UsersForm";
+import SharedButton from "@/Shared/Components/SharedButton";
+import CustomInput from "@/Shared/Components/CustomInput";
+import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
+import CustomSelect from "@/Shared/Components/CustomSelect";
+
+import { format } from "date-fns";
 
 const UsersPage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -24,77 +29,72 @@ const UsersPage = () => {
     open: false,
     row: null as any,
   });
-
+  const handleOTPPress = () => {
+    formLogicRef.current?.openOtpModal();
+  };
   const [paginationState, setPaginationState] = useState({
     pageCount: 0,
     totalRows: 0,
   });
 
+  const [filters, setFilters] = useState({
+    fromDate: format(new Date(), "MM-dd-yyyy"),
+    toDate: format(new Date(), "MM-dd-yyyy"),
+    name: "",
+    phoneNumber: "",
+    idNumber: "",
+    nationality: "",
+  });
+
   const pageSize = 30;
   const formikRef = useRef<FormikProps<any>>(null);
+  const formLogicRef = useRef<UsersFormHandle>(null);
 
   const fetchData = async (page = 0) => {
+    const payload = {
+      startAt: page,
+      pageSize: pageSize,
+      filters: {
+        fromDate: new Date(filters.fromDate).toISOString(),
+        toDate: new Date(filters.toDate).toISOString(),
+        username: filters.phoneNumber || null,
+        nationalityId: filters.nationality ? Number(filters.nationality) : null,
+        idNo: filters.idNumber || null,
+      },
+    };
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
-        getMobileRequest({
-          extension: DashboardMobileRepository.MobileUser.page,
-          parameters: `&_startAt=${page}&_pageSize=${pageSize}`,
+        postMobileRequest({
+          extension: DashboardMobileRepository.MobileUser.SearchEngine,
+          body: payload,
+          rawBody: true,
         })
-      )
+      ).unwrap()
     );
 
-    const list = result?.payload?.data?.list;
-    const total = result?.payload?.data?.count;
-
+    const list = result?.data;
     setData(Array.isArray(list) ? list : []);
-    if (typeof total === "number") {
-      setPaginationState((prev) => ({
-        ...prev,
-        totalRows: total,
-      }));
-    }
+
+    setPaginationState((prev) => ({
+      ...prev,
+      totalRows: Array.isArray(list) ? list.length : 0,
+    }));
   };
 
   useEffect(() => {
     fetchData(paginationState.pageCount);
   }, [paginationState.pageCount]);
 
-  const columns = [
-    {
-      name: t("Username"),
-      selector: (row: any) => row.username,
-      sortable: true,
-      id: "username",
-    },
-    {
-      name: t("Active"),
-      cell: (row: any) => (
-        <span
-          style={{
-            color: row.isInactive ? "red" : "green",
-            fontWeight: "bold",
-          }}
-        >
-          {row.isInactive ? t("Inactive") : t("Active")}
-        </span>
-      ),
-      sortable: true,
-      id: "isInactive",
-    },
-    {
-      name: t("emailValidTo"),
-      selector: (row: any) =>
-        row.emailValidTo ? formatDate(row.emailValidTo, "dd/MM/yyyy") : "",
-      sortable: true,
-      id: "emailValidTo",
-    },
-    {
-      name: t("deviceIMEI"),
-      selector: (row: any) => row.deviceIMEI,
-      sortable: true,
-      id: "deviceIMEI",
-    },
-  ];
+  const handleFilterChange = (field: string, value: string | number) => {
+    setFilters((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePageChange = (startAt: number) => {
+    setPaginationState((prev) => ({
+      ...prev,
+      pageCount: startAt,
+    }));
+  };
 
   const openModal = (row: any = null) => {
     setModalState({
@@ -108,53 +108,203 @@ const UsersPage = () => {
       open: false,
       row: null,
     });
-    fetchData(paginationState.pageCount); 
+    fetchData(paginationState.pageCount);
   };
 
-  const handleSubmit = () => {
-    if (formikRef.current) {
-      formikRef.current.submitForm();
-    }
+  const handleInfoClick = () => {
+    formLogicRef.current?.logFormValues();
   };
 
-  const handlePageChange = (startAt: number) => {
-    setPaginationState((prev) => ({
-      ...prev,
-      pageCount: startAt,
-    }));
+  const handleUserInfoPress = () => {
+    formLogicRef.current?.openUserInfoModal();
   };
+
+  const handleUserControlPress = () => {
+    formLogicRef.current?.openUserControlModal();
+  };
+
+  const columns = [
+    {
+      name: t("Name"),
+      selector: (row: any) => row.clientMaster?.name ?? "",
+      sortable: true,
+      id: "name",
+    },
+    {
+      name: t("PhoneNumber"),
+      selector: (row: any) => row.clientMaster?.cellPhone ?? "",
+      id: "phone",
+    },
+    {
+      name: t("Nationality"),
+      selector: (row: any) => row.clientMaster?.nationalityName ?? "",
+      id: "nationality",
+    },
+    {
+      name: t("ID Number"),
+      selector: (row: any) => row.clientRemittance?.idNo ?? "",
+      id: "idNo",
+    },
+    {
+      name: t("City"),
+      selector: (row: any) => row.address?.city ?? "",
+      id: "city",
+    },
+    {
+      name: t("District"),
+      selector: (row: any) => row.address?.cityDistrict ?? "",
+      id: "district",
+    },
+    {
+      name: t("Street"),
+      selector: (row: any) => row.address?.street1 ?? "",
+      id: "street",
+    },
+    {
+      name: t("Active"),
+      cell: (row: any) => (
+        <span
+          style={{
+            color: row.user?.isInactive ? "red" : "green",
+            fontWeight: "bold",
+          }}
+        >
+          {row.user?.isInactive ? t("InActive") : t("Active")}
+        </span>
+      ),
+      sortable: true,
+      id: "isInactive",
+    },
+  ];
 
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Users")} />
+        <CommonCardHeader title={t("Users")}>
+          <Row className="w-100">
+            <Col md="2">
+              <CustomDatePicker
+                name="fromDate"
+                label={t("From Date")}
+                value={filters.fromDate}
+                onChange={(val) =>
+                  val && setFilters((prev) => ({ ...prev, fromDate: val }))
+                }
+              />
+            </Col>
+            <Col md="2">
+              <CustomDatePicker
+                name="toDate"
+                label={t("To Date")}
+                value={filters.toDate}
+                onChange={(val) =>
+                  val && setFilters((prev) => ({ ...prev, toDate: val }))
+                }
+              />
+            </Col>
+
+            <Col md="2">
+              <CustomInput
+                name="phoneNumber"
+                label={t("Phone Number")}
+                placeholder={t("Search by Phone Number")}
+                value={filters.phoneNumber}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "phoneNumber",
+                    e.target.value.replace(/\D/g, "")
+                  )
+                }
+              />
+            </Col>
+            <Col md="2">
+              <CustomInput
+                name="idNumber"
+                label={t("ID Number")}
+                placeholder={t("Search by ID Number")}
+                value={filters.idNumber}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "idNumber",
+                    e.target.value.replace(/\D/g, "")
+                  )
+                }
+              />
+            </Col>
+            <Col md="2">
+              <CustomSelect
+                name="nationality"
+                label={t("Nationality")}
+                value={filters.nationality}
+                onChange={(val) => {
+                  handleFilterChange("nationality", val ?? "");
+                }}
+                endpointId={DashboardMobileRepository.country.getall}
+                labelKey="name"
+                valueKey="recordId"
+              />
+            </Col>
+
+            <Col md="2" className="d-flex align-items-center">
+              <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
+            </Col>
+          </Row>
+        </CommonCardHeader>
+
         <CardBody>
           <DataTable
             title={t("Users")}
             data={data}
             columns={columns}
             pagination
-            serverPagination={true}
+            serverPagination
             totalRows={paginationState.totalRows}
             pageSize={pageSize}
             onPageChange={handlePageChange}
-            showActions={true}
+            showActions
             onEdit={(row) => openModal(row)}
           />
         </CardBody>
       </Card>
+
       <SharedModal
         visible={modalState.open}
         onClose={handleModalClose}
         title={t("User")}
-        width="30vw"
+        width="50vw"
         height="70vh"
-        onSubmit={handleSubmit}
+        onInfoClick={handleInfoClick}
+        footerActions={
+          <>
+            <SharedButton
+              logo="/assets/images/icons/userControl.png"
+              color="primary"
+              title={t("UserControl")}
+              onClick={handleUserControlPress}
+              tooltip={t("UserControl")}
+            />
+            <SharedButton
+              logo="/assets/images/icons/user.png"
+              color="tertiary"
+              title={t("AdditionalInfo")}
+              onClick={handleUserInfoPress}
+              tooltip={t("AdditionalInfo")}
+            />
+            <SharedButton
+              logo="/assets/images/icons/lock.png"
+              color="warning"
+              title={t("OTP")}
+              onClick={handleOTPPress}
+              tooltip={t("OTP")}
+            />
+          </>
+        }
       >
         {modalState.row && (
           <UsersForm
-          userId={modalState.row.username.replace(/\+/g, "%2B")}
-          formikRef={formikRef}
+            ref={formLogicRef}
+            user={modalState.row}
+            formikRef={formikRef}
             onSuccessSubmit={handleModalClose}
           />
         )}
