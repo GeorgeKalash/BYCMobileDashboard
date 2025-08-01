@@ -31,7 +31,7 @@ const PaymentsHistoryPage = () => {
     toDate: "",
     paymentGatewayId: "",
     paymentStatus: "",
-    username: "",
+    cellphone: "",
   });
 
   const [data, setData] = useState<{ key: string; value: string }[]>([]);
@@ -43,12 +43,6 @@ const PaymentsHistoryPage = () => {
   });
 
   const pageSize = 30;
-
-  const paymentStatusOptions = [
-    { value: 1, label: "PENDING" },
-    { value: 2, label: "SUCCESS" },
-    { value: -1, label: "FAILED" },
-  ];
 
   const fetchData = async (page = 0) => {
     const params = new URLSearchParams();
@@ -93,9 +87,9 @@ const PaymentsHistoryPage = () => {
 
   const columns = [
     {
-      name: t("Record ID"),
-      selector: (row: any) => row.recordId,
-      id: "RecordID",
+      name: t("receipt ID"),
+      selector: (row: any) => row.receiptId,
+      id: "receiptId",
     },
     {
       name: t("Card Holder Name"),
@@ -116,9 +110,9 @@ const PaymentsHistoryPage = () => {
       id: "TransactionDate",
     },
     {
-      name: t("Payment Date"),
-      selector: (row: any) => " ",
-      id: "PaymentDate",
+      name: t("Posting Date"),
+      selector: (row: any) => row.postingDate ?? " ",
+      id: "PostingDate",
     },
     {
       name: t("Amount"),
@@ -156,6 +150,16 @@ const PaymentsHistoryPage = () => {
       id: "paymentStatus",
     },
     {
+      name: t("Payment Code"),
+      selector: (row: any) => row.paymentCode,
+      id: "paymentCode",
+    },
+    {
+      name: t("Payment Description"),
+      selector: (row: any) => row.paymentDescription,
+      id: "paymentDescription",
+    },
+    {
       name: t("Payment Brand"),
       selector: (row: any) => row.network ?? " ",
       id: "network",
@@ -183,7 +187,7 @@ const PaymentsHistoryPage = () => {
   ];
 
   return (
-    <Col xs="12">
+    <Col xs="12" style={{ maxHeight: "85vh", overflowY: "auto" }}>
       <Card>
         <CommonCardHeader title={t("Payments History")} />
         <Row className="w-100 px-3 py-2">
@@ -228,9 +232,9 @@ const PaymentsHistoryPage = () => {
             <CustomSelect
               name="paymentStatus"
               label={t("Payment Status")}
-              options={paymentStatusOptions}
-              valueKey="value"
-              labelKey="label"
+              endpointId={PaymentGatewayRepository.status.getAll}
+              valueKey="key"
+              labelKey="value"
               value={filters.paymentStatus || undefined}
               onChange={(val) =>
                 setFilters((prev) => ({
@@ -249,14 +253,12 @@ const PaymentsHistoryPage = () => {
               columns={[{ key: "username", label: "Phone Number" }]}
               minChars={3}
               onChange={(selectedUser) => {
-                if (selectedUser) {
-                  setFilters((prev) => ({
-                    ...prev,
-                    username: selectedUser.username,
-                  }));
-                }
+                setFilters((prev) => ({
+                  ...prev,
+                  cellphone: selectedUser?.username || "",
+                }));
               }}
-              value={filters.username}
+              value={filters.cellphone}
             />
           </Col>
 

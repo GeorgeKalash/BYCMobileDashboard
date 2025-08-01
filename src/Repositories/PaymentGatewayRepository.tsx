@@ -1,4 +1,4 @@
-const service = "/api/PaymentGateway/";
+const service = "/api/Dashboard/PaymentGateway/";
 
 export const PaymentGatewayRepository = {
   Transactions: {
@@ -11,5 +11,8 @@ export const PaymentGatewayRepository = {
   PaymentSupport: {
     getAll: service + "PaymentSupport/getAll",
     setPack: service + "PaymentSupport/setPack",
+  },
+  status: {
+    getAll: service + "status/getAll",
   },
 };
