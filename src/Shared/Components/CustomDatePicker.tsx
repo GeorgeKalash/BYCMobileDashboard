@@ -2,7 +2,7 @@ import React, { useEffect, useState, forwardRef } from "react";
 import { FormGroup, Label } from "reactstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Calendar } from "react-feather";
+import { Calendar, XCircle } from "react-feather";
 
 interface CustomDatePickerProps {
   name: string;
@@ -15,7 +15,6 @@ interface CustomDatePickerProps {
   maxDate?: Date;
   placeholder?: string;
   mode?: "date" | "monthYear";
-  selectYear?: boolean;
 }
 
 const formatToMMDDYYYY = (date: Date): string =>
@@ -30,11 +29,11 @@ const parseDate = (value?: string): Date | null => {
   if (!value) return null;
   const parts = value.split("-");
   if (parts.length === 2) {
-    const [m, y] = parts.map(Number);
-    return new Date(y, m - 1, 1);
+    const [month, year] = parts.map(Number);
+    return new Date(year, month - 1, 1);
   } else if (parts.length === 3) {
-    const [m, d, y] = parts.map(Number);
-    return new Date(y, m - 1, d);
+    const [month, day, year] = parts.map(Number);
+    return new Date(year, month - 1, day);
   }
   return null;
 };
@@ -52,9 +51,8 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   readOnly = false,
   minDate,
   maxDate,
-  placeholder = "Select...",
+  placeholder = "Select a date",
   mode = "date",
-  selectYear = false,
 }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(
     parseDate(value)
@@ -66,29 +64,73 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
-    if (!date) return onChange?.(null);
-
     const formatted =
-      mode === "monthYear" ? formatToMMYYYY(date) : formatToMMDDYYYY(date);
+      date && mode === "monthYear"
+        ? formatToMMYYYY(date)
+        : date
+        ? formatToMMDDYYYY(date)
+        : null;
     onChange?.(formatted);
   };
 
   const CustomInput = forwardRef<HTMLDivElement, any>(
-    ({ value: displayValue, onClick }, ref) => (
+    ({ value, onClick }, ref) => (
       <div
-        className="form-control form-select d-flex align-items-center justify-content-between"
+        className="form-control d-flex align-items-center justify-content-between"
+        style={{
+          height: "38px",
+          padding: "6px 12px",
+          borderRadius: ".25rem",
+          fontSize: "0.875rem",
+          cursor: readOnly ? "not-allowed" : "pointer",
+          position: "relative",
+        }}
         onClick={onClick}
         ref={ref}
-        style={{ cursor: readOnly ? "not-allowed" : "pointer" }}
       >
-        <span>{selectedDate ? displayValue : placeholder}</span>
-        <Calendar size={16} />
+        <span style={{ fontSize: 15 }}>
+          {selectedDate
+            ? selectedDate.toLocaleDateString("en-GB", {
+                year: "numeric",
+                month: "2-digit",
+                ...(mode === "date" && { day: "2-digit" }),
+              })
+            : placeholder}
+        </span>
+
+        {!readOnly && selectedDate && (
+          <XCircle
+            size={16}
+            className="text-danger"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDateChange(null);
+            }}
+            style={{
+              position: "absolute",
+              right: "2rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+              cursor: "pointer",
+            }}
+          />
+        )}
+
+        <Calendar
+          size={16}
+          style={{
+            position: "absolute",
+            right: "0.75rem",
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        />
       </div>
     )
   );
 
   return (
-    <FormGroup>
+    <FormGroup style={{ display: "flex", flexDirection: "column" }}>
       {label && (
         <Label>
           {label} {isRequired && <span className="text-danger">*</span>}
@@ -97,19 +139,20 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
       <DatePicker
         selected={selectedDate}
         onChange={handleDateChange}
+        minDate={minDate}
+        maxDate={maxDate}
         name={name}
         readOnly={readOnly}
-        minDate={new Date(1950, 0, 1)}
-        maxDate={new Date()}
         placeholderText={placeholder}
         dateFormat={mode === "monthYear" ? "MM/yyyy" : "dd/MM/yyyy"}
+        showPopperArrow={false}
+        popperPlacement="bottom-start"
         customInput={<CustomInput />}
-        showMonthDropdown={mode === "date"}
-        showYearDropdown={mode === "date" && selectYear}
-        dropdownMode="select"
         showMonthYearPicker={mode === "monthYear"}
-        scrollableYearDropdown={selectYear || mode === "monthYear"}
-        yearDropdownItemNumber={new Date().getFullYear() - 1950 + 1}
+        showMonthDropdown={mode === "date"}
+        showYearDropdown
+        scrollableYearDropdown
+        yearDropdownItemNumber={100}
         renderMonthContent={renderMonthContent}
         popperModifiers={[
           {
@@ -117,7 +160,9 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
             enabled: true,
             phase: "write",
             fn: ({ state }) => {
-              Object.assign(state.styles.popper, { zIndex: 1055 });
+              Object.assign(state.styles.popper, {
+                zIndex: 1055,
+              });
             },
           },
         ]}
