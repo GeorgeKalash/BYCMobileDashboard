@@ -60,9 +60,16 @@ const Menulist: React.FC<MenuListType> = ({ menu, setActiveMenu, activeMenu, lev
             {item.children && (<div className="according-menu"><i className="fa fa-angle-right" /></div>)}
           </Link>
           {item.children && (
-            <ul className={`${level !== 0  ? "nav-sub-childmenu submenu-content" : "sidebar-submenu "}`}>
-              <Menulist menu={item.children} activeMenu={activeMenu} setActiveMenu={setActiveMenu} level={level + 1} className="sidebar-submenu" />
+           <div className="menu-scroll-container">
+            <ul className="sidebar-menu">
+              <Menulist
+                menu={menu}
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+                level={0}
+              />
             </ul>
+          </div>
           )}
         </li>
       ))}
