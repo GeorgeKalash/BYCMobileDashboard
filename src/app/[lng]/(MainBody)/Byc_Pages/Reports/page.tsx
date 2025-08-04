@@ -57,16 +57,13 @@ const Reports = () => {
               ).unwrap()
             );
 
-            if (result.status === 1 && Array.isArray(result.data)) {
-              const dataObj: Partial<typeof initialValues> = {};
-              result.data.forEach((item: { key: string; value: string }) => {
-                if (item.key in initialValues) {
-                  dataObj[item.key as keyof typeof initialValues] =
-                    Number(item.value) || 0;
-                }
-              });
-              setValues({ ...initialValues, ...dataObj });
-            }
+            let dataObj: Partial<typeof initialValues> = {};
+            Object.keys(initialValues).forEach((key) => {
+              dataObj[key as keyof typeof initialValues] =
+                Number(result.data[key]) || 0;
+            });
+
+            setValues({ ...initialValues, ...dataObj });
           };
 
           useEffect(() => {
@@ -84,7 +81,8 @@ const Reports = () => {
                         label={t("From Date")}
                         value={filters.fromDate}
                         onChange={(val) =>
-                          val && setFilters((prev) => ({ ...prev, fromDate: val }))
+                          val &&
+                          setFilters((prev) => ({ ...prev, fromDate: val }))
                         }
                       />
                     </Col>
@@ -94,7 +92,8 @@ const Reports = () => {
                         label={t("To Date")}
                         value={filters.toDate}
                         onChange={(val) =>
-                          val && setFilters((prev) => ({ ...prev, toDate: val }))
+                          val &&
+                          setFilters((prev) => ({ ...prev, toDate: val }))
                         }
                       />
                     </Col>
