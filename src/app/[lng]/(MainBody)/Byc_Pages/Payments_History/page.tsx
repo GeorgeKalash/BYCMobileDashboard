@@ -22,10 +22,15 @@ const PaymentsHistoryPage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
-  const reduxLangId = useAppSelector((state) => state.authSlice.languageId);
-  const langId =
-    reduxLangId || parseInt(localStorage.getItem("languageId") || "1", 10);
 
+  const [data, setData] = useState<{ key: string; value: string }[]>([]);
+
+  const [paginationState, setPaginationState] = useState({
+    pageCount: 0,
+    totalRows: 0,
+  });
+
+  const pageSize = 10;
   const [filters, setFilters] = useState({
     fromDate: "",
     toDate: "",
@@ -34,30 +39,24 @@ const PaymentsHistoryPage = () => {
     cellphone: "",
   });
 
-  const [data, setData] = useState<{ key: string; value: string }[]>([]);
-
-  const parseBody = (body: string | null) => (body ? JSON.parse(body) : {});
-  const [paginationState, setPaginationState] = useState({
-    pageCount: 0,
-    totalRows: 0,
-  });
-
-  const pageSize = 30;
-
-  const fetchData = async (page = 0) => {
-    const params = new URLSearchParams();
-    params.append("_startAt", page.toString());
-    params.append("_pageSize", pageSize.toString());
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) params.append(`_${key}`, value.toString());
+  const fetchData = async (page = paginationState.pageCount) => {
+    const queryParams = new URLSearchParams({
+      _startAt: (page * pageSize).toString(),
+      _pageSize: pageSize.toString(),
     });
 
+    if (filters.fromDate) queryParams.append("_fromDate", filters.fromDate);
+    if (filters.toDate) queryParams.append("_toDate", filters.toDate);
+    if (filters.paymentGatewayId)
+      queryParams.append("_paymentGatewayId", filters.paymentGatewayId);
+    if (filters.paymentStatus)
+      queryParams.append("_paymentStatus", filters.paymentStatus);
+    if (filters.cellphone) queryParams.append("_cellphone", filters.cellphone);
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
           extension: PaymentGatewayRepository.Transactions.GetAll,
-          parameters: params.toString(),
+          parameters: queryParams.toString(),
         })
       )
     );
@@ -75,15 +74,8 @@ const PaymentsHistoryPage = () => {
   };
 
   useEffect(() => {
-    fetchData(paginationState.pageCount);
-  }, [paginationState.pageCount]);
-
-  const handlePageChange = (startAt: number) => {
-    setPaginationState((prev) => ({
-      ...prev,
-      pageCount: startAt,
-    }));
-  };
+    fetchData();
+  }, [paginationState, paginationState.pageCount]);
 
   const columns = [
     {
@@ -186,12 +178,20 @@ const PaymentsHistoryPage = () => {
     },
   ];
 
+  const handlePageChange = (startAt: number) => {
+    const newPage = Math.floor(startAt / pageSize);
+    setPaginationState((prev) => ({
+      ...prev,
+      pageCount: newPage,
+    }));
+  };
+
   return (
-    <Col xs="12" style={{ maxHeight: "85vh", overflowY: "auto" }}>
+    <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Payments History")} />
-        <Row className="w-100 px-3 py-2">
-          <Col md="3">
+        <CommonCardHeader title={t("Payment History")}></CommonCardHeader>
+        <Row className="w-100 px-2 ">
+          <Col md="2">
             <CustomDatePicker
               name="fromDate"
               label={t("From Date")}
@@ -201,7 +201,7 @@ const PaymentsHistoryPage = () => {
               }
             />
           </Col>
-          <Col md="3">
+          <Col md="2">
             <CustomDatePicker
               name="toDate"
               label={t("To Date")}
@@ -212,11 +212,11 @@ const PaymentsHistoryPage = () => {
             />
           </Col>
 
-          <Col md="3">
+          <Col md="2">
             <CustomSelect
               name="paymentGatewayId"
               label={t("Payment Gateway")}
-              endpointId={`${DashboardKVSRepository.KVS.GetAll}?_dataset=2&_language=${langId}`}
+              dashboardDatasetId={2}
               valueKey="key"
               labelKey="value"
               value={filters.paymentGatewayId || undefined}
@@ -228,7 +228,7 @@ const PaymentsHistoryPage = () => {
               }
             />
           </Col>
-          <Col md="3">
+          <Col md="2">
             <CustomSelect
               name="paymentStatus"
               label={t("Payment Status")}
@@ -244,7 +244,7 @@ const PaymentsHistoryPage = () => {
               }
             />
           </Col>
-          <Col md="3">
+          <Col md="2">
             <ResourceLookup
               name="username"
               label={t("Phone Number")}
@@ -262,7 +262,7 @@ const PaymentsHistoryPage = () => {
             />
           </Col>
 
-          <Col md="3" className="d-flex align-items-center">
+          <Col md="2" className="d-flex align-items-center">
             <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
           </Col>
         </Row>
