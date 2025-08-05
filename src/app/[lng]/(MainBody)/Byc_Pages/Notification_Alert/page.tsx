@@ -112,7 +112,8 @@ const Notification_Alert = () => {
     try {
       const result = await dispatch(
         getMobileRequest({
-          extension: `${NotificationAlertRepository.NotificationGroup.getpack}?_recordId=${groupId}`,
+          extension: NotificationAlertRepository.NotificationGroup.getpack,
+          parameters: `_recordId=${groupId}`,
         })
       ).unwrap();
 

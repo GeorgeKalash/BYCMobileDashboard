@@ -64,7 +64,8 @@ const NotificationForm = ({
       const res = await withRequestTracking(dispatch, () =>
         dispatch(
           getMobileRequest({
-            extension: `${NotificationAlertRepository.NotificationTemplate.getPack}?_recordId=${templateId}`,
+            extension: NotificationAlertRepository.NotificationTemplate.getPack,
+            parameters: `_recordId=${templateId}`,
           })
         )
       );
