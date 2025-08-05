@@ -24,7 +24,7 @@ const Requests = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [eventType, setEventType] = useState<1 | 2 | null>(1);
   const [totalRows, setTotalRows] = useState(0);
-  const [pageCount, setPageCount] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
   const formikRef = useRef<FormikProps<any>>(null);
   const pageSize = 30
 
