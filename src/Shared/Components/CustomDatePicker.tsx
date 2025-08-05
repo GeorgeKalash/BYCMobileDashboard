@@ -76,19 +76,19 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   const CustomInput = forwardRef<HTMLDivElement, any>(
     ({ value, onClick }, ref) => (
       <div
-        className="form-control form-select d-flex align-items-center justify-content-between"
-        onClick={!readOnly ? onClick : undefined}
-        ref={ref}
+        className="form-control d-flex align-items-center justify-content-between"
         style={{
-          width: "100%",
-          minWidth: "180px",
-          paddingRight: "3rem",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
+          height: "38px",
+          padding: "6px 12px",
+          borderRadius: ".25rem",
+          fontSize: "0.875rem",
+          cursor: readOnly ? "not-allowed" : "pointer",
+          position: "relative",
         }}
+        onClick={onClick}
+        ref={ref}
       >
-        <span className="text-truncate">
+        <span style={{ fontSize: 15 }}>
           {selectedDate
             ? selectedDate.toLocaleDateString("en-GB", {
                 year: "numeric",

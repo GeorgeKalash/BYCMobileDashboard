@@ -209,6 +209,9 @@
   "Language 2": "Arabic",
   "deviceIMEI": "device IMEI",
   "emailValidTo": "Email Valid To",
+  "version": "Version",
+  "publishingDate": "Publishing Date",
+  "TermsAndConditions": "Terms And Conditions",
   "newClients": "New Clients",
   "onlineClients": "Online Clients",
   "inactiveClients": "Inactive Clients"

@@ -53,4 +53,10 @@ export const DashboardMobileRepository = {
   country: {
     getall: service + "System/Country/getAll",
   },
+  TermsAndConditions: {
+    page: service + "TermsAndConditions/page",
+    delete: service + "TermsAndConditions/delete",
+    setpack: service + "TermsAndConditions/setPack",
+    getpack: service + "TermsAndConditions/getPack",
+  },
 };
