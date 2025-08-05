@@ -95,7 +95,13 @@ export const MenuList: MenuItem[] | undefined = [
         type: "link",
         title: "Terms And Conditions",
         icon: "ui-kits",
-      }
+      },
+      {
+        path: "/Byc_Pages/Reports",
+        type: "link",
+        title: "Reports",
+        icon: "ui-kits",
+      },
     ],
   },
 ];
