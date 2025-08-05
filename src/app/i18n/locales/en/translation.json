@@ -211,5 +211,7 @@
   "emailValidTo": "Email Valid To",
   "newClients": "New Clients",
   "onlineClients": "Online Clients",
-  "inactiveClients": "Inactive Clients"
+  "inactiveClients": "Inactive Clients",
+  "From Date": "From Date",
+  "To Date": "To Date"
 }

@@ -49,4 +49,7 @@ export const DashboardMobileRepository = {
   country: {
     getall: service + "System/Country/getAll",
   },
+  city: {
+    getall: service + "System/City/getAll",
+  },
 };

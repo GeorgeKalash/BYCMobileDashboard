@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { FormGroup, Label, Spinner, Button } from "reactstrap";
 import { useSelector } from "react-redux";
 import { RootState } from "@/Redux/Store";
@@ -17,6 +19,7 @@ interface CustomSelectProps {
   label?: string;
   options?: OptionType[] | null;
   endpointId?: string;
+  parameters?: string;
   dataSetId?: number | string;
   dashboardDatasetId?: number | string;
   isRequired?: boolean;
@@ -36,6 +39,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   label = "",
   options = null,
   endpointId,
+  parameters,
   dataSetId,
   dashboardDatasetId,
   isRequired = false,
@@ -61,73 +65,65 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   const langId =
     reduxLangId || parseInt(localStorage.getItem("languageId") || "1", 10);
 
-  const loadOptions = useCallback(
-    async (preserveSelected = false) => {
-      let url = "";
-      let params = "";
+  const fetchOptions = async (preserveSelected = false) => {
+    let url = "";
+    let params = "";
 
-      if (dashboardDatasetId) {
-        url = "/api/KVS/Dashboard/getAllKVS";
-        params = `_dataset=${dashboardDatasetId}&_language=${langId}`;
-      } else if (dataSetId) {
-        url = "/api/KVS/getAllKVS";
-        params = `_dataset=${dataSetId}&_language=${langId}`;
-      } else if (endpointId) {
-        url = endpointId;
-        params = endpointId.includes("?") ? "" : "";
-      }
-
-      if (!url) return;
-
-      setIsLoading(true);
-      const action = await withRequestTracking(dispatch, () =>
-        dispatch(
-          getMobileRequest({
-            extension: url,
-            parameters: params,
-          })
-        )
-      );
-
-      const data = action.payload?.data ?? [];
-      const mapped: OptionType[] = data.map((item: any) => ({
-        value: item[valueKey],
-        label: item[labelKey],
-      }));
-
-      setSelectOptions(mapped);
-
-      if (!preserveSelected) {
-        if (typeof value !== "undefined" && value !== null) {
-          onChange?.(value);
-        } else if (typeof defaultIndex === "number" && mapped[defaultIndex]) {
-          onChange?.(mapped[defaultIndex].value);
-        } else {
-          onChange?.(null);
-        }
-      }
-
-      setIsLoading(false);
-    },
-    [
-      dashboardDatasetId,
-      dataSetId,
-      endpointId,
-      dispatch,
-      langId,
-      valueKey,
-      labelKey,
-      defaultIndex,
-      value,
-      onChange,
-    ]
-  );
-
-  useEffect(() => {
-    if ((dashboardDatasetId || dataSetId || endpointId) && selectOptions.length === 0) {
-      loadOptions(false);
+    if (dashboardDatasetId) {
+      url = "/api/KVS/Dashboard/getAllKVS";
+      params = `_dataset=${dashboardDatasetId}&_language=${langId}`;
+    } else if (dataSetId) {
+      url = "/api/KVS/getAllKVS";
+      params = `_dataset=${dataSetId}&_language=${langId}`;
+    } else if (endpointId) {
+      url = endpointId;
+      params = parameters
+        ? endpointId.includes("?")
+          ? parameters
+          : `?${parameters}`
+        : "";
     }
-  }, [dashboardDatasetId, dataSetId, endpointId, selectOptions.length, loadOptions]);
+
+    if (!url) return;
+
+    setIsLoading(true);
+    const action = await withRequestTracking(dispatch, () =>
+      dispatch(
+        getMobileRequest({
+          extension: url,
+          parameters: params,
+        })
+      )
+    );
+
+    const data = action.payload?.data ?? [];
+    const mapped: OptionType[] = data.map((item: any) => ({
+      value: item[valueKey],
+      label: item[labelKey],
+    }));
+
+    setSelectOptions(mapped);
+
+    if (!preserveSelected) {
+      if (typeof value !== "undefined" && value !== null) {
+        onChange?.(value);
+      } else if (typeof defaultIndex === "number" && mapped[defaultIndex]) {
+        onChange?.(mapped[defaultIndex].value);
+      } else {
+        onChange?.(null);
+      }
+    }
+
+    setIsLoading(false);
+  };
+
+  // Load options on mount & whenever parameters change
+  useEffect(() => {
+    if (dashboardDatasetId || dataSetId || endpointId) {
+      fetchOptions(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dashboardDatasetId, dataSetId, endpointId, parameters]);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value === "" ? null : e.target.value;
@@ -176,24 +172,25 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
 
             {!readOnly && (
               <>
-                {(dashboardDatasetId || dataSetId || endpointId) && showRefresh && (
-                  <Button
-                    type="button"
-                    color="link"
-                    size="sm"
-                    onClick={() => loadOptions(true)}
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      right: clearable ? "3.5rem" : "2rem",
-                      transform: "translateY(-50%)",
-                      padding: 0,
-                    }}
-                    title="Refresh"
-                  >
-                    <RefreshCw size={16} />
-                  </Button>
-                )}
+                {(dashboardDatasetId || dataSetId || endpointId) &&
+                  showRefresh && (
+                    <Button
+                      type="button"
+                      color="link"
+                      size="sm"
+                      onClick={() => fetchOptions(true)}
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        right: clearable ? "3.5rem" : "2rem",
+                        transform: "translateY(-50%)",
+                        padding: 0,
+                      }}
+                      title="Refresh"
+                    >
+                      <RefreshCw size={16} />
+                    </Button>
+                  )}
                 {clearable && (
                   <Button
                     type="button"

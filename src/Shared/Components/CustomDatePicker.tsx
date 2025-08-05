@@ -1,4 +1,5 @@
 import React, { useEffect, useState, forwardRef } from "react";
+import { useFormikContext, useField } from "formik";
 import { FormGroup, Label } from "reactstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -38,76 +39,98 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   maxDate,
   placeholder = "Select a date...",
 }) => {
+  const formik = useFormikContext();
+  const isControlled =
+    typeof value !== "undefined" || typeof onChange !== "undefined";
+
+  const [field, meta] = isControlled
+    ? [{ name, value, onChange, onBlur: undefined }, {}]
+    : useField(name);
+
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    parseDate(value)
+    parseDate(isControlled ? (value as string) : field.value)
   );
 
   useEffect(() => {
-    setSelectedDate(parseDate(value));
-  }, [value]);
+    setSelectedDate(
+      parseDate(isControlled ? (value as string) : field.value)
+    );
+  }, [value, field.value]);
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
     const formatted = date ? formatToMMDDYYYY(date) : null;
-    onChange?.(formatted);
+    if (isControlled) {
+      onChange?.(formatted);
+    } else {
+      formik.setFieldValue(name, formatted);
+    }
   };
 
-  const CustomInput = forwardRef<HTMLDivElement, any>(
-    ({ value, onClick }, ref) => (
-      <div
-        className="form-control form-select d-flex align-items-center justify-content-between"
-        onClick={!readOnly ? onClick : undefined}
-        ref={ref}
-        style={{
-          width: "100%",
-          minWidth: "180px",
-          paddingRight: "3rem",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
-        <span className="text-truncate">
-          {selectedDate
-            ? selectedDate.toLocaleDateString("en-GB")
-            : placeholder}
-        </span>
+  const isEmpty = isRequired && !selectedDate;
+  const validationClass =
+    formik && meta.touched
+      ? meta.error || isEmpty
+        ? "is-invalid"
+        : ""
+      : "";
 
-        {!readOnly && selectedDate && (
-          <XCircle
-            size={16}
-            className="text-danger"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDateChange(null);
-            }}
-            style={{
-              position: "absolute",
-              right: "2rem",
-              top: "50%",
-              transform: "translateY(-50%)",
-              cursor: "pointer",
-            }}
-          />
-        )}
+  const CustomInput = forwardRef<HTMLDivElement, any>(({ value, onClick }, ref) => (
+    <div
+      className={`form-control d-flex align-items-center justify-content-between ${validationClass}`}
+      onClick={!readOnly ? onClick : undefined}
+      ref={ref}
+      style={{
+        width: "100%",
+        minHeight: "38px",
+        paddingRight: "3rem",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        position: "relative",
+        cursor: readOnly ? "not-allowed" : "pointer",
+      }}
+    >
+      <span className="text-truncate">
+        {selectedDate
+          ? selectedDate.toLocaleDateString("en-GB")
+          : placeholder}
+      </span>
 
-        <Calendar
+      {!readOnly && selectedDate && (
+        <XCircle
           size={16}
+          className="text-danger"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDateChange(null);
+          }}
           style={{
             position: "absolute",
-            right: "0.75rem",
+            right: "2rem",
             top: "50%",
             transform: "translateY(-50%)",
+            cursor: "pointer",
           }}
         />
-      </div>
-    )
-  );
+      )}
+
+      <Calendar
+        size={16}
+        style={{
+          position: "absolute",
+          right: "0.75rem",
+          top: "50%",
+          transform: "translateY(-50%)",
+        }}
+      />
+    </div>
+  ));
 
   return (
     <FormGroup>
       {label && (
-        <Label>
+        <Label htmlFor={name} style={{ display: "block", marginBottom: "0.25rem" }}>
           {label} {isRequired && <span className="text-danger">*</span>}
         </Label>
       )}
@@ -136,6 +159,9 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
           },
         ]}
       />
+      {formik && meta.touched && meta.error && (
+        <div className="invalid-feedback d-block">{meta.error}</div>
+      )}
     </FormGroup>
   );
 };
