@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
-import SVG from "@/CommonComponent/SVG";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
-import { handlePined } from "@/Redux/Reducers/LayoutSlice";
 import { MenuListType, SidebarItemTypes } from "@/Types/LayoutTypes";
 import { useTranslation } from "@/app/i18n/client";
 import Link from "next/link";
@@ -15,7 +13,6 @@ const Menulist: React.FC<MenuListType> = ({
   className
 }) => {
   const { pinedMenu } = useAppSelector((state) => state.layout);
-  const { sidebarIconType } = useAppSelector((state) => state.themeCustomizer);
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
 
   const pathname = usePathname();
@@ -66,7 +63,6 @@ const Menulist: React.FC<MenuListType> = ({
             {level === 0 && (
               <i
                 className="fa fa-thumb-tack"
-                onClick={() => dispatch(handlePined(item.title))}
               ></i>
             )}
 

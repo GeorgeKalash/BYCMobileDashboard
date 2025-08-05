@@ -95,25 +95,7 @@ export const MenuList: MenuItem[] | undefined = [
         type: "link",
         title: "Terms And Conditions",
         icon: "ui-kits",
-      },
-      {
-        path: "/Byc_Pages/Terms_And_Conditions",
-        type: "link",
-        title: "Terms And Conditions",
-        icon: "ui-kits",
-      },
-      {
-        path: "/Byc_Pages/Terms_And_Conditions",
-        type: "link",
-        title: "Terms And Conditions",
-        icon: "ui-kits",
-      },
-      {
-        path: "/Byc_Pages/Terms_And_Conditions",
-        type: "link",
-        title: "Terms And Conditions",
-        icon: "ui-kits",
-      },
+      }
     ],
   },
 ];
