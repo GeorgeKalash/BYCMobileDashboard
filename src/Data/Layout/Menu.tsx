@@ -3,7 +3,6 @@ import { MenuItem } from "@/Types/LayoutTypes";
 export const MenuList: MenuItem[] | undefined = [
   {
     title: "Navigation Menu",
-    lanClass: "lan-8",
     menucontent: "BYC Pages to use",
     Items: [
       {
@@ -95,6 +94,18 @@ export const MenuList: MenuItem[] | undefined = [
         path: "/Byc_Pages/Payment",
         type: "link",
         title: "Payment",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/Terms_And_Conditions",
+        type: "link",
+        title: "Terms And Conditions",
+        icon: "ui-kits",
+      },
+      {
+        path: "/Byc_Pages/Reports",
+        type: "link",
+        title: "Reports",
         icon: "ui-kits",
       },
     ],

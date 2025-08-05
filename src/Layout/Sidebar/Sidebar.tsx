@@ -1,5 +1,5 @@
 import ConfigDB from "@/Config/ThemeConfig";
-import { ImagePath, Pinned } from "@/Constant";
+import { ImagePath } from "@/Constant";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { scrollToLeft, scrollToRight } from "@/Redux/Reducers/LayoutSlice";
 import Link from "next/link";
@@ -7,12 +7,9 @@ import { ArrowLeft, ArrowRight } from "react-feather";
 import SimpleBar from "simplebar-react";
 import { LogoWrapper } from "./LogoWrapper";
 import SidebarMenuList from "./SideBarMenuList";
-import { useTranslation } from "@/app/i18n/client";
 export const SideBar = () => {
   const { toggleSidebar, margin } = useAppSelector((state) => state.layout);
-  const { pinedMenu } = useAppSelector((state) => state.layout);
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
-  const { t } = useTranslation(i18LangStatus);
   const wrapper = ConfigDB.data.settings.layout_class;
   const dispatch = useAppDispatch();
 
@@ -39,7 +36,7 @@ export const SideBar = () => {
           }}
         >
           <ul className="sidebar-links custom-scrollbar" id="simple-bar">
-            <SimpleBar style={{ width: "80px", height: "350px" }}>
+            <SimpleBar style={{ width: "80px", height: "350px",paddingTop: "24px" }}>
               <li className="back-btn">
                 <Link href={`/${i18LangStatus}/dashboard/default_dashboard`}>
                   <img
@@ -51,15 +48,6 @@ export const SideBar = () => {
                 <div className="mobile-back text-end ">
                   <span>Back </span>
                   <i className="fa fa-angle-right ps-2" aria-hidden="true"></i>
-                </div>
-              </li>
-              <li
-                className={`pin-title sidebar-main-title ${
-                  pinedMenu.length > 1 ? "show" : ""
-                } `}
-              >
-                <div>
-                  <h6>{t("Pinned")}</h6>
                 </div>
               </li>
               <SidebarMenuList />

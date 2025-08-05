@@ -10,7 +10,7 @@ type CustomInputProps = {
   readOnly?: boolean;
   min?: number | string;
   ar?: boolean;
-  value?: string | number;
+  value?: string | number | null;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 };
