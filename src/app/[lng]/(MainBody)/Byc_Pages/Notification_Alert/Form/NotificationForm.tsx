@@ -35,24 +35,15 @@ interface Props {
   templateId: number;
   formikRef?: React.Ref<FormikProps<any>>;
   onSuccessSubmit?: () => void;
-  selectedUser?: any;
-  selectedCountry?: any;
-  selectedGroup?: any;
-  idNumber?: any;
-  fromBirthDate?: string | null;
-  toBirthDate?: string | null;
+
+  filters: Record<string, any>;
 }
 
 const NotificationForm = ({
   templateId,
   formikRef,
   onSuccessSubmit,
-  selectedUser,
-  selectedCountry,
-  selectedGroup,
-  idNumber,
-  fromBirthDate,
-  toBirthDate,
+  filters,
 }: Props) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
@@ -135,16 +126,7 @@ const NotificationForm = ({
 
     const requestBody = {
       notificationAlerts: payload,
-      filters: {
-        userName: selectedUser?.username || null,
-        nationalityId: selectedCountry || null,
-        idNo: idNumber || null,
-        notificationGroupId: selectedGroup || null,
-        fromBirthDate: fromBirthDate
-          ? new Date(fromBirthDate).toISOString()
-          : null,
-        toBirthDate: toBirthDate ? new Date(toBirthDate).toISOString() : null,
-      },
+      filters: filters,
     };
 
     await withRequestTracking(dispatch, () =>

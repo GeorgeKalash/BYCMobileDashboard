@@ -19,6 +19,7 @@ import {
 } from "@/Redux/Reducers/RequestThunks";
 import DataTableComponent from "@/Shared/Components/DataTable";
 import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
+import MultiValueInput from "@/Shared/Components/MultiValueInput";
 
 const Notification_Alert = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -50,6 +51,26 @@ const Notification_Alert = () => {
       formikRef.current.submitForm();
     }
   };
+  const filters = {
+    username:
+      selectedUser?.username || formikRef.current?.values.mobile || null,
+    nationalityId: formikRef.current?.values.country || null,
+    idNo: formikRef.current?.values.idNumber || null,
+    notificationGroupId: formikRef.current?.values.group || null,
+    fromBirthDate: formikRef.current?.values.fromBirthDate
+      ? new Date(formikRef.current?.values.fromBirthDate).toISOString()
+      : null,
+    toBirthDate: formikRef.current?.values.toBirthDate
+      ? new Date(formikRef.current?.values.toBirthDate).toISOString()
+      : null,
+    sponsors:
+      formikRef.current?.values.sponsors?.length > 0
+        ? formikRef.current?.values.sponsors
+        : null,
+    cityId: null,
+    street: null,
+    lastLogin: null,
+  };
 
   const fetchData = async (page = 0) => {
     const values = formikRef.current?.values;
@@ -66,6 +87,10 @@ const Notification_Alert = () => {
         username: values?.mobile || null,
         nationalityId: values?.country?.toString() || null,
         idNo: values?.idNumber || null,
+        sponsors: values?.sponsors?.length ? values.sponsors : null,
+        cityId: null,
+        street: null,
+        lastLogin: null,
       },
     };
     const result = await dispatch(
@@ -160,6 +185,7 @@ const Notification_Alert = () => {
               template: selectedRow?.template || "",
               fromBirthDate: "",
               toBirthDate: "",
+              sponsors: [],
             }}
             enableReinitialize
             onSubmit={() => {}}
@@ -168,27 +194,25 @@ const Notification_Alert = () => {
             {({ values, setFieldValue }) => (
               <Form>
                 <Row className="align-items-end">
-                  <Col md="2">
+                  <Col md="3">
                     <CustomDatePicker
                       name="fromBirthDate"
                       label={t("From Birth Date")}
                       value={values.fromBirthDate}
                       onChange={(val) => setFieldValue("fromBirthDate", val)}
-                      selectYear={true}
                     />
                   </Col>
 
-                  <Col md="2">
+                  <Col md="3">
                     <CustomDatePicker
                       name="toBirthDate"
                       label={t("To Birth Date")}
                       value={values.toBirthDate}
                       onChange={(val) => setFieldValue("toBirthDate", val)}
-                      selectYear={true}
                     />
                   </Col>
 
-                  <Col md="2">
+                  <Col md="3">
                     <CustomSelect
                       name="Nationality"
                       label={t("Nationality")}
@@ -202,7 +226,7 @@ const Notification_Alert = () => {
                       isRequired={true}
                     />
                   </Col>
-                  <Col md="2">
+                  <Col md="3">
                     <CustomInput
                       name="mobile"
                       label={t("Phone Number")}
@@ -214,7 +238,7 @@ const Notification_Alert = () => {
                     />
                   </Col>
 
-                  <Col md="2">
+                  <Col md="3">
                     <CustomInput
                       name="idNumber"
                       label={t("ID Number")}
@@ -225,8 +249,16 @@ const Notification_Alert = () => {
                       }
                     />
                   </Col>
+                  <Col md="3">
+                    <MultiValueInput
+                      name="sponsors"
+                      label={t("Sponsor Name")}
+                      placeholder={t("Enter Sponsor Name")}
+                    />
+                  </Col>
+
                   <Col
-                    md="2"
+                    md="3"
                     className="d-flex justify-content-end align-items-end"
                   >
                     <SharedButton
@@ -238,8 +270,9 @@ const Notification_Alert = () => {
                     />
                   </Col>
                 </Row>
+
                 <Row>
-                  <Col md="2">
+                  <Col md="3">
                     <CustomSelect
                       name="Group"
                       label={t("Group")}
@@ -263,7 +296,7 @@ const Notification_Alert = () => {
                   </Col>
                 </Row>
                 <Row className="align-items-end mb-2">
-                  <Col md="2">
+                  <Col md="3">
                     <CustomSelect
                       name="template"
                       label={t("Template")}
@@ -330,14 +363,9 @@ const Notification_Alert = () => {
       >
         <NotificationForm
           templateId={formikRef.current?.values.template || null}
-          selectedUser={selectedUser}
-          selectedCountry={formikRef.current?.values.country || null}
-          selectedGroup={formikRef.current?.values.group || null}
-          idNumber={formikRef.current?.values.idNumber || null}
-          fromBirthDate={formikRef.current?.values.fromBirthDate || null}
-          toBirthDate={formikRef.current?.values.toBirthDate || null}
           formikRef={formikModalRef}
           onSuccessSubmit={handleModalClose}
+          filters={filters}
         />
       </SharedModal>
     </Col>
