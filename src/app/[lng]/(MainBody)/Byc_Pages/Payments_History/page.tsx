@@ -12,9 +12,7 @@ import formatDate from "@/utils/DateFormatter";
 import { PaymentGatewayRepository } from "@/Repositories/PaymentGatewayRepository";
 import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 import SharedButton from "@/Shared/Components/SharedButton";
-import CustomInput from "@/Shared/Components/CustomInput";
 import CustomSelect from "@/Shared/Components/CustomSelect";
-import { DashboardKVSRepository } from "@/Repositories/DashboardKVSRepository";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import ResourceLookup from "@/Shared/Components/ResourceLookup";
 
@@ -41,7 +39,7 @@ const PaymentsHistoryPage = () => {
 
   const fetchData = async (page = paginationState.pageCount) => {
     const queryParams = new URLSearchParams({
-      _startAt: (page * pageSize).toString(),
+      _startAt: page.toString(),
       _pageSize: pageSize.toString(),
     });
 
@@ -52,6 +50,7 @@ const PaymentsHistoryPage = () => {
     if (filters.paymentStatus)
       queryParams.append("_paymentStatus", filters.paymentStatus);
     if (filters.cellphone) queryParams.append("_cellphone", filters.cellphone);
+
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
@@ -75,7 +74,7 @@ const PaymentsHistoryPage = () => {
 
   useEffect(() => {
     fetchData();
-  }, [paginationState, paginationState.pageCount]);
+  }, [paginationState.pageCount]);
 
   const columns = [
     {
