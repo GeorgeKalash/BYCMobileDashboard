@@ -57,14 +57,14 @@ const UsersPage = () => {
       startAt: page,
       pageSize,
       filters: {
-        fromDate: new Date(filters.fromDate).toISOString(),
-        toDate: new Date(filters.toDate).toISOString(),
+        fromDate: filters.fromDate ? new Date(filters?.fromDate).toISOString() : null,
+        toDate: filters?.toDate? new Date(filters?.toDate).toISOString() : null,
         username: filters.phoneNumber || null,
-        nationalityId: filters.nationality ? Number(filters.nationality) : null,
+        nationalityId: filters.nationality ? Number(filters?.nationality) : null,
         idNo: filters.idNumber || null,
         cityId: filters.cityId || null,
         street: filters.street || "",
-        lastLogin: parseDateTime(filters.lastLogin)?.toISOString() ?? null,
+        lastLogin: parseDateTime(filters?.lastLogin)?.toISOString() ?? null,
       },
     };
 
