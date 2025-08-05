@@ -62,7 +62,6 @@ const TermsAndConditionsForm = ({
     values: typeof initialValues,
     { setSubmitting }: FormikHelpers<typeof initialValues>
   ) => {
-    console.log("Submitting:", values);
 
     await withRequestTracking(dispatch, () =>
       dispatch(
@@ -104,47 +103,55 @@ const TermsAndConditionsForm = ({
       innerRef={formikRef}
     >
       {({ submitForm, setValues, values, setFieldValue }) => {
-        useEffect(() => {
-          const fetchData = async () => {
-            if (recordId) {
-              const result = await withRequestTracking(dispatch, () =>
-                dispatch(
-                  getMobileRequest({
-                    extension: DashboardMobileRepository.TermsAndConditions.getpack,
-                    parameters: `_recordId=${recordId}`,
-                  })
-                )
-              );
+       useEffect(() => {
+        const fetchData = async () => {
+          if (recordId) {
+            const result = await withRequestTracking(dispatch, () =>
+              dispatch(
+                getMobileRequest({
+                  extension: DashboardMobileRepository.TermsAndConditions.getpack,
+                  parameters: `_recordId=${recordId}`,
+                })
+              )
+            );
 
-              if (result?.payload?.data) {
-                const apiData = result.payload.data;
-                const mergedLanguages = supportedLanguagesRef.current.map((lang) => {
-                  const existing = apiData.languages?.find(
-                    (l: any) => l.languageId === lang.id
-                  );
-                  return {
-                    termsId: recordId,
-                    languageId: lang.id,
-                    text: existing?.text || "",
-                  };
-                });
+            if (result?.payload?.data) {
+              const apiData = result.payload.data;
 
-                setValues({
-                  header: {
-                    ...apiData.header,
-                    version: String(apiData.header.version ?? ""),
-                    publishingDate:
-                      apiData.header.publishingDate ||
-                      format(new Date(), "MM-dd-yyyy"),
-                  },
-                  languages: mergedLanguages,
-                });
+              const mergedLanguages = supportedLanguagesRef.current.map((lang) => {
+                const existing = apiData.languages?.find(
+                  (l: any) => l.languageId === lang.id
+                );
+                return {
+                  termsId: recordId,
+                  languageId: lang.id,
+                  text: existing?.text || "",
+                };
+              });
+
+              const rawDate = apiData?.header?.publishingDate;
+              let safePublishingDate: string;
+
+              if (rawDate && !isNaN(new Date(rawDate).getTime())) {
+                safePublishingDate = format(new Date(rawDate), "MM-dd-yyyy");
+              } else {
+                safePublishingDate = format(new Date(), "MM-dd-yyyy");
               }
-            }
-          };
 
-          fetchData();
-        }, [recordId, dispatch, setValues]);
+              setValues({
+                header: {
+                  ...apiData.header,
+                  version: String(apiData.header.version ?? ""),
+                  publishingDate: safePublishingDate,
+                },
+                languages: mergedLanguages,
+              });
+            }
+          }
+        };
+
+        fetchData();
+      }, [recordId, dispatch, setValues]);
 
         return (
           <Form onKeyDown={(e) => handleKeyDown(e, submitForm)}>
