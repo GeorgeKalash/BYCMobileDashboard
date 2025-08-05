@@ -8,22 +8,26 @@ interface SharedModalProps {
   visible: boolean;
   onClose: () => void;
   onSubmit?: () => void;
+  onInfoClick?: () => void;
   title: string;
   children: ReactNode;
   width?: string;
   height?: string;
   className?: string;
+  footerActions?: ReactNode;
 }
 
 const SharedModal: React.FC<SharedModalProps> = ({
   visible,
   onClose,
   onSubmit,
+  onInfoClick,
   title,
   children,
   width = "",
   height = "",
   className = "",
+  footerActions,
 }) => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
@@ -38,15 +42,29 @@ const SharedModal: React.FC<SharedModalProps> = ({
       style={{ maxWidth: width }}
     >
       <ModalHeader toggle={onClose}>{title}</ModalHeader>
-      <ModalBody style={{ maxHeight: height, overflowY: "auto" }}>
+
+      <ModalBody style={{ height: height, overflowY: "auto" }}>
         {children}
       </ModalBody>
+
       <ModalFooter>
+        {footerActions}
+
+        {typeof onInfoClick === "function" && (
+          <SharedButton
+            logo="/assets/images/icons/info.png"
+            color="info"
+            tooltip={t("More info")}
+            onClick={onInfoClick}
+          />
+        )}
+
         {typeof onSubmit === "function" && (
           <SharedButton
+            logo="/assets/images/icons/save.png"
             color="primary"
             onClick={onSubmit}
-            title={t("Submit")}
+            tooltip={t("Submit")}
           />
         )}
       </ModalFooter>

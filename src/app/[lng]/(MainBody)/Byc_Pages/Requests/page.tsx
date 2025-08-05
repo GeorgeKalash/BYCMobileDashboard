@@ -116,7 +116,7 @@ const Requests = () => {
     },
   ];
 
-  const handleLanguageChange = (e: string | number | null) => {
+  const handleEventChange = (e: string | number | null) => {
     const num = Number(e);
     setEventType([1, 2].includes(num) ? (num as 1 | 2) : null);
   };
@@ -137,7 +137,7 @@ const Requests = () => {
               valueKey="key"
               labelKey="value"
               value={eventType ?? ""}
-              onChange={handleLanguageChange}
+              onChange={handleEventChange}
             />
           </div>
         </CommonCardHeader>

@@ -19,6 +19,7 @@ interface CustomSelectProps {
   options?: OptionType[] | null;
   endpointId?: string;
   dataSetId?: number | string;
+  dashboardDatasetId?: number | string;
   isRequired?: boolean;
   showRefresh?: boolean;
   loadingText?: string;
@@ -37,6 +38,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   options = null,
   endpointId,
   dataSetId,
+  dashboardDatasetId,
   isRequired = false,
   showRefresh = true,
   loadingText = "Loading...",
@@ -62,7 +64,20 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
 
   const loadOptions = useCallback(
     async (preserveSelected = false) => {
-      const url = dataSetId ? `/api/KVS/getAllKVS` : endpointId;
+      let url = "";
+      let params = "";
+
+      if (dashboardDatasetId) {
+        url = "/api/KVS/Dashboard/getAllKVS";
+        params = `_dataset=${dashboardDatasetId}&_language=${langId}`;
+      } else if (dataSetId) {
+        url = "/api/KVS/getAllKVS";
+        params = `_dataset=${dataSetId}&_language=${langId}`;
+      } else if (endpointId) {
+        url = endpointId;
+        params = endpointId.includes("?") ? "" : "";
+      }
+
       if (!url) return;
 
       setIsLoading(true);
@@ -70,9 +85,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
         dispatch(
           getMobileRequest({
             extension: url,
-            parameters: dataSetId
-              ? `_dataset=${dataSetId}&_language=${langId}`
-              : "",
+            parameters: params,
           })
         )
       );
@@ -98,6 +111,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
       setIsLoading(false);
     },
     [
+      dashboardDatasetId,
       dataSetId,
       endpointId,
       dispatch,
@@ -111,10 +125,10 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   );
 
   useEffect(() => {
-    if ((dataSetId || endpointId) && selectOptions.length === 0) {
+    if ((dashboardDatasetId || dataSetId || endpointId) && selectOptions.length === 0) {
       loadOptions(false);
     }
-  }, [dataSetId, endpointId, selectOptions.length, loadOptions]);
+  }, [dashboardDatasetId, dataSetId, endpointId, selectOptions.length, loadOptions]);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value === "" ? null : e.target.value;
@@ -163,7 +177,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
 
             {!readOnly && (
               <>
-                {(dataSetId || endpointId) && showRefresh && (
+                {(dashboardDatasetId || dataSetId || endpointId) && showRefresh && (
                   <Button
                     type="button"
                     color="link"

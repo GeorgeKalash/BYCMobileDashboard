@@ -200,10 +200,11 @@ const DataTableComponent = ({
           data={paginatedData}
           fixedHeader
           striped
-          fixedHeaderScrollHeight="67vh"
+          fixedHeaderScrollHeight="60vh"
           highlightOnHover={highlightOnHover}
           persistTableHead
           sortServer
+          pagination={false}
           onRowClicked={onRowClicked}
           onSort={(column, direction) => {
             const columnId =
@@ -257,7 +258,7 @@ const DataTableComponent = ({
               return (
                 <span>
                   <i className="fa me-1" />
-                  Displaying Records <strong>{start}</strong> -{" "}
+                  Displaying Records <strong>{start}</strong> -
                   <strong>{end}</strong> of <strong>{total}</strong>
                 </span>
               );
