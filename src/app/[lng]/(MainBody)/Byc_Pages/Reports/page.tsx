@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form } from "formik";
 import { CardBody, Card, Col, Row } from "reactstrap";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
@@ -43,43 +43,6 @@ const Reports = () => {
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
 
-  const fetchAndSet = useCallback(
-    async (setValues: (vals: typeof initialValues) => void) => {
-      const result = await withRequestTracking(dispatch, () =>
-        dispatch(
-          getMobileRequest({
-            extension: ReportsRepository.MobileStatistics,
-            parameters: `_from=${filters.fromDate}&_to=${filters.toDate}`,
-          })
-        ).unwrap()
-      );
-
-      const result2 = await withRequestTracking(dispatch, () =>
-        dispatch(
-          getMobileRequest({
-            extension: ReportsRepository.RT405,
-            parameters: `_from=${filters.fromDate}&_to=${filters.toDate}`,
-          })
-        ).unwrap()
-      );
-
-      let dataObj: Partial<typeof initialValues> = {};
-      Object.keys(initialValues).forEach((key) => {
-        dataObj[key as keyof typeof initialValues] =
-          Number(result.data[key]) || 0;
-      });
-
-      let dataObj2: Partial<typeof initialValues> = {};
-      Object.keys(initialValues).forEach((key) => {
-        dataObj2[key as keyof typeof initialValues] =
-          Number(result2.data[key]) || 0;
-      });
-
-      setValues({ ...initialValues, ...dataObj, ...dataObj2 });
-    },
-    [dispatch, filters]
-  );
-
   return (
     <Col xs="12">
       <Formik
@@ -89,9 +52,30 @@ const Reports = () => {
         enableReinitialize
       >
         {({ values, setValues }) => {
+          const fetchAndSet = async () => {
+            const result = await withRequestTracking(dispatch, () =>
+              dispatch(
+                getMobileRequest({
+                  extension: ReportsRepository.MobileStatistics,
+                  parameters: `_from=${filters.fromDate}&_to=${filters.toDate}`,
+                })
+              ).unwrap()
+            );
+
+            const result2 = await withRequestTracking(dispatch, () =>
+              dispatch(
+                getMobileRequest({
+                  extension: ReportsRepository.RT405,
+                  parameters: `_from=${filters.fromDate}&_to=${filters.toDate}`,
+                })
+              ).unwrap()
+            );
+            setValues({ ...initialValues, ...result.data,...result2.data });
+          };
+
           useEffect(() => {
-            fetchAndSet(setValues);
-          }, [fetchAndSet, setValues]);
+            fetchAndSet();
+          }, []);
 
           return (
             <Form style={{ maxHeight: "85vh", overflowY: "auto" }}>
@@ -123,7 +107,7 @@ const Reports = () => {
                     <Col className="d-flex align-items-center">
                       <SharedButton
                         title={t("Filter")}
-                        onClick={() => fetchAndSet(setValues)}
+                        onClick={() => fetchAndSet()}
                       />
                     </Col>
                   </Row>
