@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
+import { useAppSelector } from "@/Redux/Hooks";
 import { MenuListType, SidebarItemTypes } from "@/Types/LayoutTypes";
 import { useTranslation } from "@/app/i18n/client";
 import Link from "next/link";
@@ -16,7 +16,6 @@ const Menulist: React.FC<MenuListType> = ({
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
 
   const pathname = usePathname();
-  const dispatch = useAppDispatch();
   const { t } = useTranslation(i18LangStatus);
 
   const ActiveNavLinkUrl = (path?: string, active?: boolean) => {
