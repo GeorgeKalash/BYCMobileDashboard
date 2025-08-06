@@ -18,10 +18,7 @@ const Notification_Type = () => {
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
 
-  const [data, setData] = useState<{ id: any; key: string; value: string }[]>(
-    []
-  );
-
+  const [data, setData] = useState<{ id: any; key: string; value: string }[]>([]);
   const [modalState, setModalState] = useState({
     open: false,
     action: null as "add" | "edit" | null,
@@ -35,7 +32,6 @@ const Notification_Type = () => {
       dispatch(
         getMobileRequest({
           extension: `${NotificationAlertRepository.NotificationTypes.getAll}`,
-          parameters: "",
         })
       )
     );
@@ -61,7 +57,7 @@ const Notification_Type = () => {
   const columns = [
     {
       name: t("Type"),
-      selector: (row: any) => row.value || "-",
+      selector: (row: any) => row.value || "",
       sortable: true,
       id: "type",
     },

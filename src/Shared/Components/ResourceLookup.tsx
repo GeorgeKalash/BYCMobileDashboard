@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { FormGroup, Label, Input, Spinner } from "reactstrap";
 import { useAppDispatch } from "@/Redux/Hooks";
@@ -7,6 +5,7 @@ import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { useTranslation } from "react-i18next";
 import DataTableComponent from "@/Shared/Components/DataTable";
+import { XCircle } from "react-feather";
 
 interface Column {
   key: string;
@@ -128,6 +127,13 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
 
   const isFieldInvalid = isRequired && touched && !inputValue;
 
+  const handleClear = () => {
+    setInputValue("");
+    setResults([]);
+    setShowDropdown(false);
+    onChange(null);
+  };
+
   return (
     <div ref={containerRef} style={{ position: "relative" }}>
       <FormGroup>
@@ -163,11 +169,24 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
             }}
             autoComplete="off"
           />
+          {!isFieldInvalid && inputValue && (
+            <XCircle
+              size={16}
+              className="text-danger position-absolute"
+              style={{
+                right: "10px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                cursor: "pointer",
+              }}
+              onClick={handleClear}
+            />
+          )}
           {!isFieldInvalid && (
             <i
               className="fa fa-search position-absolute"
               style={{
-                right: "10px",
+                right: "30px",
                 top: "50%",
                 transform: "translateY(-50%)",
                 pointerEvents: "none",

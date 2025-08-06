@@ -1,18 +1,16 @@
 "use client";
 
 import React, {
-  KeyboardEvent,
   useEffect,
   useState,
   forwardRef,
   useImperativeHandle,
-  useRef,
 } from "react";
 import { FormikProps } from "formik";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
-import { Card, CardBody, CardHeader, Col, Row } from "reactstrap";
+import { Card, CardBody, Col, Row } from "reactstrap";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import { withRequestTracking } from "@/utils/withRequestTracking";
@@ -48,7 +46,6 @@ const UsersForm = forwardRef<
   const [showMoreInfoModal, setShowMoreInfoModal] = useState(false);
   const [showUserInfoModal, setShowUserInfoModal] = useState(false);
   const [showUserControlModal, setShowUserControlModal] = useState(false);
-
   const [initialValues, setInitialValues] = useState<FormValues | null>(null);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [userData, setUserData] = useState<any | null>(null);

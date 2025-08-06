@@ -34,7 +34,6 @@ const UsersPage = () => {
     pageCount: 0,
     totalRows: 0,
   });
-
   const [filters, setFilters] = useState({
     fromDate: format(new Date(), "MM-dd-yyyy"),
     toDate: format(new Date(), "MM-dd-yyyy"),
@@ -250,7 +249,6 @@ const UsersPage = () => {
             </Col>
           </Row>
         </CommonCardHeader>
-
         <CardBody>
           <DataTable
             title={t("Users")}
@@ -266,7 +264,6 @@ const UsersPage = () => {
           />
         </CardBody>
       </Card>
-
       <SharedModal
         visible={modalState.open}
         onClose={handleModalClose}

@@ -23,13 +23,11 @@ const Notification_Group = () => {
   const dispatch = useAppDispatch();
 
   const [data, setData] = useState<{ key: string; value: string }[]>([]);
-
   const [modalState, setModalState] = useState({
     open: false,
     action: null as "add" | "edit" | null,
     row: null as any,
   });
-
   const [paginationState, setPaginationState] = useState({
     pageCount: 0,
     totalRows: 0,

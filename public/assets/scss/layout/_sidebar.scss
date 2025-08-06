@@ -3629,6 +3629,170 @@
   }
 }
 
+/* Container holding sidebar with full height */
+.sidebar-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Scrollable top-level menu container */
+.menu-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #999 transparent;
+  padding-left: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* Scrollbar styling for Chrome, Edge, Safari */
+.menu-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+.menu-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.menu-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #999;
+  border-radius: 3px;
+}
+.menu-scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+
+/* Top-level menu items */
+.sidebar-menu > li.sidebar-list {
+  position: relative;
+  list-style: none;
+  padding: 5px 0;
+}
+
+/* Pin icon styling on top-level items */
+.sidebar-list > i.fa-thumb-tack {
+  cursor: pointer;
+  position: absolute;
+  top: 12px;
+  right: 5px;
+  color: #007bff; /* Primary color */
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.sidebar-list > i.fa-thumb-tack:hover {
+  color: #0056b3; /* Darker primary on hover */
+}
+
+/* Pinned item style */
+.pined > a {
+  font-weight: 700;
+  color: #007bff;
+}
+
+/* Link styles */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  color: #2b2b2b;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-weight: 500;
+}
+
+.sidebar-link.sidebar-title {
+  font-size: 1rem;
+  text-transform: capitalize;
+}
+
+/* Active link */
+.sidebar-link.active,
+.sidebar-list.active > a {
+  background-color: rgba(0, 123, 255, 0.15);
+  color: #007bff;
+  font-weight: 600;
+}
+
+/* Icon inside links */
+.sidebar-link svg {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  fill: currentColor;
+}
+
+/* Text inside link */
+.sidebar-link span {
+  flex: 1;
+}
+
+/* Accordion arrow for submenu */
+.according-menu {
+  margin-left: auto;
+  font-size: 12px;
+  color: #888;
+  transition: transform 0.3s ease;
+}
+
+/* Rotate arrow when active */
+.sidebar-list.active > a .according-menu i.fa-angle-right {
+  transform: rotate(90deg);
+}
+
+/* Submenu container - dropdown style */
+.sidebar-submenu {
+  position: fixed;
+  top: 100%;
+  left: 100%;
+  margin-left: 0;
+  background: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  padding: 15px 0;
+  list-style: none;
+  min-width: 180px;
+  display: none; /* hidden by default */
+  z-index: 1000;
+}
+
+/* Show submenu on hover */
+.sidebar-list:hover > .sidebar-submenu {
+  display: block;
+}
+
+/* Submenu list items */
+.sidebar-submenu > li {
+  padding: 5px 20px;
+  list-style: none;
+}
+
+/* Submenu links */
+.sidebar-submenu a {
+  color: #2b2b2b;
+  text-decoration: none;
+  display: block;
+  padding: 4px 0;
+  font-weight: 500;
+  transition: color 0.3s ease, letter-spacing 0.3s ease;
+}
+
+/* Submenu active link */
+.sidebar-submenu a.active,
+.sidebar-submenu a:hover {
+  color: #007bff;
+  letter-spacing: 1.2px;
+}
+
+/* Optional: Fix submenu z-index conflicts */
+.sidebar-submenu {
+  z-index: 10;
+}
+
+/* Responsive adjustments can be added as needed */
+
+
 @media screen and (max-width: 1480px) {
   .page-wrapper {
     &.horizontal-wrapper {

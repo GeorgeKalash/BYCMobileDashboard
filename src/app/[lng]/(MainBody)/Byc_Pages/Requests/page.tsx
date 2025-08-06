@@ -24,7 +24,7 @@ const Requests = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [eventType, setEventType] = useState<1 | 2 | null>(1);
   const [totalRows, setTotalRows] = useState(0);
-  const [pageCount, setPageCount] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
   const formikRef = useRef<FormikProps<any>>(null);
   const pageSize = 30
 
@@ -63,13 +63,13 @@ const Requests = () => {
   const columns = [
     {
       name: t("accountId"),
-      selector: (row: any) => row.accountId?.toString() || "-",
+      selector: (row: any) => row.accountId?.toString() || "",
       sortable: true,
       id: "accountId",
     },
     {
       name: t("clientId"),
-      selector: (row: any) => row.clientId?.toString() || "-",
+      selector: (row: any) => row.clientId?.toString() || "",
       sortable: true,
       id: "clientId",
     },
@@ -77,37 +77,37 @@ const Requests = () => {
       name: t("clockStamp"),
       selector: (row: any) => row.clockStamp,
       cell: (row: any) =>
-        row.clockStamp ? formatDate(row.clockStamp, "dd/MM/yyyy HH:mm:ss") : "-",
+        row.clockStamp ? formatDate(row.clockStamp, "dd/MM/yyyy HH:mm:ss") : "",
       sortable: true,
       id: "clockStamp",
     },
     {
       name: t("recordId"),
-      selector: (row: any) => row.recordId?.toString() || "-",
+      selector: (row: any) => row.recordId?.toString() || "",
       sortable: true,
       id: "recordId",
     },
     {
       name: t("requestBody"),
-      selector: (row: any) => row.requestBody?.toString() || "-",
+      selector: (row: any) => row.requestBody?.toString() || "",
       sortable: true,
       id: "requestBody",
     },
     {
       name: t("requestType"),
-      selector: (row: any) => row.requestType?.toString() || "-",
+      selector: (row: any) => row.requestType?.toString() || "",
       sortable: true,
       id: "requestType",
     },
     {
       name: t("url"),
-      selector: (row: any) => row.url?.toString() || "-",
+      selector: (row: any) => row.url?.toString() || "",
       sortable: true,
       id: "url",
     },
     {
       name: t("userId"),
-      selector: (row: any) => row.userId?.toString() || "-",
+      selector: (row: any) => row.userId?.toString() || "",
       sortable: true,
       id: "userId",
     },
@@ -166,7 +166,6 @@ const Requests = () => {
           formikRef={formikRef}
         />
       </SharedModal>
-     
     </Col>
   );
 };

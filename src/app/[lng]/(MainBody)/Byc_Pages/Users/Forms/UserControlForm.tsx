@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import SharedModal from "@/Shared/Components/SharedModal";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";

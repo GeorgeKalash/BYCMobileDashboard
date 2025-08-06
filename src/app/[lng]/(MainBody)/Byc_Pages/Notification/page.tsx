@@ -229,7 +229,6 @@ const Notification = () => {
             </Col>
           </Row>
         </CommonCardHeader>
-
         <CardBody>
           <DataTable
             title={t("Notifications")}
@@ -246,7 +245,6 @@ const Notification = () => {
           />
         </CardBody>
       </Card>
-
       <SharedModal
         visible={modal.open}
         onClose={handleModalClose}

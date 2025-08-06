@@ -15,6 +15,7 @@ interface CustomDatePickerProps {
   minDate?: Date;
   maxDate?: Date;
   placeholder?: string;
+  mode?: "date" | "monthYear";
 }
 
 const formatToMMDDYYYY = (date: Date): string =>
@@ -22,11 +23,25 @@ const formatToMMDDYYYY = (date: Date): string =>
     date.getDate()
   ).padStart(2, "0")}-${date.getFullYear()}`;
 
+const formatToMMYYYY = (date: Date): string =>
+  `${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
+
 const parseDate = (value?: string): Date | null => {
   if (!value) return null;
-  const [month, day, year] = value.split("-").map(Number);
-  return new Date(year, month - 1, day);
+  const parts = value.split("-");
+  if (parts.length === 2) {
+    const [month, year] = parts.map(Number);
+    return new Date(year, month - 1, 1);
+  } else if (parts.length === 3) {
+    const [month, day, year] = parts.map(Number);
+    return new Date(year, month - 1, day);
+  }
+  return null;
 };
+
+const renderMonthContent = (month: number) => (
+  <span>{(month + 1).toString().padStart(2, "0")}</span>
+);
 
 const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   name,
@@ -37,7 +52,8 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   readOnly = false,
   minDate,
   maxDate,
-  placeholder = "Select a date...",
+  placeholder = "Select a date",
+  mode = "date",
 }) => {
   const formik = useFormikContext();
   const isControlled =
@@ -59,7 +75,14 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
-    const formatted = date ? formatToMMDDYYYY(date) : null;
+
+    const formatted =
+      date && mode === "monthYear"
+        ? formatToMMYYYY(date)
+        : date
+        ? formatToMMDDYYYY(date)
+        : null;
+
     if (isControlled) {
       onChange?.(formatted);
     } else {
@@ -75,62 +98,71 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
         : ""
       : "";
 
-  const CustomInput = forwardRef<HTMLDivElement, any>(({ value, onClick }, ref) => (
-    <div
-      className={`form-control d-flex align-items-center justify-content-between ${validationClass}`}
-      onClick={!readOnly ? onClick : undefined}
-      ref={ref}
-      style={{
-        width: "100%",
-        minHeight: "38px",
-        paddingRight: "3rem",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        position: "relative",
-        cursor: readOnly ? "not-allowed" : "pointer",
-      }}
-    >
-      <span className="text-truncate">
-        {selectedDate
-          ? selectedDate.toLocaleDateString("en-GB")
-          : placeholder}
-      </span>
+  const CustomInput = forwardRef<HTMLDivElement, any>(
+    ({ value, onClick }, ref) => (
+      <div
+        className={`form-control d-flex align-items-center justify-content-between ${validationClass}`}
+        onClick={!readOnly ? onClick : undefined}
+        ref={ref}
+        style={{
+          width: "100%",
+          minHeight: "38px",
+          paddingRight: "3rem",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          position: "relative",
+          cursor: readOnly ? "not-allowed" : "pointer",
+        }}
+      >
+        <span className="text-truncate">
+          {selectedDate
+            ? selectedDate.toLocaleDateString("en-GB", {
+                year: "numeric",
+                month: "2-digit",
+                ...(mode === "date" && { day: "2-digit" }),
+              })
+            : placeholder}
+        </span>
 
-      {!readOnly && selectedDate && (
-        <XCircle
+        {!readOnly && selectedDate && (
+          <XCircle
+            size={16}
+            className="text-danger"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDateChange(null);
+            }}
+            style={{
+              position: "absolute",
+              right: "2rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+              cursor: "pointer",
+            }}
+          />
+        )}
+
+        <Calendar
           size={16}
-          className="text-danger"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDateChange(null);
-          }}
           style={{
             position: "absolute",
-            right: "2rem",
+            right: "0.75rem",
             top: "50%",
             transform: "translateY(-50%)",
-            cursor: "pointer",
           }}
         />
-      )}
-
-      <Calendar
-        size={16}
-        style={{
-          position: "absolute",
-          right: "0.75rem",
-          top: "50%",
-          transform: "translateY(-50%)",
-        }}
-      />
-    </div>
-  ));
+      </div>
+    )
+  );
 
   return (
-    <FormGroup>
+    <FormGroup style={{ display: "flex", flexDirection: "column" }}>
       {label && (
-        <Label htmlFor={name} style={{ display: "block", marginBottom: "0.25rem" }}>
+        <Label
+          htmlFor={name}
+          style={{ display: "block", marginBottom: "0.25rem" }}
+        >
           {label} {isRequired && <span className="text-danger">*</span>}
         </Label>
       )}
@@ -142,10 +174,16 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
         name={name}
         readOnly={readOnly}
         placeholderText={placeholder}
-        dateFormat="dd/MM/yyyy"
+        dateFormat={mode === "monthYear" ? "MM/yyyy" : "dd/MM/yyyy"}
         showPopperArrow={false}
         popperPlacement="bottom-start"
         customInput={<CustomInput />}
+        showMonthYearPicker={mode === "monthYear"}
+        showMonthDropdown={mode === "date"}
+        showYearDropdown
+        scrollableYearDropdown
+        yearDropdownItemNumber={100}
+        renderMonthContent={renderMonthContent}
         popperModifiers={[
           {
             name: "zIndex",

@@ -25,13 +25,18 @@ const Reports = () => {
     newClients: 0,
     onlineClients: 0,
     inactiveClients: 0,
+    outwardTransferAmount: 0,
+    outwardTransferCount: 0,
+    paidReturnPercentage: 0,
+    returnAmount: 0,
+    returnCount: 0
   };
 
   const validationSchema = Yup.object({});
 
   const [filters, setFilters] = useState<Filters>({
-    fromDate: format(new Date(), "MM-dd-yyyy"),
-    toDate: format(new Date(), "MM-dd-yyyy"),
+    fromDate: format(new Date(), "yyyy-MM-dd"),
+    toDate: format(new Date(), "yyyy-MM-dd"),
   });
 
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -57,13 +62,15 @@ const Reports = () => {
               ).unwrap()
             );
 
-            let dataObj: Partial<typeof initialValues> = {};
-            Object.keys(initialValues).forEach((key) => {
-              dataObj[key as keyof typeof initialValues] =
-                Number(result.data[key]) || 0;
-            });
-
-            setValues({ ...initialValues, ...dataObj });
+            const result2 = await withRequestTracking(dispatch, () =>
+              dispatch(
+                getMobileRequest({
+                  extension: ReportsRepository.RT405,
+                  parameters: `_from=${filters.fromDate}&_to=${filters.toDate}`,
+                })
+              ).unwrap()
+            );
+            setValues({ ...initialValues, ...result.data,...result2.data });
           };
 
           useEffect(() => {
@@ -98,7 +105,10 @@ const Reports = () => {
                       />
                     </Col>
                     <Col className="d-flex align-items-center">
-                      <SharedButton title={t("Filter")} onClick={fetchAndSet} />
+                      <SharedButton
+                        title={t("Filter")}
+                        onClick={() => fetchAndSet()}
+                      />
                     </Col>
                   </Row>
                 </CommonCardHeader>
@@ -106,11 +116,16 @@ const Reports = () => {
                   <Row>
                     <SimpleStatsGrid
                       data={values}
-                      logoMap={{
-                        newClients: "/user-check.svg",
-                        onlineClients: "/user-plus.svg",
-                        inactiveClients: "/user-lock.svg",
-                      }}
+                     logoMap={{
+                      newClients: "user-check",
+                      onlineClients: "user-plus",
+                      inactiveClients: "user-lock",
+                      outwardTransferAmount: "folder-sync",
+                      outwardTransferCount: "tally-5",
+                      paidReturnPercentage: "percent",
+                      returnAmount: "undo-2",
+                      returnCount: "activity"
+                    }}
                     />
                   </Row>
                 </CardBody>
