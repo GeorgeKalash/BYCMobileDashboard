@@ -3,7 +3,6 @@
 import React from "react";
 import { Card, Col, CardBody } from "reactstrap";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
-
 import { useTranslation } from "@/app/i18n/client";
 import { useAppSelector } from "@/Redux/Hooks";
 

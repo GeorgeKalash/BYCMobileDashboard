@@ -22,12 +22,10 @@ const PaymentsHistoryPage = () => {
   const dispatch = useAppDispatch();
 
   const [data, setData] = useState<{ key: string; value: string }[]>([]);
-
   const [paginationState, setPaginationState] = useState({
     pageCount: 0,
     totalRows: 0,
   });
-
   const pageSize = 10;
   const [filters, setFilters] = useState({
     fromDate: "",
@@ -102,12 +100,12 @@ const PaymentsHistoryPage = () => {
     },
     {
       name: t("Posting Date"),
-      selector: (row: any) => row.postingDate ?? " ",
+      selector: (row: any) => row.postingDate ?? "",
       id: "PostingDate",
     },
     {
       name: t("Amount"),
-      selector: (row: any) => row.amount ?? " ",
+      selector: (row: any) => row.amount ?? "",
       id: "amount",
     },
     {
@@ -152,12 +150,12 @@ const PaymentsHistoryPage = () => {
     },
     {
       name: t("Payment Brand"),
-      selector: (row: any) => row.network ?? " ",
+      selector: (row: any) => row.network ?? "",
       id: "network",
     },
     {
       name: t("Receipt Ref"),
-      selector: (row: any) => row.receiptRef ?? " ",
+      selector: (row: any) => row.receiptRef ?? "",
       id: "receiptRef",
     },
     {
@@ -210,7 +208,6 @@ const PaymentsHistoryPage = () => {
               }
             />
           </Col>
-
           <Col md="2">
             <CustomSelect
               name="paymentGatewayId"
@@ -260,7 +257,6 @@ const PaymentsHistoryPage = () => {
               value={filters.cellphone}
             />
           </Col>
-
           <Col md="2" className="d-flex align-items-center">
             <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
           </Col>

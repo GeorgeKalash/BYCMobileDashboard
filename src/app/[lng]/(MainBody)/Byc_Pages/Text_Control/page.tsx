@@ -78,13 +78,13 @@ const TextControl = () => {
   const columns = [
     {
       name: t("Key"),
-      selector: (row: any) => row.key || "-",
+      selector: (row: any) => row.key || "",
       sortable: true,
       id: "key",
     },
     {
       name: t("Value"),
-      selector: (row: any) => row.value || "-",
+      selector: (row: any) => row.value || "",
       sortable: true,
       id: "value",
     },
@@ -101,7 +101,6 @@ const TextControl = () => {
       setLanguageId(null);
       return;
     }
-  
     const num = Number(e);
     if (num === 1 || num === 2) {
       setLanguageId(num);

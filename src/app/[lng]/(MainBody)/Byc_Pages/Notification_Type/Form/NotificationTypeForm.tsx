@@ -42,11 +42,9 @@ const NotificationTypeForm: React.FC<NotificationFormProps> = ({
   const initialValues = {
     value: rowData?.value || "",
   };
-
   const validationSchema = Yup.object().shape({
     value: Yup.string().required(t("required")),
   });
-
   const handleSubmit = async (
     values: typeof initialValues,
     { setSubmitting }: FormikHelpers<typeof initialValues>

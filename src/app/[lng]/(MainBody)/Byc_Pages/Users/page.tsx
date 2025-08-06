@@ -36,7 +36,6 @@ const UsersPage = () => {
     pageCount: 0,
     totalRows: 0,
   });
-
   const [filters, setFilters] = useState({
     fromDate: format(new Date(), "MM-dd-yyyy"),
     toDate: format(new Date(), "MM-dd-yyyy"),
@@ -202,7 +201,6 @@ const UsersPage = () => {
                 }
               />
             </Col>
-
             <Col md="2">
               <CustomInput
                 name="phoneNumber"
@@ -244,13 +242,11 @@ const UsersPage = () => {
                 valueKey="recordId"
               />
             </Col>
-
             <Col md="2" className="d-flex align-items-center">
               <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
             </Col>
           </Row>
         </CommonCardHeader>
-
         <CardBody>
           <DataTable
             title={t("Users")}
@@ -266,7 +262,6 @@ const UsersPage = () => {
           />
         </CardBody>
       </Card>
-
       <SharedModal
         visible={modalState.open}
         onClose={handleModalClose}

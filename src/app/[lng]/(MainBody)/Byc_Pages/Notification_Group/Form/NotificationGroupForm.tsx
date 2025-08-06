@@ -37,7 +37,6 @@ const NotificationGroupForm = ({
   const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [groupMembers, setGroupMembers] = useState<any[]>([]);
-  const [phoneNumber, setPhoneNumber] = useState("");
   const localFormikRef = useRef<FormikProps<any>>(null);
   const formikReference = formikRef || localFormikRef;
   const memberFormikRef = useRef<FormikProps<any>>(null);
@@ -153,7 +152,6 @@ const NotificationGroupForm = ({
                     />
                   </Col>
                 </Row>
-
                 <Row className="mt-3">
                   <Col md={12} className="d-flex justify-content-end">
                     <SharedButton
@@ -163,7 +161,6 @@ const NotificationGroupForm = ({
                     />
                   </Col>
                 </Row>
-
                 <Col md={12} className="mt-3">
                   <DataTableComponent
                     data={groupMembers}
@@ -175,7 +172,6 @@ const NotificationGroupForm = ({
                   />
                 </Col>
               </Row>
-
               {modalAction === "edit" && (
                 <SharedModal
                   visible={showModal}
