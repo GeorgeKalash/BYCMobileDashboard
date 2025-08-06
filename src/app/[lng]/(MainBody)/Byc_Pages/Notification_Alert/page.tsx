@@ -174,7 +174,7 @@ const Notification_Alert = () => {
   }, [paginationState.pageCount]);
 
   return (
-    <Col xs="12">
+    <Col xs="12" Form style={{ maxHeight: "85vh", overflowY: "auto" }}>
       <Card>
         <CommonCardHeader title={t("View Notification")} />
         <CardBody>
@@ -279,12 +279,15 @@ const Notification_Alert = () => {
                       label={t("Group")}
                       value={values.group}
                       onChange={async (val) => {
+                        setFieldValue("group", val);
+
                         if (val && !isNaN(Number(val))) {
-                          setFieldValue("group", val);
                           setFieldValue("mobile", "");
                           setFieldValue("idNumber", "");
                           setFieldValue("country", "");
                           await fetchDataByGroup(Number(val));
+                        } else {
+                          setData([]);
                         }
                       }}
                       endpointId={
