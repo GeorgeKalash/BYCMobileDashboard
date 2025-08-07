@@ -302,43 +302,6 @@ export const VerticalGroupButton: string = "Vertical";
 export const RememberMe: string = "Remember me";
 export const Meditations: string = "Meditations";
 
-//Charts - Apex charts
-export const BasicAreaCharts: string = "Basic Area Chart ";
-export const AreaSpalineCharts: string = "Area Spaline Chart";
-export const BarCharts: string = "Bar chart";
-export const ColumnCharts: string = "Column Chart ";
-export const BubbleCharts: string = "3d Bubble Chart";
-export const SteplineCharts: string = "Stepline Chart ";
-export const ChartColumn: string = "Column Chart";
-export const PieCharts: string = "Pie Chart ";
-export const DonutChart: string = "Donut Chart";
-export const MixedCharts: string = "Mixed Chart";
-export const CandlestickCharts: string = "Candlestick Chart ";
-export const RadarCharts: string = "Radar Chart";
-export const RadialBarCharts: string = "Radial Bar Chart";
-
-//Charts - Google charts
-export const AreaChartOne: string = "Area Chart 1";
-export const ColumnChartOne: string = "Column Chart 1";
-export const AreaChartTwo: string = "Area Chart 2";
-export const ColumnChartTwo: string = "Column Chart 2";
-export const GanttCharts: string = "Gantt Chart";
-export const LineCharts: string = "Line Chart";
-export const ComboCharts: string = "Combo Chart";
-export const BarChartTwo: string = "bar-chart2";
-export const WordTreeChart: string = "word tree";
-export const PieChartOne: string = "Pie Chart 1";
-export const PieChartTwo: string = "Pie Chart 2";
-export const PieChartThree: string = "Pie Chart 3";
-export const PieChartFour: string = "Pie Chart 4";
-
-//Charts - ChartJS charts
-export const ChartJSBarChart: string = "Bar Chart";
-export const ChatJSLineGraph: string = "Line Graph";
-export const ChatJSRadarGraph: string = "Radar Graph";
-export const ChatJSLineChart: string = "Line Chart";
-export const ChatJSPolarChart: string = "Polar Chart";
-
 //sample page
 export const SamplePage: string = "Sample Page";
 export const SampleCard: string = "Sample Card";

@@ -111,7 +111,6 @@
   "Edge Style": "الأسلوب الحاد",
   "Raised Style": "الأسلوب المرتفع",
   "Button Group": "مجموعة الأزرار",
-  "Charts": "الرسوم البيانية",
   "Apex Chart": "رسم بياني Apex",
   "Google Chart": "رسم بياني Google",
   "Chart JS Chart": "رسم بياني Chart JS",
@@ -312,7 +311,6 @@
   "userId": "معرّف المستخدم",
   "Read Request": "عرض الطلب",
   "Requests": "الطلبات",
-
   "New Clients": "العملاء الجدد",
   "Online Clients": "العملاء المتصلون",
   "Inactive Clients": "العملاء غير النشطين",

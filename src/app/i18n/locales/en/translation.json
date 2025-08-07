@@ -110,7 +110,6 @@
   "Edge Style": "Edge Style",
   "Raised Style": "Raised Style",
   "Button Group": "Button Group",
-  "Charts": "Charts",
   "Apex Chart": "Apex Chart",
   "Google Chart": "Google Chart",
   "Chart JS Chart": "Chart JS Chart",
@@ -334,7 +333,6 @@
   "Uploading...": "Uploading...",
   "Image Attachments": "Image Attachments",
   "Image Attechment": "Image Attachments",
-
   "Loading images...": "Loading images...",
   "Drag & drop images here, or click 'Open Files' button to select images, or wait for API to load images.": "Drag & drop images here, or click 'Open Files' button to select images, or wait for API to load images.",
   "Text": "Text",
@@ -345,7 +343,6 @@
   "Key is required": "Key is required",
   "Value is required": "Value is required",
   "Reset": "Reset",
-
   "User Control": "User Control",
   "username": "Username",
   "isInactive": "Is Inactive",
