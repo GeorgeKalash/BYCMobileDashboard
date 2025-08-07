@@ -326,14 +326,6 @@ export const PasswordWizard: string = "Password";
 export const PasswordWizardPlaceholder: string = "Password";
 export const Logout: string = "Log out";
 
-//Miscellaneous - Gallery
-export const ImageGallery: string = "IMAGE GALLERY";
-export const MyPortfolioTitle: string = "My Portfolio";
-export const MasonryGallery: string = "Masonry Gallery";
-export const MasonryGalleryCap: string = "MASONRY GALLERY";
-export const PortfolioTitle: string = "Portfolio Title";
-export const ImageHoverEffects: string = "Image Hover Effects";
-
 //Editors
 export const InlineEditors: string = "Inline Editor";
 export const EditorsText: string = "Your title";
