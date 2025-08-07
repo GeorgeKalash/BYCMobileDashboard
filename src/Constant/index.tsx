@@ -779,35 +779,6 @@ export const RecentOrder: string = "Recent Orders";
 export const DealDayFrom: string = "Deal of the Day From ";
 export const SelectSize: string = "Select size";
 
-// Widgets
-export const WebsiteDesigns: string = "Website Design";
-export const SquareDashboard: string = "Square Dashboard";
-export const Design3D: string = "3D Design";
-export const Visitor: string = "Visitors";
-export const UpcomingAppointments: string = "Upcoming Appointment";
-export const MonthlyHistorys: string = "Monthly History";
-export const SkillStatusHeading: string = "Skill Status";
-export const OrdersStatusHeading: string = "Order Status";
-export const LiveProduct: string = "Live Products";
-export const TurnOver: string = "Turn over";
-export const CryptocurrencyPrice: string = "Cryptocurrency Prices";
-export const StockMarkets: string = "Stock Market";
-export const Finances: string = "Finance";
-export const MonthlySale: string = "Monthly Sales";
-export const CryptoAnnotation: string = "Crypto Annotations";
-export const OrdersStatus: string = "Order Status";
-export const Uses: string = "Uses";
-export const StudyStatistic: string = "Study Statistics";
-export const UXDesign: string = "UX Design";
-export const Illustrations: string = "Illustrations";
-export const Assignments: string = "Assignments";
-export const LiveMeetings: string = "Live Meeting";
-export const ActivelyHour: string = "Actively Hours";
-export const EnrolledClass: string = "Enrolled Classes";
-export const MonthlyAttendances: string = "Monthly Attendance Report (Feb)";
-export const Schedules: string = "Schedule";
-export const FeaturedCourse: string = "Featured Courses";
-
 //Project
 export const ProjectLists: string = "Project List";
 export const All: string = "All";
