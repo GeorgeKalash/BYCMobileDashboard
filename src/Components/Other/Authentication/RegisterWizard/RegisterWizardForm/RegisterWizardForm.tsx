@@ -1,6 +1,5 @@
 import { Form } from "reactstrap";
 import { ToastContainer } from "react-toastify";
-import { RegisterWizadList } from "./RegisterWizadList";
 import PersonalForm from "./PersonalForm";
 import AddressForm from "./AddressForm";
 import MessageForm from "./MessageForm";
@@ -42,7 +41,6 @@ export const RegisterWizardForm = () => {
   return (
     <Form className="theme-form">
       <div className="wizard-4" id="wizard">
-        <RegisterWizadList level={level} />
         <div className="step-container login-card">
           {level === 1 && <PersonalForm formValue={formValue} getUserData={getUserData} />}
           {level === 2 && <AddressForm formValue={formValue} getUserData={getUserData} />}
