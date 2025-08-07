@@ -166,8 +166,8 @@ const Notification = () => {
     <Col xs="12">
       <Card>
         <CommonCardHeader title={t("Notifications")}>
-          <Row className="w-100">
-            <Col md="2">
+          <Row>
+            <Col xs="2" className="mb-3">
               <CustomDatePicker
                 name="fromDate"
                 label={t("From Date")}
@@ -177,7 +177,7 @@ const Notification = () => {
                 }
               />
             </Col>
-            <Col md="2">
+            <Col xs="2" className="mb-3">
               <CustomDatePicker
                 name="toDate"
                 label={t("To Date")}
@@ -187,7 +187,7 @@ const Notification = () => {
                 }
               />
             </Col>
-            <Col md="2">
+            <Col xs="2" className="mb-3">
               <CustomInput
                 name="title"
                 label={t("Title")}
@@ -196,7 +196,7 @@ const Notification = () => {
                 onChange={(e) => handleFilterChange("title", e.target.value)}
               />
             </Col>
-            <Col md="2">
+            <Col xs="2" className="mb-3">
               <CustomInput
                 name="phoneNumber"
                 type="text"
@@ -209,7 +209,7 @@ const Notification = () => {
                 }}
               />
             </Col>
-            <Col md="2">
+            <Col xs="2" className="mb-3">
               <CustomSelect
                 name="templateId"
                 label={t("Template Name")}
@@ -217,21 +217,18 @@ const Notification = () => {
                 onChange={(val) =>
                   setFilters((prev) => ({ ...prev, templateId: val ?? "" }))
                 }
-                endpointId={
-                  NotificationAlertRepository.NotificationTypes.getAll
-                }
+                endpointId={NotificationAlertRepository.NotificationTypes.getAll}
                 valueKey="key"
                 labelKey="value"
               />
             </Col>
-            <Col md="2" className="d-flex align-items-center">
+            <Col xs="2" className="mb-3">
               <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
             </Col>
           </Row>
         </CommonCardHeader>
         <CardBody>
           <DataTable
-            title={t("Notifications")}
             data={tableData.data}
             columns={columns}
             highlightOnHover
@@ -250,7 +247,7 @@ const Notification = () => {
         onClose={handleModalClose}
         title={t("Notification")}
         width="600px"
-        height="60vh"
+        height="30vh"
       >
         <NotificationForm
           rowData={modal.row}

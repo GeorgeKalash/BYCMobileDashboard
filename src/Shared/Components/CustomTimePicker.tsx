@@ -51,7 +51,7 @@ const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
   };
 
   const CustomInput = forwardRef<HTMLDivElement, any>(
-    ({ value, onClick }, ref) => (
+    ({ onClick }, ref) => (
       <div
         ref={ref}
         onClick={!readOnly && !datePickerDisabled ? onClick : undefined}
@@ -126,7 +126,6 @@ const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
             ]}
           />
         </div>
-
         {showNowButton && (
           <SharedButton
             title="Now"

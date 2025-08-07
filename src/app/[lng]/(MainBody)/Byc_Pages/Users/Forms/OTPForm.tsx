@@ -74,53 +74,51 @@ const OTPForm: React.FC<OTPFormProps> = ({ visible, onClose, phoneNumber }) => {
       visible={visible}
       onClose={onClose}
       title={t("OTP Control")}
-      height="80vh"
-      width="80vw"
+      height="60vh"
+      width="50vw"
     >
-      <div style={{ padding: "1rem", maxHeight: "70vh", overflowY: "auto" }}>
-        {otpData.length > 0 &&
-          otpData.map((item) => (
-            <Card className="mb-3" key={item.resourceId}>
-              <CardHeader tag="h5">{item.resourceName}</CardHeader>
-              <CardBody>
-                <Row>
-                  <Col>
-                    <CustomInput
-                      name={`lastRequest-${item.resourceId}`}
-                      label={t("Last Request")}
-                      value={item.lastRequest?.split("T")[0] || ""}
-                      readOnly
-                    />
-                  </Col>
-                  <Col>
-                    <CustomInput
-                      name={`count-${item.resourceId}`}
-                      label={t("Request Count")}
-                      value={item.count}
-                      readOnly
-                    />
-                  </Col>
-                  <Col>
-                    <CustomInput
-                      name={`isInactive-${item.resourceId}`}
-                      label={t("Inactive")}
-                      value={item.isInactive === true ? t("Yes") : t("No")}
-                      readOnly
-                    />
-                  </Col>
-                  <Col className="d-flex align-items-center">
-                    <SharedButton
-                      color="primary"
-                      type="button"
-                      title={t("Reset")}
-                      onClick={() => handleReset(item.resourceId)}
-                    />
-                  </Col>
-                </Row>
-              </CardBody>
-            </Card>
-          ))}
-      </div>
+      {otpData.length > 0 &&
+        otpData.map((item) => (
+          <Card className="mb-3" key={item.resourceId}>
+            <CardHeader tag="h5">{item.resourceName}</CardHeader>
+            <CardBody>
+              <Row>
+                <Col>
+                  <CustomInput
+                    name={`lastRequest-${item.resourceId}`}
+                    label={t("Last Request")}
+                    value={item.lastRequest?.split("T")[0] || ""}
+                    readOnly
+                  />
+                </Col>
+                <Col>
+                  <CustomInput
+                    name={`count-${item.resourceId}`}
+                    label={t("Request Count")}
+                    value={item.count}
+                    readOnly
+                  />
+                </Col>
+                <Col>
+                  <CustomInput
+                    name={`isInactive-${item.resourceId}`}
+                    label={t("Inactive")}
+                    value={item.isInactive === true ? t("Yes") : t("No")}
+                    readOnly
+                  />
+                </Col>
+                <Col className="d-flex align-items-center">
+                  <SharedButton
+                    color="primary"
+                    type="button"
+                    title={t("Reset")}
+                    onClick={() => handleReset(item.resourceId)}
+                  />
+                </Col>
+              </Row>
+            </CardBody>
+          </Card>
+        ))}
     </SharedModal>
   );
 };

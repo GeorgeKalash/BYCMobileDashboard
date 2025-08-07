@@ -6,9 +6,6 @@ import SVG from "@/CommonComponent/SVG";
 import { ImagePath, VariationRadios } from "@/Constant";
 import { VariationRadioProp } from "@/Types/FormType";
 
-// ----------------------------------------------
-//  SharedRadioButton
-// ----------------------------------------------
 type SharedRadioButtonProps = {
   label?: string;
   name: string;
@@ -79,9 +76,6 @@ export const SharedRadioButton = forwardRef<
 );
 SharedRadioButton.displayName = "SharedRadioButton";
 
-// ----------------------------------------------
-//  SharedRadioGroup
-// ----------------------------------------------
 type RadioOption = {
   label: string;
   value: string;
@@ -124,9 +118,6 @@ export const SharedRadioGroup: React.FC<SharedRadioGroupProps> = ({
   );
 };
 
-// ----------------------------------------------
-//  VariationRadioGroup
-// ----------------------------------------------
 type VariationRadioPropList = {
   colClass?: string;
   title: string;
@@ -162,7 +153,6 @@ export const VariationRadio: React.FC<VariationRadioProps> = ({ data }) => {
                         className="payment-wrapper d-flex align-items-center justify-content-between mb-1  rounded-2"
                         key={id}
                       >
-                        {/* Left: Radio + Label */}
                         <div className="d-flex align-items-center ">
                           <FormGroup className="radio radio-primary mb-1" check>
                             <Input
@@ -180,8 +170,6 @@ export const VariationRadio: React.FC<VariationRadioProps> = ({ data }) => {
                             </Label>
                           </FormGroup>
                         </div>
-
-                        {/* Right: Icon or Image */}
                         {(image || icon) && (
                           <div
                             className="d-flex align-items-center justify-content-center"

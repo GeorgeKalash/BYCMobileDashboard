@@ -117,12 +117,10 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
     setIsLoading(false);
   };
 
-  // Load options on mount & whenever parameters change
   useEffect(() => {
     if (dashboardDatasetId || dataSetId || endpointId) {
       fetchOptions(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dashboardDatasetId, dataSetId, endpointId, parameters]);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

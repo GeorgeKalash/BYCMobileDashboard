@@ -184,7 +184,7 @@ const NotificationTemplateForm = ({
         <Form>
           <Row>
             <Col md={6}>
-              <CustomInput name="name" label={t("Template Name")} />
+              <CustomInput name="name" isRequired={true} label={t("Template Name")} />
               <SharedCheckbox
                 name="isPushNotification"
                 label={t("Push Notification")}

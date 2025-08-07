@@ -173,56 +173,53 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
       visible={visible}
       onClose={onClose}
       title={t("Additional Data")}
-      height="80vh"
-      width="80vw"
+      height="60vh"
+      width="50vw"
     >
-      <div style={{ maxHeight: "70vh", overflowY: "auto" }}>
-        <Card>
-          <CardBody>
-            {questionsWithType.map((q) => (
-              <Row key={q.value} className="align-items-center mb-3">
-                <Col xs="6">
-                  {q.type === "Text Field" || q.type === "Number Field" ? (
-                    <CustomInput
-                      name={`field_${q.value}`}
-                      label={q.label}
-                      type="text"
-                      value={q.body || ""}
-                      readOnly={!!q.isRequested}
-                    />
-                  ) : q.type === "PDF" ? (
-                    <CustomPdfDisplayInput
-                      name={`file_${q.value}`}
-                      label={q.label}
-                      isRequired={false}
-                      ar={false}
-                      fileUrl={""}
-                      fileName={q.body || ""}
-                    />
-                  ) : (
-                    <strong>{q.label}</strong>
-                  )}
-                </Col>
-                <Col xs="3">
-                  <SharedButton
-                    title={q.isRequested ? t("Cancel") : t("Request")}
-                    onClick={() => handleRequest(q)}
-                    color={q.isRequested ? "danger" : "success"}
-                  />
-                </Col>
-                <Col xs="3">
-                  <SharedButton
-                    title={q.isValid ? t("Revoke") : t("Validate")}
-                    onClick={() => handleValidate(q)}
-                    disabled={!q.isRequested || !q.body?.trim()}
-                    color={q.isValid ? "warning" : "primary"}
-                  />
-                </Col>
-              </Row>
-            ))}
-          </CardBody>
-        </Card>
-      </div>
+      {questionsWithType.map((q) => {
+        console.log(q)
+        return(
+          <Row key={q.value} className="align-items-center mb-3">
+            <Col xs="6">
+              {q.type === "Text Field" || q.type === "Number Field" ? (
+                <CustomInput
+                  name={`field_${q.value}`}
+                  label={q.label}
+                  type="text"
+                  value={q.body || ""}
+                  readOnly={!!q.isRequested}
+                />
+              ) : q.type === "PDF" ? (
+                <CustomPdfDisplayInput
+                  name={`file_${q.value}`}
+                  label={q.label}
+                  isRequired={false}
+                  ar={false}
+                  fileUrl={q.body || ""}
+                  fileName={q.body || ""}
+                />
+              ) : (
+                <strong>{q.label}</strong>
+              )}
+            </Col>
+            <Col xs="3">
+              <SharedButton
+                title={q.isRequested ? t("Cancel") : t("Request")}
+                onClick={() => handleRequest(q)}
+                color={q.isRequested ? "danger" : "success"}
+              />
+            </Col>
+            <Col xs="3">
+              <SharedButton
+                title={q.isValid ? t("Revoke") : t("Validate")}
+                onClick={() => handleValidate(q)}
+                disabled={!q.isRequested || !q.body?.trim()}
+                color={q.isValid ? "warning" : "primary"}
+              />
+            </Col>
+          </Row>
+        )
+      })}
     </SharedModal>
   );
 };

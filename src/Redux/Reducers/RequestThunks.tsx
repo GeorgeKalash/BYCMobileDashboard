@@ -4,6 +4,7 @@ import jwtDecode from "jwt-decode";
 import { RootState } from "../Store";
 import { RequestProps } from "@/Types/RequestType";
 import { decrementRequests, incrementRequests } from "./RequestSlice";
+import { setError } from "./ErrorSlice";
 
 type Method = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -111,12 +112,20 @@ const withLoading = async (
   try {
     return await fn();
   } catch (error: any) {
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Unknown error occurred";
+
     if (throwError) throw error;
-    return error?.response?.data || error.message || "Unknown error";
+
+    dispatch(setError(message));
+    return null;
   } finally {
     dispatch(decrementRequests());
   }
 };
+
 
 export const getRequest = createAsyncThunk<
   any,

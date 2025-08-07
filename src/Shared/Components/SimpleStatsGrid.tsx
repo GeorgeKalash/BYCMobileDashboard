@@ -1,4 +1,3 @@
-// SimpleStatsGrid.tsx
 import React from "react";
 import { Card, CardBody, Col } from "reactstrap";
 import { useAppSelector } from "@/Redux/Hooks";

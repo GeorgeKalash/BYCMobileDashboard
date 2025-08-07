@@ -95,7 +95,6 @@ const Notification_Type = () => {
         />
         <CardBody>
           <DataTable
-            title={t("New Message")}
             data={data}
             columns={columns}
             highlightOnHover
@@ -116,7 +115,7 @@ const Notification_Type = () => {
             : t("Edit Notification Type")
         }
         width="600px"
-        height="60vh"
+        height="15vh"
         onSubmit={handleSubmit}
       >
         <NotificationTypeForm

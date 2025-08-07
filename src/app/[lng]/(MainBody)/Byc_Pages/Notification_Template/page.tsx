@@ -148,7 +148,6 @@ const NotificationTemplatePage = () => {
         />
         <CardBody>
           <DataTable
-            title={t("New Message")}
             data={data}
             columns={columns}
             pagination
@@ -181,7 +180,7 @@ const NotificationTemplatePage = () => {
             : t("Edit Notification Template")
         }
         width={"80vw"}
-        height="70vh"
+        height="53vh"
         onSubmit={handleSubmit}
       >
         <NotificationTemplateForm

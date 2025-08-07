@@ -125,12 +125,11 @@ const FAQ = () => {
     <Col xs="12">
       <Card>
         <CommonCardHeader
-          title={t("Notification Template")}
+          title={t("FAQ")}
           onAdd={() => openModal()}
         ></CommonCardHeader>
         <CardBody>
           <DataTable
-            title={t("New Message")}
             data={data}
             columns={columns}
             pagination
@@ -159,11 +158,11 @@ const FAQ = () => {
         onClose={handleModalClose}
         title={
           modalState.action === "add"
-            ? t("Add Notification Template")
-            : t("Edit Notification Template")
+            ? t("Add FAQ")
+            : t("Edit FAQ")
         }
-        width={"80vw"}
-        height="70vh"
+        width={"60vw"}
+        height="40vh"
         onSubmit={handleSubmit}
       >
         <FAQForm

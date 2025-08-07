@@ -117,8 +117,8 @@ const Reports = () => {
                     <SimpleStatsGrid
                       data={values}
                      logoMap={{
-                      newClients: "user-check",
-                      onlineClients: "user-plus",
+                      newClients: "user-plus",
+                      onlineClients: "user-check",
                       inactiveClients: "user-lock",
                       outwardTransferAmount: "folder-sync",
                       outwardTransferCount: "tally-5",

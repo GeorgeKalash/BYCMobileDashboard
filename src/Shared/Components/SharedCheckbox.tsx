@@ -9,9 +9,6 @@ import React, {
 import { Card, CardBody, Col, FormGroup, Row } from "reactstrap";
 import { ChooseActivities } from "@/Constant";
 
-// ----------------------------------------------
-//   SharedCheckbox (single)
-// ----------------------------------------------
 type SharedCheckboxProps = {
   label?: string;
   checked?: boolean;
@@ -78,9 +75,6 @@ export const SharedCheckbox = forwardRef<HTMLInputElement, SharedCheckboxProps>(
 );
 SharedCheckbox.displayName = "SharedCheckbox";
 
-// ----------------------------------------------
-//   SharedCheckboxGroup (multi)
-// ----------------------------------------------
 type CheckboxOption = {
   label: string;
   value: string;
@@ -137,10 +131,6 @@ export const SharedCheckboxGroup: React.FC<SharedCheckboxGroupProps> = ({
     </div>
   );
 };
-
-// ----------------------------------------------
-//  VariationCheckbox
-// ----------------------------------------------
 
 type VariationCheckboxItem = {
   id: number;

@@ -263,7 +263,6 @@ const PaymentsHistoryPage = () => {
         </Row>
         <CardBody>
           <DataTable
-            title={t("Payments History")}
             data={data}
             columns={columns}
             pagination

@@ -10,7 +10,7 @@ import { FormikProps } from "formik";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
-import { Card, CardBody, Col, Row } from "reactstrap";
+import {  Col, Row } from "reactstrap";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import { withRequestTracking } from "@/utils/withRequestTracking";
@@ -98,83 +98,77 @@ const UsersForm = forwardRef<
 
   return (
     <>
-      <Card className="mb-4">
-        <CardBody>
-          <Row>
-            <Col md="6">
-              <CustomInput
-                name="name"
-                label={t("Name")}
-                value={user?.clientMaster?.name || ""}
-                readOnly
-              />
-            </Col>
-            <Col md="6">
-              <CustomInput
-                name="cellPhone"
-                label={t("Phone Number")}
-                value={user?.clientMaster?.cellPhone || ""}
-                readOnly
-              />
-            </Col>
-            <Col md="6">
-              <CustomInput
-                name="nationality"
-                label={t("Nationality")}
-                value={user?.clientMaster?.nationalityName || ""}
-                readOnly
-              />
-            </Col>
-            <Col md="6">
-              <CustomInput
-                name="idNo"
-                label={t("ID Number")}
-                value={user?.clientRemittance?.idNo || ""}
-                readOnly
-              />
-            </Col>
-            <Col md="6">
-              <CustomInput
-                name="city"
-                label={t("City")}
-                value={user?.address?.city || ""}
-                readOnly
-              />
-            </Col>
-            <Col md="6">
-              <CustomInput
-                name="district"
-                label={t("District")}
-                value={user?.address?.cityDistrict || ""}
-                readOnly
-              />
-            </Col>
-            <Col md="6">
-              <CustomInput
-                name="street"
-                label={t("Street")}
-                value={user?.address?.street1 || ""}
-                readOnly
-              />
-            </Col>
-            <Col md="6">
-              <CustomInput
-                name="status"
-                label={t("Status")}
-                value={user?.clientMaster?.statusName || ""}
-                readOnly
-              />
-            </Col>
-          </Row>
-        </CardBody>
-      </Card>
-
+      <Row>
+        <Col md="6">
+          <CustomInput
+            name="name"
+            label={t("Name")}
+            value={user?.clientMaster?.name || ""}
+            readOnly
+          />
+        </Col>
+        <Col md="6">
+          <CustomInput
+            name="cellPhone"
+            label={t("Phone Number")}
+            value={user?.clientMaster?.cellPhone || ""}
+            readOnly
+          />
+        </Col>
+        <Col md="6">
+          <CustomInput
+            name="nationality"
+            label={t("Nationality")}
+            value={user?.clientMaster?.nationalityName || ""}
+            readOnly
+          />
+        </Col>
+        <Col md="6">
+          <CustomInput
+            name="idNo"
+            label={t("ID Number")}
+            value={user?.clientRemittance?.idNo || ""}
+            readOnly
+          />
+        </Col>
+        <Col md="6">
+          <CustomInput
+            name="city"
+            label={t("City")}
+            value={user?.address?.city || ""}
+            readOnly
+          />
+        </Col>
+        <Col md="6">
+          <CustomInput
+            name="district"
+            label={t("District")}
+            value={user?.address?.cityDistrict || ""}
+            readOnly
+          />
+        </Col>
+        <Col md="6">
+          <CustomInput
+            name="street"
+            label={t("Street")}
+            value={user?.address?.street1 || ""}
+            readOnly
+          />
+        </Col>
+        <Col md="6">
+          <CustomInput
+            name="status"
+            label={t("Status")}
+            value={user?.clientMaster?.statusName || ""}
+            readOnly
+          />
+        </Col>
+      </Row>
       <TransactionLogForm
         visible={showMoreInfoModal}
         onClose={() => setShowMoreInfoModal(false)}
         phoneNumber={initialValues?.username}
       />
-
       <UserInfoForm
         visible={showUserInfoModal}
         onClose={() => setShowUserInfoModal(false)}

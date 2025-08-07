@@ -8,7 +8,7 @@ interface CustomDateTimePickerProps {
   name: string;
   label?: string;
   isRequired?: boolean;
-  value?: string; // Format: MM-DD-YYYY HH:mm or MM-YYYY (monthYear mode)
+  value?: string; 
   onChange?: (value: string | null) => void;
   readOnly?: boolean;
   minDate?: Date;
@@ -105,7 +105,6 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
               })
             : placeholder}
         </span>
-
         {!readOnly && selectedDate && (
           <XCircle
             size={16}
@@ -123,7 +122,6 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
             }}
           />
         )}
-
         <Calendar
           size={16}
           style={{

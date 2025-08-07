@@ -127,7 +127,6 @@ const Notification_Group = () => {
         />
         <CardBody>
           <DataTable
-            title={t("New Group")}
             data={data}
             columns={columns}
             pagination
@@ -156,8 +155,8 @@ const Notification_Group = () => {
           visible={modalState.open}
           onClose={handleModalClose}
           title={modalState.action === "add" ? t("Add") : t("Edit")}
-          width={"80vw"}
-          height={"80vh"}
+          width={"40vw"}
+          height={"60vh"}
           onSubmit={handleSubmit}
         >
           <NotificationGroupForm

@@ -128,7 +128,6 @@ const TermsAndConditions = () => {
         </CommonCardHeader>
         <CardBody>
           <DataTable
-            title="Terms_And_Conditions_Table"
             data={data}
             columns={columns}
             highlightOnHover

@@ -68,7 +68,6 @@ const TransactionLog = ({
       </FormGroup>
 
       <DataTableComponent
-        title={t("Transaction Logs")}
         data={data}
         columns={columns}
         pagination={pagination}

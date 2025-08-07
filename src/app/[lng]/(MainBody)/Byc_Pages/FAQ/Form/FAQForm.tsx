@@ -13,7 +13,7 @@ import { DashboardMobileRepository } from "@/Repositories/DashboardMobileReposit
 import { showToast } from "@/Shared/Components/showToast";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";
-import { Card, CardBody, CardHeader, Col, Row } from "reactstrap";
+import {  Col, Row } from "reactstrap";
 import { useTranslation } from "react-i18next";
 
 interface FAQFormProps {
@@ -157,31 +157,26 @@ const FAQForm = ({
     >
       {() => (
         <Form>
-          <Card className="border">
-            <CardHeader className="fw-bold">{t("FAQ Entry")}</CardHeader>
-            <CardBody>
-              <Row>
-                <Col md={12}>
-                  <CustomInput name="title" label={t("FAQ Title")} />
-                </Col>
-              </Row>
-              <Row>
-                {supportedLanguagesRef.current.map((lang) => (
-                  <Col md={6} key={lang.id}>
-                    <CustomInput
-                      name={lang.questionKey}
-                      label={`${t("Question")} (${t(`Language ${lang.id}`)})`}
-                    />
-                    <CustomTextarea
-                      name={lang.answerKey}
-                      label={`${t("Answer")} (${t(`Language ${lang.id}`)})`}
-                      rows={5}
-                    />
-                  </Col>
-                ))}
-              </Row>
-            </CardBody>
-          </Card>
+          <Row>
+            <Col md={12}>
+              <CustomInput name="title" label={t("FAQ Title")} />
+            </Col>
+          </Row>
+          <Row>
+            {supportedLanguagesRef.current.map((lang) => (
+              <Col md={6} key={lang.id}>
+                <CustomInput
+                  name={lang.questionKey}
+                  label={`${t("Question")} (${t(`Language ${lang.id}`)})`}
+                />
+                <CustomTextarea
+                  name={lang.answerKey}
+                  label={`${t("Answer")} (${t(`Language ${lang.id}`)})`}
+                  rows={5}
+                />
+              </Col>
+            ))}
+          </Row>
         </Form>
       )}
     </Formik>

@@ -42,14 +42,11 @@ const SharedModal: React.FC<SharedModalProps> = ({
       style={{ maxWidth: width }}
     >
       <ModalHeader toggle={onClose}>{title}</ModalHeader>
-
       <ModalBody style={{ height: height, overflowY: "auto" }}>
         {children}
       </ModalBody>
-
       <ModalFooter>
         {footerActions}
-
         {typeof onInfoClick === "function" && (
           <SharedButton
             logo="/assets/images/icons/info.png"
@@ -58,7 +55,6 @@ const SharedModal: React.FC<SharedModalProps> = ({
             onClick={onInfoClick}
           />
         )}
-
         {typeof onSubmit === "function" && (
           <SharedButton
             logo="/assets/images/icons/save.png"

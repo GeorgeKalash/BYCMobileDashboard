@@ -13,12 +13,14 @@ import ProductSlice from "./Reducers/ProductSlice";
 import FilterSlice from "./Reducers/FilterSlice";
 import LetterBoxSlice from "./Reducers/LetterBoxSlice";
 import ThemeCustomizerSlice from "./Reducers/ThemeCustomizerSlice";
+import errorReducer from "./Reducers/ErrorSlice";
 
 const Store = configureStore({
   reducer: {
     authSlice: AuthSlice,
     request: RequestSlice, 
     layout: LayoutSlice,
+    error: errorReducer,
     twoFactor: TwoFactorSlice,
     numberingWizard: NumberingWizardSlice,
     studentWizard: StudentWizardSlice,

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Formik, Form, FormikProps } from "formik";
-import { Col, Row, Card, CardBody } from "reactstrap";
+import { Col, Row } from "reactstrap";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
@@ -42,17 +42,13 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
         <Form>
           <Row className="gy-4">
             <Col>
-              <Card className="h-100">
-                <CardBody>
-                  <CustomInput
-                    name="title"
-                    label={t("Title")}
-                    type="text"
-                    readOnly
-                  />
-                  <CustomTextarea name="body" label={t("Body")} readOnly />
-                </CardBody>
-              </Card>
+              <CustomInput
+                name="title"
+                label={t("Title")}
+                type="text"
+                readOnly
+              />
+              <CustomTextarea name="body" label={t("Body")} readOnly />
             </Col>
           </Row>
         </Form>

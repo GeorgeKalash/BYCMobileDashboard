@@ -17,6 +17,22 @@ const CustomPdfDisplayInput: React.FC<CustomPdfDisplayInputProps> = ({
   fileUrl,
   ar = false,
 }) => {
+console.log(fileUrl)
+  const getPdfDataUrl = () => {
+    if (!fileUrl) return null;
+    if (fileUrl.startsWith("data:application/pdf;base64,")) {
+      return fileUrl;
+    }
+    return `data:application/pdf;base64,${fileUrl}`;
+  };
+
+  const handleOpenPdf = () => {
+    const pdfUrl = getPdfDataUrl();
+    if (pdfUrl) {
+      window.open(pdfUrl, "_blank");
+    }
+  };
+
   return (
     <FormGroup>
       <Label htmlFor={name}>
@@ -25,11 +41,9 @@ const CustomPdfDisplayInput: React.FC<CustomPdfDisplayInputProps> = ({
       <div
         id={name}
         className="form-control"
-        style={{ cursor: "pointer" }}
+        style={{ cursor: fileUrl ? "pointer" : "not-allowed" }}
         dir={ar ? "rtl" : "ltr"}
-        onClick={() => {
-          window.open(fileUrl, "_blank");
-        }}
+        onClick={handleOpenPdf}
       >
         {fileName || "No file selected"}
       </div>

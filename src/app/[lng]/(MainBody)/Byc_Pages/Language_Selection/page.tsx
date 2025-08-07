@@ -68,7 +68,7 @@ const LanguageSelection = () => {
   const columns = [
     {
       name: t("Translation Name"),
-      selector: (row: any) => row.name || "-",
+      selector: (row: any) => row.name || "",
       sortable: true,
       id: "name",
     },
@@ -95,7 +95,6 @@ const LanguageSelection = () => {
         <CommonCardHeader title={t("Languages Page")} />
         <CardBody>
           <DataTable
-            title="language_table"
             data={data}
             columns={columns}
             highlightOnHover
@@ -110,7 +109,7 @@ const LanguageSelection = () => {
         onClose={handleModalClose}
         title={t("Languages Page")}
         width="600px"
-        height="60vh"
+        height="20vh"
         onSubmit={handleSubmit} 
       >
         <ActivateLanguageForm

@@ -127,7 +127,6 @@ const TextControl = () => {
         </CommonCardHeader>
         <CardBody>
           <DataTable
-            title="textControl_table"
             data={data}
             columns={columns}
             highlightOnHover
@@ -144,7 +143,7 @@ const TextControl = () => {
         onClose={handleModalClose}
         title={modalAction === "add" ? t("Add Text") : t("Edit Text")}
         width="600px"
-        height="60vh"
+        height="30vh"
         onSubmit={handleSubmit}
       >
         <TextControlForm

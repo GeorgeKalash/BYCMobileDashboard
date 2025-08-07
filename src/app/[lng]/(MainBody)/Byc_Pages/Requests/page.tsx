@@ -140,7 +140,6 @@ const Requests = () => {
         </CommonCardHeader>
         <CardBody>
           <DataTable
-            title="requests_table"
             data={data}
             columns={columns}
             pagination

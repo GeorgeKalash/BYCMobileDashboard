@@ -127,7 +127,7 @@ const UsersPage = () => {
 
   const columns = [
     { name: t("Name"), selector: (row: any) => row.clientMaster?.name ?? "", sortable: true },
-    { name: t("PhoneNumber"), selector: (row: any) => row.clientMaster?.cellPhone ?? "" },
+    { name: t("Phone Number"), selector: (row: any) => row.clientMaster?.cellPhone ?? "" },
     { name: t("Nationality"), selector: (row: any) => row.clientMaster?.nationalityName ?? "" },
     { name: t("ID Number"), selector: (row: any) => row.clientRemittance?.idNo ?? "" },
     { name: t("City"), selector: (row: any) => row.address?.city ?? "" },
@@ -251,7 +251,6 @@ const UsersPage = () => {
         </CommonCardHeader>
         <CardBody>
           <DataTable
-            title={t("Users")}
             data={data}
             columns={columns}
             pagination
@@ -269,7 +268,7 @@ const UsersPage = () => {
         onClose={handleModalClose}
         title={t("User")}
         width="50vw"
-        height="70vh"
+        height="40vh"
         onInfoClick={handleInfoClick}
         footerActions={
           <>

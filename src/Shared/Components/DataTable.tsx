@@ -1,17 +1,14 @@
 import React, { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Label, Input } from "reactstrap";
-import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppSelector } from "@/Redux/Hooks";
 import SharedModal from "@/Shared/Components/SharedModal";
 const DataTableComponent = ({
-  title,
   data,
   columns,
   defaultSortColumn = "field",
   highlightOnHover = false,
-  direction = "ltr",
   pagination = true,
   showActions = false,
   Search = false,
@@ -26,12 +23,10 @@ const DataTableComponent = ({
   onSearchChange,
   onRowClicked,
 }: {
-  title?: string;
   data: any[];
   columns: any[];
   defaultSortColumn?: string;
   highlightOnHover?: boolean;
-  direction?: "ltr" | "rtl";
   pagination?: boolean;
   showActions?: boolean;
   Search?: boolean;
@@ -162,8 +157,6 @@ const DataTableComponent = ({
       );
     }
   };
-  const [deleteConfirmText, setDeleteConfirmText] = useState("");
-  const [deleteError, setDeleteError] = useState(false);
   return (
     <>
       {Search && (
