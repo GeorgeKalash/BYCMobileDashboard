@@ -143,7 +143,7 @@ const NotificationGroupForm = ({
           <Card>
             <CardBody>
               <Row>
-                <Col md={3}>
+                <Col md={6}>
                   <CustomInput
                     name="name"
                     label={t("Group Name")}

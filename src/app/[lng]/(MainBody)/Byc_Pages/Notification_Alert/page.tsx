@@ -46,11 +46,6 @@ const Notification_Alert = () => {
     setSelectedRow(null);
   };
 
-  const handleSubmit = () => {
-    if (formikRef.current) {
-      formikRef.current.submitForm();
-    }
-  };
   const filters = {
     username:
       selectedUser?.username || formikRef.current?.values.mobile || null,
@@ -109,36 +104,31 @@ const Notification_Alert = () => {
     }));
   };
   const fetchDataByGroup = async (groupId: number) => {
-    try {
-      const result = await dispatch(
-        getMobileRequest({
-          extension: NotificationAlertRepository.NotificationGroup.getpack,
-          parameters: `_recordId=${groupId}`,
-        })
-      ).unwrap();
+    const result = await dispatch(
+      getMobileRequest({
+        extension: NotificationAlertRepository.NotificationGroup.getpack,
+        parameters: `_recordId=${groupId}`,
+      })
+    ).unwrap();
 
-      const clients = result?.data?.clients || [];
+    const clients = result?.data?.clients || [];
 
-      const formattedData = clients.map((client: any) => ({
-        clientMaster: {
-          name: client?.name ?? "",
-          cellPhone: client?.username ?? "",
-          nationalityName: client?.nationality ?? "",
-        },
-        clientRemittance: {
-          idNo: client?.idNo ?? "",
-        },
-      }));
+    const formattedData = clients.map((client: any) => ({
+      clientMaster: {
+        name: client?.name ?? "",
+        cellPhone: client?.username ?? "",
+        nationalityName: client?.nationality ?? "",
+      },
+      clientRemittance: {
+        idNo: client?.idNo ?? "",
+      },
+    }));
 
-      setData(formattedData);
-      setPaginationState((prev) => ({
-        ...prev,
-        totalRows: formattedData.length,
-      }));
-    } catch (error) {
-      console.error("Error fetching group data:", error);
-      setData([]);
-    }
+    setData(formattedData);
+    setPaginationState((prev) => ({
+      ...prev,
+      totalRows: formattedData.length,
+    }));
   };
 
   const columns = [
@@ -203,7 +193,6 @@ const Notification_Alert = () => {
                       onChange={(val) => setFieldValue("fromBirthDate", val)}
                     />
                   </Col>
-
                   <Col md="3">
                     <CustomDatePicker
                       name="toBirthDate"
@@ -212,7 +201,6 @@ const Notification_Alert = () => {
                       onChange={(val) => setFieldValue("toBirthDate", val)}
                     />
                   </Col>
-
                   <Col md="3">
                     <CustomSelect
                       name="Nationality"
@@ -224,7 +212,6 @@ const Notification_Alert = () => {
                       endpointId={DashboardMobileRepository.country.getall}
                       labelKey="name"
                       valueKey="recordId"
-                      isRequired={true}
                     />
                   </Col>
                   <Col md="3">
@@ -238,7 +225,6 @@ const Notification_Alert = () => {
                       }}
                     />
                   </Col>
-
                   <Col md="3">
                     <CustomInput
                       name="idNumber"
@@ -257,7 +243,6 @@ const Notification_Alert = () => {
                       placeholder={t("Enter Sponsor Name")}
                     />
                   </Col>
-
                   <Col
                     md="3"
                     className="d-flex justify-content-end align-items-end"
@@ -271,7 +256,6 @@ const Notification_Alert = () => {
                     />
                   </Col>
                 </Row>
-
                 <Row>
                   <Col md="3">
                     <CustomSelect
@@ -280,7 +264,6 @@ const Notification_Alert = () => {
                       value={values.group}
                       onChange={async (val) => {
                         setFieldValue("group", val);
-
                         if (val && !isNaN(Number(val))) {
                           setFieldValue("mobile", "");
                           setFieldValue("idNumber", "");
@@ -295,7 +278,6 @@ const Notification_Alert = () => {
                       }
                       labelKey="name"
                       valueKey="recordId"
-                      isRequired
                     />
                   </Col>
                 </Row>
@@ -314,7 +296,6 @@ const Notification_Alert = () => {
                       }
                       labelKey="name"
                       valueKey="recordId"
-                      isRequired
                     />
                   </Col>
                   <Col
@@ -338,7 +319,6 @@ const Notification_Alert = () => {
               </Form>
             )}
           </Formik>
-
           <DataTableComponent
             data={data}
             columns={columns}
