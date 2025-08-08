@@ -10,7 +10,6 @@ import {
 } from "@/Redux/Reducers/RequestThunks";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import { withRequestTracking } from "@/utils/withRequestTracking";
-
 import { showToast } from "@/Shared/Components/showToast";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";
@@ -185,7 +184,7 @@ const NotificationTemplateForm = ({
         <Form>
           <Row>
             <Col md={6}>
-              <CustomInput name="name" isRequired={true} label={t("Template Name")} />
+              <CustomInput name="name" isRequired label={t("Template Name")} />
               <SharedCheckbox
                 name="isPushNotification"
                 label={t("Push Notification")}
@@ -218,10 +217,12 @@ const NotificationTemplateForm = ({
                   <Col md={6} key={lang.id}>
                     <CustomInput
                       name={lang.titleKey}
+                      isRequired
                       label={`${t("Title")} (${t(`Language ${lang.id}`)})`}
                     />
                     <CustomTextarea
                       name={lang.descKey}
+                      isRequired
                       label={`${t("Message")} (${t(`Language ${lang.id}`)})`}
                       rows={5}
                     />

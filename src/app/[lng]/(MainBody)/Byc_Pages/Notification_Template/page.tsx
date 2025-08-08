@@ -13,11 +13,9 @@ import {
 } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
-
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import formatDate from "@/utils/DateFormatter";
 import { showToast } from "@/Shared/Components/showToast";
-
 import NotificationTemplateForm from "./Form/NotificationTemplateForm";
 
 const NotificationTemplatePage = () => {
@@ -131,7 +129,8 @@ const NotificationTemplatePage = () => {
     await withRequestTracking(dispatch, () =>
       dispatch(
         deleteMobileRequest({
-          extension: `${NotificationAlertRepository.NotificationTemplate.delete}?_recordId=${row.recordId}`,
+          extension: NotificationAlertRepository.NotificationTemplate.delete,
+          parameters: `_recordId=${row.recordId}`,
           rawBody: false,
         })
       ).unwrap()
@@ -180,7 +179,7 @@ const NotificationTemplatePage = () => {
             ? t("Add Notification Template")
             : t("Edit Notification Template")
         }
-        width={"80vw"}
+        width={"70vw"}
         height="53vh"
         onSubmit={handleSubmit}
       >

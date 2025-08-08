@@ -208,9 +208,6 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
           },
         ]}
       />
-      {formik && meta.touched && meta.error && (
-        <div className="invalid-feedback d-block">{meta.error}</div>
-      )}
     </FormGroup>
   );
 };

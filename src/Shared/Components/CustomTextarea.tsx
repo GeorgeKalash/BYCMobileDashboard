@@ -56,9 +56,6 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
         onChange={isControlled ? onChange : field.onChange}
         onBlur={isControlled ? onBlur : field.onBlur}
       />
-      {formik && meta.touched && meta.error && (
-        <div className="invalid-feedback">{meta.error}</div>
-      )}
     </FormGroup>
   );
 };
