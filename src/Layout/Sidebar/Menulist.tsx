@@ -87,8 +87,8 @@ const Menulist: React.FC<MenuListType> = ({ menu, setActiveMenu, activeMenu, lev
             }`}
             href={item?.path ? `/${i18LangStatus}${item.path}` : "#"}
             onClick={(e) => {
-              e.preventDefault();
               if (item.children) {
+                e.preventDefault(); 
                 toggleExpand(item.title);
               }
               const temp = activeMenu;
