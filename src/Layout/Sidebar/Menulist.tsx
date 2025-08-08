@@ -98,7 +98,11 @@ const Menulist: React.FC<MenuListType> = ({ menu, setActiveMenu, activeMenu, lev
           >
             {item.icon && <SVG className={`${sidebarIconType}-icon`} iconId={`${sidebarIconType}-${item.icon}`} />}
             <span className={item.lanClass && item.lanClass}>{t(item.title)}</span>
-            {item.children && <div className="according-menu"><i className="fa fa-angle-right" /></div>}
+            {item.children && (
+              <div className="according-menu">
+                <i className="fa fa-angle-right" />
+              </div>
+            )}
           </Link>
 
           {item.children && expandedMenu === item.title && (
@@ -108,6 +112,13 @@ const Menulist: React.FC<MenuListType> = ({ menu, setActiveMenu, activeMenu, lev
           )}
         </li>
       ))}
+
+      <style jsx>{`
+        .according-menu .fa-angle-right {
+          font-size: 1.6rem; /* increase from default (usually 1rem or 1.2rem) */
+          transition: transform 0.3s ease;
+        }
+      `}</style>
     </>
   );
 };

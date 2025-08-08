@@ -28,13 +28,19 @@ const formatToMMYYYY = (date: Date): string =>
 
 const parseDate = (value?: string): Date | null => {
   if (!value) return null;
-  const parts = value.split("-");
+  const parts = value.split("-").map(Number);
+
   if (parts.length === 2) {
-    const [month, year] = parts.map(Number);
+    const [month, year] = parts;
     return new Date(year, month - 1, 1);
   } else if (parts.length === 3) {
-    const [month, day, year] = parts.map(Number);
-    return new Date(year, month - 1, day);
+    if (parts[0] > 1000) {
+      const [year, month, day] = parts;
+      return new Date(year, month - 1, day);
+    } else {
+      const [month, day, year] = parts;
+      return new Date(year, month - 1, day);
+    }
   }
   return null;
 };
