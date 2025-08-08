@@ -29,7 +29,7 @@ const Reports = () => {
     outwardTransferCount: 0,
     paidReturnPercentage: 0,
     returnAmount: 0,
-    returnCount: 0
+    returnCount: 0,
   };
 
   const validationSchema = Yup.object({});
@@ -70,7 +70,7 @@ const Reports = () => {
                 })
               ).unwrap()
             );
-            setValues({ ...initialValues, ...result.data,...result2.data });
+            setValues({ ...initialValues, ...result.data, ...result2.data });
           };
 
           useEffect(() => {
@@ -80,7 +80,7 @@ const Reports = () => {
           return (
             <Form style={{ maxHeight: "85vh", overflowY: "auto" }}>
               <Card className="mb-3">
-                <CommonCardHeader title={t("Notifications")}>
+                <CommonCardHeader title={t("Reports")}>
                   <Row className="w-100">
                     <Col>
                       <CustomDatePicker
@@ -116,16 +116,16 @@ const Reports = () => {
                   <Row>
                     <SimpleStatsGrid
                       data={values}
-                     logoMap={{
-                      newClients: "user-check",
-                      onlineClients: "user-plus",
-                      inactiveClients: "user-lock",
-                      outwardTransferAmount: "folder-sync",
-                      outwardTransferCount: "tally-5",
-                      paidReturnPercentage: "percent",
-                      returnAmount: "undo-2",
-                      returnCount: "activity"
-                    }}
+                      logoMap={{
+                        newClients: "user-check",
+                        onlineClients: "user-plus",
+                        inactiveClients: "user-lock",
+                        outwardTransferAmount: "folder-sync",
+                        outwardTransferCount: "tally-5",
+                        paidReturnPercentage: "percent",
+                        returnAmount: "undo-2",
+                        returnCount: "activity",
+                      }}
                     />
                   </Row>
                 </CardBody>

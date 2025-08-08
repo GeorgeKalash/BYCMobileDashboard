@@ -6,6 +6,8 @@ import { useAppDispatch } from "@/Redux/Hooks";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { RefreshCw, XCircle } from "react-feather";
+import { useTranslation } from "@/app/i18n/client";
+import { useAppSelector } from "@/Redux/Hooks";
 
 type OptionType = {
   value: string | number;
@@ -49,6 +51,8 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   readOnly = false,
   clearable = true,
 }) => {
+  const { i18LangStatus } = useAppSelector((state) => state.langSlice);
+  const { t } = useTranslation(i18LangStatus);
   const [selectOptions, setSelectOptions] = useState<OptionType[]>(
     options || []
   );
@@ -58,8 +62,26 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   const reduxLangId = useSelector(
     (state: RootState) => state.authSlice.languageId
   );
-  const langId =
-    reduxLangId || parseInt(localStorage.getItem("languageId") || "1", 10);
+  const langId = parseInt(localStorage.getItem("languageId") || "1", 10);
+
+  const isRtl =
+    typeof window !== "undefined" && localStorage.getItem("dir") === "rtl";
+
+  const refreshIconStyle = {
+    position: "absolute",
+    top: "50%",
+    [isRtl ? "left" : "right"]: clearable ? "3.5rem" : "2rem",
+    transform: "translateY(-50%)",
+    padding: 0,
+  } as const;
+
+  const clearIconStyle = {
+    position: "absolute",
+    top: "50%",
+    [isRtl ? "left" : "right"]: "2rem",
+    transform: "translateY(-50%)",
+    padding: 0,
+  } as const;
 
   const loadOptions = useCallback(
     async (preserveSelected = false) => {
@@ -124,10 +146,19 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   );
 
   useEffect(() => {
-    if ((dashboardDatasetId || dataSetId || endpointId) && selectOptions.length === 0) {
+    if (
+      (dashboardDatasetId || dataSetId || endpointId) &&
+      selectOptions.length === 0
+    ) {
       loadOptions(false);
     }
-  }, [dashboardDatasetId, dataSetId, endpointId, selectOptions.length, loadOptions]);
+  }, [
+    dashboardDatasetId,
+    dataSetId,
+    endpointId,
+    selectOptions.length,
+    loadOptions,
+  ]);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value === "" ? null : e.target.value;
@@ -143,7 +174,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   const validationClass = isRequired && !isFieldFilled ? "is-invalid" : "";
 
   return (
-    <FormGroup>
+    <FormGroup dir={isRtl ? "rtl" : "ltr"}>
       {label && (
         <Label className="mb-1 d-block">
           {label} {isRequired && <span className="text-danger">*</span>}
@@ -165,7 +196,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
               disabled={readOnly}
             >
               <option value="" disabled hidden>
-                Select...
+                {t("Select")}
               </option>
               {selectOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -176,24 +207,19 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
 
             {!readOnly && (
               <>
-                {(dashboardDatasetId || dataSetId || endpointId) && showRefresh && (
-                  <Button
-                    type="button"
-                    color="link"
-                    size="sm"
-                    onClick={() => loadOptions(true)}
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      right: clearable ? "3.5rem" : "2rem",
-                      transform: "translateY(-50%)",
-                      padding: 0,
-                    }}
-                    title="Refresh"
-                  >
-                    <RefreshCw size={16} />
-                  </Button>
-                )}
+                {(dashboardDatasetId || dataSetId || endpointId) &&
+                  showRefresh && (
+                    <Button
+                      type="button"
+                      color="link"
+                      size="sm"
+                      onClick={() => loadOptions(true)}
+                      style={refreshIconStyle}
+                      title="Refresh"
+                    >
+                      <RefreshCw size={16} />
+                    </Button>
+                  )}
                 {clearable && (
                   <Button
                     type="button"
@@ -201,13 +227,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
                     size="sm"
                     onClick={clearSelection}
                     className="text-danger"
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      right: "2rem",
-                      transform: "translateY(-50%)",
-                      padding: 0,
-                    }}
+                    style={clearIconStyle}
                     title="Clear"
                   >
                     <XCircle size={16} />
