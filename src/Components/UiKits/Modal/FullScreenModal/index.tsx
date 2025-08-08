@@ -7,13 +7,11 @@ import FullScreenBelowMd from "./FullScreenBelowMd";
 import FullScreenBelowLg from "./FullScreenBelowLg";
 import FullScreenBelowXl from "./FullScreenBelowXl";
 import FullScreenBelowXxl from "./FullScreenBelowXxl";
-import { FullScreenModalData } from "@/Data/Uikits/modal";
 
 const FullScreenModals = () => {
   return (
     <Col xl="12">
       <Card>
-        <CommonCardHeader title={FullScreenModal} span={FullScreenModalData} />
         <CardBody className="badge-spacing">
           <FullModal />
           <FullScreenBelowSm />
