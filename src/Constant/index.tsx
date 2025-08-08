@@ -302,43 +302,6 @@ export const VerticalGroupButton: string = "Vertical";
 export const RememberMe: string = "Remember me";
 export const Meditations: string = "Meditations";
 
-//Charts - Apex charts
-export const BasicAreaCharts: string = "Basic Area Chart ";
-export const AreaSpalineCharts: string = "Area Spaline Chart";
-export const BarCharts: string = "Bar chart";
-export const ColumnCharts: string = "Column Chart ";
-export const BubbleCharts: string = "3d Bubble Chart";
-export const SteplineCharts: string = "Stepline Chart ";
-export const ChartColumn: string = "Column Chart";
-export const PieCharts: string = "Pie Chart ";
-export const DonutChart: string = "Donut Chart";
-export const MixedCharts: string = "Mixed Chart";
-export const CandlestickCharts: string = "Candlestick Chart ";
-export const RadarCharts: string = "Radar Chart";
-export const RadialBarCharts: string = "Radial Bar Chart";
-
-//Charts - Google charts
-export const AreaChartOne: string = "Area Chart 1";
-export const ColumnChartOne: string = "Column Chart 1";
-export const AreaChartTwo: string = "Area Chart 2";
-export const ColumnChartTwo: string = "Column Chart 2";
-export const GanttCharts: string = "Gantt Chart";
-export const LineCharts: string = "Line Chart";
-export const ComboCharts: string = "Combo Chart";
-export const BarChartTwo: string = "bar-chart2";
-export const WordTreeChart: string = "word tree";
-export const PieChartOne: string = "Pie Chart 1";
-export const PieChartTwo: string = "Pie Chart 2";
-export const PieChartThree: string = "Pie Chart 3";
-export const PieChartFour: string = "Pie Chart 4";
-
-//Charts - ChartJS charts
-export const ChartJSBarChart: string = "Bar Chart";
-export const ChatJSLineGraph: string = "Line Graph";
-export const ChatJSRadarGraph: string = "Radar Graph";
-export const ChatJSLineChart: string = "Line Chart";
-export const ChatJSPolarChart: string = "Polar Chart";
-
 //sample page
 export const SamplePage: string = "Sample Page";
 export const SampleCard: string = "Sample Card";
@@ -362,14 +325,6 @@ export const EmailAddressWizardPlaceholder: string = "name@example.com";
 export const PasswordWizard: string = "Password";
 export const PasswordWizardPlaceholder: string = "Password";
 export const Logout: string = "Log out";
-
-//Miscellaneous - Gallery
-export const ImageGallery: string = "IMAGE GALLERY";
-export const MyPortfolioTitle: string = "My Portfolio";
-export const MasonryGallery: string = "Masonry Gallery";
-export const MasonryGalleryCap: string = "MASONRY GALLERY";
-export const PortfolioTitle: string = "Portfolio Title";
-export const ImageHoverEffects: string = "Image Hover Effects";
 
 //Editors
 export const InlineEditors: string = "Inline Editor";
@@ -815,35 +770,6 @@ export const TopSellerMonth: string = "Top seller of the month";
 export const RecentOrder: string = "Recent Orders";
 export const DealDayFrom: string = "Deal of the Day From ";
 export const SelectSize: string = "Select size";
-
-// Widgets
-export const WebsiteDesigns: string = "Website Design";
-export const SquareDashboard: string = "Square Dashboard";
-export const Design3D: string = "3D Design";
-export const Visitor: string = "Visitors";
-export const UpcomingAppointments: string = "Upcoming Appointment";
-export const MonthlyHistorys: string = "Monthly History";
-export const SkillStatusHeading: string = "Skill Status";
-export const OrdersStatusHeading: string = "Order Status";
-export const LiveProduct: string = "Live Products";
-export const TurnOver: string = "Turn over";
-export const CryptocurrencyPrice: string = "Cryptocurrency Prices";
-export const StockMarkets: string = "Stock Market";
-export const Finances: string = "Finance";
-export const MonthlySale: string = "Monthly Sales";
-export const CryptoAnnotation: string = "Crypto Annotations";
-export const OrdersStatus: string = "Order Status";
-export const Uses: string = "Uses";
-export const StudyStatistic: string = "Study Statistics";
-export const UXDesign: string = "UX Design";
-export const Illustrations: string = "Illustrations";
-export const Assignments: string = "Assignments";
-export const LiveMeetings: string = "Live Meeting";
-export const ActivelyHour: string = "Actively Hours";
-export const EnrolledClass: string = "Enrolled Classes";
-export const MonthlyAttendances: string = "Monthly Attendance Report (Feb)";
-export const Schedules: string = "Schedule";
-export const FeaturedCourse: string = "Featured Courses";
 
 //Project
 export const ProjectLists: string = "Project List";

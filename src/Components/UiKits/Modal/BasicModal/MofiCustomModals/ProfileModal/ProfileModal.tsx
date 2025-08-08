@@ -1,6 +1,5 @@
 import SVG from "@/CommonComponent/SVG";
 import { ImagePath } from "@/Constant";
-import { ProfileData } from "@/Data/Uikits/modal";
 import { useAppSelector } from "@/Redux/Hooks";
 import { ProfileModalType } from "@/Types/UikitsType";
 import Link from "next/link";
@@ -29,12 +28,7 @@ export const ProfileModal:React.FC<ProfileModalType> = ({ modalOne, modalOneTogg
                       <h5 className="mb-0">1,908</h5>
                       <span className="f-light">Posts</span>
                     </li>
-                    {ProfileData.map(({ heading, data }, index) => (
-                      <li key={index}>
-                        <h5 className="mb-0">{heading}</h5>
-                        <span className="f-light">{data}</span>
-                      </li>
-                    ))}
+                  
                   </ul>
                 </div>
               </CardBody>

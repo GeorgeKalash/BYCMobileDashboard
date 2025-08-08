@@ -19,10 +19,7 @@ const Notification_Type = () => {
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
 
-  const [data, setData] = useState<{ id: any; key: string; value: string }[]>(
-    []
-  );
-
+  const [data, setData] = useState<{ id: any; key: string; value: string }[]>([]);
   const [modalState, setModalState] = useState({
     open: false,
     action: null as "add" | "edit" | null,
@@ -36,7 +33,6 @@ const Notification_Type = () => {
       dispatch(
         getMobileRequest({
           extension: `${NotificationAlertRepository.NotificationTypes.getAll}`,
-          parameters: "",
         })
       )
     );
@@ -62,7 +58,7 @@ const Notification_Type = () => {
   const columns = [
     {
       name: t("Type"),
-      selector: (row: any) => row.value || "-",
+      selector: (row: any) => row.value || "",
       sortable: true,
       id: "type",
     },
@@ -100,7 +96,6 @@ const Notification_Type = () => {
         />
         <CardBody>
           <DataTable
-            title={t("New Message")}
             data={data}
             columns={columns}
             highlightOnHover
@@ -121,7 +116,7 @@ const Notification_Type = () => {
             : t("Edit Notification Type")
         }
         width="600px"
-        height="60vh"
+        height="15vh"
         onSubmit={handleSubmit}
       >
         <NotificationTypeForm

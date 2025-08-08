@@ -49,9 +49,13 @@ export const DashboardMobileRepository = {
     getAll: service + "ClientExtraInfo/getAll",
     update: service + "ClientExtraInfo/update",
     validate: service + "ClientExtraInfo/validate",
+    getPdf: service + "ClientExtraInfo/getPdf",
   },
   country: {
     getall: service + "System/Country/getAll",
+  },
+  city: {
+    getall: service + "System/City/getAll",
   },
   TermsAndConditions: {
     page: service + "TermsAndConditions/page",

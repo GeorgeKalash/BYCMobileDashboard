@@ -258,7 +258,6 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
             columns={tableColumns}
             pagination={false}
             highlightOnHover
-            direction="ltr"
             showActions={false}
             Search={false}
             onRowClicked={handleSelect}

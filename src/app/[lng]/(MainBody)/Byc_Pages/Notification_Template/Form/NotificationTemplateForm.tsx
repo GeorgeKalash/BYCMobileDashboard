@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { Formik, Form, FormikProps } from "formik";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
@@ -185,7 +185,7 @@ const NotificationTemplateForm = ({
         <Form>
           <Row>
             <Col md={6}>
-              <CustomInput name="name" label={t("Template Name")} />
+              <CustomInput name="name" isRequired={true} label={t("Template Name")} />
               <SharedCheckbox
                 name="isPushNotification"
                 label={t("Push Notification")}

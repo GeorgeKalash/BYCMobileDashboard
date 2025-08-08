@@ -2,7 +2,7 @@
 
 import React, { KeyboardEvent } from "react";
 import { Formik, Form, FormikHelpers, FormikProps } from "formik";
-import { Col, Row, Card, CardBody } from "reactstrap";
+import { Col, Row } from "reactstrap";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
@@ -42,11 +42,9 @@ const NotificationTypeForm: React.FC<NotificationFormProps> = ({
   const initialValues = {
     value: rowData?.value || "",
   };
-
   const validationSchema = Yup.object().shape({
     value: Yup.string().required(t("required")),
   });
-
   const handleSubmit = async (
     values: typeof initialValues,
     { setSubmitting }: FormikHelpers<typeof initialValues>
@@ -123,16 +121,12 @@ const NotificationTypeForm: React.FC<NotificationFormProps> = ({
         <Form onKeyDown={(e) => handleKeyDown(e, submitForm)}>
           <Row className="gy-4">
             <Col>
-              <Card className="h-100">
-                <CardBody>
-                  <CustomInput
-                    name="value"
-                    label={t("Notification Type")}
-                    type="text"
-                    placeholder={t("Enter Notification Type")}
-                  />
-                </CardBody>
-              </Card>
+              <CustomInput
+                name="value"
+                label={t("Notification Type")}
+                type="text"
+                placeholder={t("Enter Notification Type")}
+              />
             </Col>
           </Row>
         </Form>

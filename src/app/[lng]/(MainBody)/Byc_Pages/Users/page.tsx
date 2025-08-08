@@ -17,8 +17,8 @@ import SharedButton from "@/Shared/Components/SharedButton";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 import CustomSelect from "@/Shared/Components/CustomSelect";
-
 import { format } from "date-fns";
+import CustomDateTimePicker, { parseDateTime } from "@/Shared/Components/CustomDateTimePicker";
 
 const UsersPage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -30,14 +30,11 @@ const UsersPage = () => {
     open: false,
     row: null as any,
   });
-  const handleOTPPress = () => {
-    formLogicRef.current?.openOtpModal();
-  };
+
   const [paginationState, setPaginationState] = useState({
     pageCount: 0,
     totalRows: 0,
   });
-
   const [filters, setFilters] = useState({
     fromDate: format(new Date(), "MM-dd-yyyy"),
     toDate: format(new Date(), "MM-dd-yyyy"),
@@ -45,6 +42,10 @@ const UsersPage = () => {
     phoneNumber: "",
     idNumber: "",
     nationality: "",
+    cityId: null,
+    street: "",
+    lastLogin: format(new Date(), "MM-dd-yyyy HH:mm"),
+    countryId: null
   });
 
   const pageSize = 30;
@@ -54,15 +55,19 @@ const UsersPage = () => {
   const fetchData = async (page = 0) => {
     const payload = {
       startAt: page,
-      pageSize: pageSize,
+      pageSize,
       filters: {
-        fromDate: new Date(filters.fromDate).toISOString(),
-        toDate: new Date(filters.toDate).toISOString(),
+        fromDate: filters.fromDate ? new Date(filters?.fromDate).toISOString() : null,
+        toDate: filters?.toDate? new Date(filters?.toDate).toISOString() : null,
         username: filters.phoneNumber || null,
-        nationalityId: filters.nationality ? Number(filters.nationality) : null,
+        nationalityId: filters.nationality ? Number(filters?.nationality) : null,
         idNo: filters.idNumber || null,
+        cityId: filters.cityId || null,
+        street: filters.street || "",
+        lastLogin: parseDateTime(filters?.lastLogin)?.toISOString() ?? null,
       },
     };
+
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         postMobileRequest({
@@ -75,7 +80,6 @@ const UsersPage = () => {
 
     const list = result?.data;
     setData(Array.isArray(list) ? list : []);
-
     setPaginationState((prev) => ({
       ...prev,
       totalRows: Array.isArray(list) ? list.length : 0,
@@ -86,7 +90,7 @@ const UsersPage = () => {
     fetchData(paginationState.pageCount);
   }, [paginationState.pageCount]);
 
-  const handleFilterChange = (field: string, value: string | number) => {
+  const handleFilterChange = (field: string, value: string | number | null) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -98,18 +102,16 @@ const UsersPage = () => {
   };
 
   const openModal = (row: any = null) => {
-    setModalState({
-      open: true,
-      row,
-    });
+    setModalState({ open: true, row });
   };
 
   const handleModalClose = () => {
-    setModalState({
-      open: false,
-      row: null,
-    });
+    setModalState({ open: false, row: null });
     fetchData(paginationState.pageCount);
+  };
+
+  const handleOTPPress = () => {
+    formLogicRef.current?.openOtpModal();
   };
 
   const handleInfoClick = () => {
@@ -125,56 +127,21 @@ const UsersPage = () => {
   };
 
   const columns = [
-    {
-      name: t("Name"),
-      selector: (row: any) => row.clientMaster?.name ?? "",
-      sortable: true,
-      id: "name",
-    },
-    {
-      name: t("PhoneNumber"),
-      selector: (row: any) => row.clientMaster?.cellPhone ?? "",
-      id: "phone",
-    },
-    {
-      name: t("Nationality"),
-      selector: (row: any) => row.clientMaster?.nationalityName ?? "",
-      id: "nationality",
-    },
-    {
-      name: t("ID Number"),
-      selector: (row: any) => row.clientRemittance?.idNo ?? "",
-      id: "idNo",
-    },
-    {
-      name: t("City"),
-      selector: (row: any) => row.address?.city ?? "",
-      id: "city",
-    },
-    {
-      name: t("District"),
-      selector: (row: any) => row.address?.cityDistrict ?? "",
-      id: "district",
-    },
-    {
-      name: t("Street"),
-      selector: (row: any) => row.address?.street1 ?? "",
-      id: "street",
-    },
+    { name: t("Name"), selector: (row: any) => row.clientMaster?.name ?? "", sortable: true },
+    { name: t("Phone Number"), selector: (row: any) => row.clientMaster?.cellPhone ?? "" },
+    { name: t("Nationality"), selector: (row: any) => row.clientMaster?.nationalityName ?? "" },
+    { name: t("ID Number"), selector: (row: any) => row.clientRemittance?.idNo ?? "" },
+    { name: t("City"), selector: (row: any) => row.address?.city ?? "" },
+    { name: t("District"), selector: (row: any) => row.address?.cityDistrict ?? "" },
+    { name: t("Street"), selector: (row: any) => row.address?.street1 ?? "" },
     {
       name: t("Active"),
       cell: (row: any) => (
-        <span
-          style={{
-            color: row.user?.isInactive ? "red" : "green",
-            fontWeight: "bold",
-          }}
-        >
+        <span style={{ color: row.user?.isInactive ? "red" : "green", fontWeight: "bold" }}>
           {row.user?.isInactive ? t("InActive") : t("Active")}
         </span>
       ),
       sortable: true,
-      id: "isInactive",
     },
   ];
 
@@ -183,78 +150,110 @@ const UsersPage = () => {
       <Card>
         <CommonCardHeader title={t("Users")}>
           <Row className="w-100">
-            <Col md="2">
+            <Col>
               <CustomDatePicker
                 name="fromDate"
                 label={t("From Date")}
                 value={filters.fromDate}
-                onChange={(val) =>
-                  val && setFilters((prev) => ({ ...prev, fromDate: val }))
-                }
+                onChange={(val) => setFilters((p) => ({ ...p, fromDate: val || "" }))}
               />
             </Col>
-            <Col md="2">
+            <Col>
               <CustomDatePicker
                 name="toDate"
                 label={t("To Date")}
                 value={filters.toDate}
-                onChange={(val) =>
-                  val && setFilters((prev) => ({ ...prev, toDate: val }))
-                }
+                onChange={(val) => setFilters((p) => ({ ...p, toDate: val || "" }))}
               />
             </Col>
-
-            <Col md="2">
+            <Col>
               <CustomInput
                 name="phoneNumber"
                 label={t("Phone Number")}
                 placeholder={t("Search by Phone Number")}
                 value={filters.phoneNumber}
                 onChange={(e) =>
-                  handleFilterChange(
-                    "phoneNumber",
-                    e.target.value.replace(/\D/g, "")
-                  )
+                  handleFilterChange("phoneNumber", e.target.value.replace(/\D/g, ""))
                 }
               />
             </Col>
-            <Col md="2">
+            <Col>
               <CustomInput
                 name="idNumber"
                 label={t("ID Number")}
                 placeholder={t("Search by ID Number")}
                 value={filters.idNumber}
                 onChange={(e) =>
-                  handleFilterChange(
-                    "idNumber",
-                    e.target.value.replace(/\D/g, "")
-                  )
+                  handleFilterChange("idNumber", e.target.value.replace(/\D/g, ""))
                 }
               />
             </Col>
-            <Col md="2">
+             <Col>
+              <CustomInput
+                name="street"
+                label={t("street")}
+                placeholder={t("Search by Street")}
+                value={filters.street}
+                onChange={(e) =>
+                  handleFilterChange("street", e.target.value)
+                }
+              />
+            </Col>
+            </Row>
+          <Row className="w-100">
+            <Col>
+              <CustomDateTimePicker
+                name="lastLogin"
+                label={t("Last Login")}
+                value={filters.lastLogin}
+                onChange={(val) => setFilters((p) => ({ ...p, lastLogin: val || "" }))}
+              />
+            </Col>
+            <Col>
               <CustomSelect
                 name="nationality"
                 label={t("Nationality")}
                 value={filters.nationality}
+                onChange={(val) => handleFilterChange("nationality", val ?? "")}
+                endpointId={DashboardMobileRepository.country.getall}
+                labelKey="name"
+                valueKey="recordId"
+              />
+            </Col>
+            <Col>
+              <CustomSelect
+                name="country"
+                label={t("Country Of Residence")}
+                value={filters.countryId}
                 onChange={(val) => {
-                  handleFilterChange("nationality", val ?? "");
+                  handleFilterChange("countryId", val || null);
+                  handleFilterChange("cityId", null);
                 }}
                 endpointId={DashboardMobileRepository.country.getall}
                 labelKey="name"
                 valueKey="recordId"
               />
             </Col>
-
-            <Col md="2" className="d-flex align-items-center">
+            <Col>
+              <CustomSelect
+                name="city"
+                label={t("city")}
+                value={filters.cityId}
+                onChange={(val) => handleFilterChange("cityId", val ?? "")}
+                endpointId={DashboardMobileRepository.city.getall}
+                parameters={`_countryId=${filters.countryId}`}
+                readOnly={!filters.countryId}
+                labelKey="name"
+                valueKey="recordId"
+              />
+            </Col>
+            <Col className="d-flex align-items-center">
               <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
             </Col>
           </Row>
         </CommonCardHeader>
-
         <CardBody>
           <DataTable
-            title={t("Users")}
             data={data}
             columns={columns}
             pagination
@@ -267,13 +266,12 @@ const UsersPage = () => {
           />
         </CardBody>
       </Card>
-
       <SharedModal
         visible={modalState.open}
         onClose={handleModalClose}
         title={t("User")}
         width="50vw"
-        height="70vh"
+        height="45vh"
         onInfoClick={handleInfoClick}
         footerActions={
           <>

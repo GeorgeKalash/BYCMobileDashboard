@@ -13,7 +13,7 @@ import {
 } from "@/Redux/Reducers/RequestThunks";
 import { NotificationAlertRepository } from "@/Repositories/NotificationAlertRepository";
 import { showToast } from "@/Shared/Components/showToast";
-import { Card, CardBody, Col, Row, FormGroup } from "reactstrap";
+import { Card, CardBody, Col, Row } from "reactstrap";
 import { useTranslation } from "react-i18next";
 import DataTableComponent from "@/Shared/Components/DataTable";
 import CustomInput from "@/Shared/Components/CustomInput";
@@ -37,7 +37,6 @@ const NotificationGroupForm = ({
   const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [groupMembers, setGroupMembers] = useState<any[]>([]);
-  const [phoneNumber, setPhoneNumber] = useState("");
   const localFormikRef = useRef<FormikProps<any>>(null);
   const formikReference = formikRef || localFormikRef;
   const memberFormikRef = useRef<FormikProps<any>>(null);
@@ -144,44 +143,36 @@ const NotificationGroupForm = ({
           <Card>
             <CardBody>
               <Row>
-                <Row>
-                  <Col md={3}>
-                    <CustomInput
-                      name="name"
-                      label={t("Group Name")}
-                      placeholder={t("Enter group name")}
-                    />
-                  </Col>
-                </Row>
-
-                <Row className="mt-3">
-                  <Col md={12} className="d-flex justify-content-end">
-                    <SharedButton
-                      title={t("Add Member")}
-                      onClick={() => setShowModal(true)}
-                      disabled={modalAction !== "edit"}
-                    />
-                  </Col>
-                </Row>
-
+                <Col md={3}>
+                  <CustomInput
+                    name="name"
+                    label={t("Group Name")}
+                    placeholder={t("Enter group name")}
+                  />
+                </Col>
+                <Col md={12} className="d-flex justify-content-end">
+                  <SharedButton
+                    title={t("Add Member")}
+                    onClick={() => setShowModal(true)}
+                    disabled={modalAction !== "edit"}
+                  />
+                </Col>
                 <Col md={12} className="mt-3">
                   <DataTableComponent
                     data={groupMembers}
                     columns={columns}
                     pagination
-                    title={t("Group Members")}
                     showActions={modalAction === "edit"}
                     onDelete={handleDelete}
                   />
                 </Col>
               </Row>
-
               {modalAction === "edit" && (
                 <SharedModal
                   visible={showModal}
                   onClose={() => setShowModal(false)}
                   title={t("Add Member")}
-                  height={"40vh"}
+                  height={"30vh"}
                   onSubmit={() => {
                     if (memberFormikRef.current) {
                       memberFormikRef.current.submitForm();

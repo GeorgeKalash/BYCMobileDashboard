@@ -52,7 +52,6 @@ const SliderImageAttachment = () => {
       dispatch(
         getMobileRequest({
           extension: DashboardMobileRepository.CarouselImages.get,
-          parameters: "",
         })
       )
     );

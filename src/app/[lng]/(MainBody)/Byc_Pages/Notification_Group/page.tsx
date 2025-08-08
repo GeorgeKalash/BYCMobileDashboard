@@ -23,13 +23,11 @@ const Notification_Group = () => {
   const dispatch = useAppDispatch();
 
   const [data, setData] = useState<{ key: string; value: string }[]>([]);
-
   const [modalState, setModalState] = useState({
     open: false,
     action: null as "add" | "edit" | null,
     row: null as any,
   });
-
   const [paginationState, setPaginationState] = useState({
     pageCount: 0,
     totalRows: 0,
@@ -129,7 +127,6 @@ const Notification_Group = () => {
         />
         <CardBody>
           <DataTable
-            title={t("New Group")}
             data={data}
             columns={columns}
             pagination
@@ -158,8 +155,8 @@ const Notification_Group = () => {
           visible={modalState.open}
           onClose={handleModalClose}
           title={modalState.action === "add" ? t("Add") : t("Edit")}
-          width={"80vw"}
-          height={"80vh"}
+          width={"40vw"}
+          height={"60vh"}
           onSubmit={handleSubmit}
         >
           <NotificationGroupForm

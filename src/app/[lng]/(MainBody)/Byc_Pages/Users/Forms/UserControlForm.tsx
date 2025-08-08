@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import SharedModal from "@/Shared/Components/SharedModal";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
@@ -61,58 +61,56 @@ const UserControlForm: React.FC<UserControlFormProps> = ({
   };
 
   return (
-    <div style={{ padding: "1rem" }}>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-        enableReinitialize
-      >
-        {({ values, setFieldValue, submitForm }) => (
-          <SharedModal
-            visible={visible}
-            onClose={onClose}
-            title={t("User Control")}
-            height="80vh"
-            width="60vw"
-            onSubmit={submitForm}
-          >
-            <div style={{ padding: "1rem" }}>
-              <Form>
-                <Row>
-                  <Col md={6}>
-                    <CustomInput
-                      name="username"
-                      label={t("username")}
-                      readOnly
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+      enableReinitialize
+    >
+      {({ values, setFieldValue, submitForm }) => (
+        <SharedModal
+          visible={visible}
+          onClose={onClose}
+          title={t("User Control")}
+          height="30vh"
+          width="40vw"
+          onSubmit={submitForm}
+        >
+          <div style={{ padding: "1rem" }}>
+            <Form>
+              <Row>
+                <Col md={6}>
+                  <CustomInput
+                    name="username"
+                    label={t("username")}
+                    readOnly
+                  />
+                </Col>
+                <Col md={6} className="d-flex align-items-center">
+                  <div className="w-100">
+                    <SharedCheckbox
+                      name="isInactive"
+                      label={t("isInactive")}
+                      checked={values.isInactive}
+                      onChange={(checked) =>
+                        setFieldValue("isInactive", checked)
+                      }
                     />
-                  </Col>
-                  <Col md={6} className="d-flex align-items-center">
-                    <div className="w-100">
-                      <SharedCheckbox
-                        name="isInactive"
-                        label={t("isInactive")}
-                        checked={values.isInactive}
-                        onChange={(checked) =>
-                          setFieldValue("isInactive", checked)
-                        }
-                      />
-                    </div>
-                  </Col>
-                  <Col md={12}>
-                    <CustomTextarea
-                      name="reason"
-                      label={t("reason")}
-                      rows={3}
-                    />
-                  </Col>
-                </Row>
-              </Form>
-            </div>
-          </SharedModal>
-        )}
-      </Formik>
-    </div>
+                  </div>
+                </Col>
+                <Col md={12}>
+                  <CustomTextarea
+                    name="reason"
+                    label={t("reason")}
+                    rows={3}
+                  />
+                </Col>
+              </Row>
+            </Form>
+          </div>
+        </SharedModal>
+      )}
+    </Formik>
   );
 };
 

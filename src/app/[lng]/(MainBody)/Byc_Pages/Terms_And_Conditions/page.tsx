@@ -128,7 +128,6 @@ const TermsAndConditions = () => {
         </CommonCardHeader>
         <CardBody>
           <DataTable
-            title="Terms_And_Conditions_Table"
             data={data}
             columns={columns}
             highlightOnHover
@@ -144,7 +143,7 @@ const TermsAndConditions = () => {
         onClose={handleModalClose}
         title={modalAction === "add" ? t("Add Text") : t("Edit Text")}
         width="600px"
-        height="40vh"
+        height="50vh"
         onSubmit={handleSubmit}
       >
         <TermsAndConditionsForm

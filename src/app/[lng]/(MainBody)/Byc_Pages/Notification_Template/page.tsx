@@ -26,13 +26,11 @@ const NotificationTemplatePage = () => {
   const dispatch = useAppDispatch();
 
   const [data, setData] = useState<{ key: string; value: string }[]>([]);
-
   const [modalState, setModalState] = useState({
     open: false,
     action: null as "add" | "edit" | null,
     row: null as any,
   });
-
   const [paginationState, setPaginationState] = useState({
     pageCount: 0,
     totalRows: 0,
@@ -148,10 +146,9 @@ const NotificationTemplatePage = () => {
         <CommonCardHeader
           title={t("Notification Template")}
           onAdd={() => openModal()}
-        ></CommonCardHeader>
+        />
         <CardBody>
           <DataTable
-            title={t("New Message")}
             data={data}
             columns={columns}
             pagination
@@ -184,7 +181,7 @@ const NotificationTemplatePage = () => {
             : t("Edit Notification Template")
         }
         width={"80vw"}
-        height="70vh"
+        height="53vh"
         onSubmit={handleSubmit}
       >
         <NotificationTemplateForm

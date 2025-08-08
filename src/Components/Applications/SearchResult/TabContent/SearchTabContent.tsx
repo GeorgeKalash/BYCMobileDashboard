@@ -1,7 +1,6 @@
 import { TabContent, TabPane } from "reactstrap";
 import AllTabs from "./AllTabs";
 import PhotosTab from "./PhotosTab";
-import VideoTabs from "./VideoTab/VideoTabs";
 import { SearchTabContentProp } from "@/Types/SearchResultType";
 
 const SearchTabContent :React.FC<SearchTabContentProp> = ({ activeTab }) => {
@@ -12,9 +11,6 @@ const SearchTabContent :React.FC<SearchTabContentProp> = ({ activeTab }) => {
       </TabPane>
       <TabPane tabId={2}>
         <PhotosTab />
-      </TabPane>
-      <TabPane tabId={3}>
-        <VideoTabs />
       </TabPane>
       <TabPane tabId={4}>
       </TabPane>

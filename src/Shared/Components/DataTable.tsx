@@ -1,17 +1,14 @@
 import React, { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Label, Input } from "reactstrap";
-import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppSelector } from "@/Redux/Hooks";
 import SharedModal from "@/Shared/Components/SharedModal";
 const DataTableComponent = ({
-  title,
   data,
   columns,
   defaultSortColumn = "field",
   highlightOnHover = false,
-  direction = "ltr",
   pagination = true,
   showActions = false,
   Search = false,
@@ -26,12 +23,10 @@ const DataTableComponent = ({
   onSearchChange,
   onRowClicked,
 }: {
-  title?: string;
   data: any[];
   columns: any[];
   defaultSortColumn?: string;
   highlightOnHover?: boolean;
-  direction?: "ltr" | "rtl";
   pagination?: boolean;
   showActions?: boolean;
   Search?: boolean;
@@ -94,7 +89,7 @@ const DataTableComponent = ({
   const { t } = useTranslation(i18LangStatus);
 
   const actionColumn = {
-    name: "Actions",
+    name: t("Actions"),
     cell: (row: any) => (
       <div className="d-flex gap-2">
         {onEdit && (
@@ -102,7 +97,7 @@ const DataTableComponent = ({
             className="fa fa-edit text-primary cursor-pointer"
             style={{ fontSize: "20px" }}
             onClick={() => onEdit(row)}
-            title="Edit"
+            title={t("Edit")}
           />
         )}
         {onDelete && (
@@ -113,7 +108,7 @@ const DataTableComponent = ({
               setRowToDelete(row);
               setShowDeleteConfirm(true);
             }}
-            title="Delete"
+            title={t("Delete")}
           />
         )}
       </div>
@@ -129,8 +124,9 @@ const DataTableComponent = ({
     const styledColumns = columns.map((col) => {
       return {
         ...col,
-        grow: 1,
+        grow: col.grow ?? 1,
         wrap: true,
+        width: col.width || "auto",
         cell: col.cell
           ? col.cell
           : (row: any) => {
@@ -162,8 +158,6 @@ const DataTableComponent = ({
       );
     }
   };
-  const [deleteConfirmText, setDeleteConfirmText] = useState("");
-  const [deleteError, setDeleteError] = useState(false);
   return (
     <>
       {Search && (
@@ -171,7 +165,7 @@ const DataTableComponent = ({
           className="dataTables_filter d-flex justify-content-end align-items-center mb-3"
           style={{ maxWidth: "250px", marginLeft: "auto" }}
         >
-          <Label className="me-2 mb-0">Search:</Label>
+          <Label className="me-2 mb-0">{t("Search")}:</Label>
           <Input
             type="search"
             value={filterText}
@@ -258,8 +252,8 @@ const DataTableComponent = ({
               return (
                 <span>
                   <i className="fa me-1" />
-                  Displaying Records <strong>{start}</strong> -
-                  <strong>{end}</strong> of <strong>{total}</strong>
+                  {t("Displaying Records")} <strong>{start}</strong> -
+                  <strong>{end}</strong> {t("of")} <strong>{total}</strong>
                 </span>
               );
             })()}
@@ -272,14 +266,14 @@ const DataTableComponent = ({
               className="btn btn-outline-primary btn-sm rounded-pill shadow-sm px-3"
               disabled={currentPage === 1}
             >
-              <i className="fa fa-chevron-left me-1" /> Prev
+              <i className="fa fa-chevron-left me-1" /> {t("Prev")}
             </button>
             <button
               onClick={() => handlePageChange(currentPage * pageSize, true)}
               className="btn btn-outline-primary btn-sm rounded-pill shadow-sm px-3"
               disabled={currentPage === totalPages}
             >
-              Next <i className="fa fa-chevron-right ms-1" />
+              {t("Next")} <i className="fa fa-chevron-right ms-1" />
             </button>
           </div>
         </div>
