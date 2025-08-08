@@ -107,16 +107,30 @@ const MobileVerificationForm = () => {
                               <CustomInput
                                 name={`settings[${index}].timeFrame`}
                                 label={t("Time Frame (in Minutes)")}
-                                type="number"
                                 min={0}
+                                value={values.settings[index].timeFrame}
+                                onChange={(e) => {
+                                  const val = e.target.value.replace(/\D/g, "");
+                                  setFieldValue(
+                                    `settings[${index}].timeFrame`,
+                                    val
+                                  );
+                                }}
                               />
                             </Col>
                             <Col>
                               <CustomInput
                                 name={`settings[${index}].maxRequest`}
                                 label={t("Max Request")}
-                                type="number"
                                 min={0}
+                                value={values.settings[index].maxRequest}
+                                onChange={(e) => {
+                                  const val = e.target.value.replace(/\D/g, "");
+                                  setFieldValue(
+                                    `settings[${index}].maxRequest`,
+                                    val
+                                  );
+                                }}
                               />
                             </Col>
                             <Col className="d-flex align-items-center">

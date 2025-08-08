@@ -382,5 +382,13 @@
   "paidReturnPercentage": "Paid Return Percentage",
   "returnAmount": "Return Amount",
   "returnCount": "Return Count",
-  "isSuspicious": "Is Suspicious"
+  "isSuspicious": "Is Suspicious",
+  "Search": "Search",
+  "Delete": "Delete",
+  "Are you sure you want to delete the selected record?": "Are you sure you want to delete the selected record?",
+  "Displaying Records": "Displaying Records",
+  "of": "of",
+  "Prev": "Previous",
+  "Next": "Next",
+  "Select": "Select"
 }

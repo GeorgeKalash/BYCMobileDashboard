@@ -29,7 +29,7 @@ const Reports = () => {
     outwardTransferCount: 0,
     paidReturnPercentage: 0,
     returnAmount: 0,
-    returnCount: 0
+    returnCount: 0,
   };
 
   const validationSchema = Yup.object({});
@@ -70,7 +70,7 @@ const Reports = () => {
                 })
               ).unwrap()
             );
-            setValues({ ...initialValues, ...result.data,...result2.data });
+            setValues({ ...initialValues, ...result.data, ...result2.data });
           };
 
           useEffect(() => {

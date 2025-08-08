@@ -67,6 +67,9 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
     parseDate(isControlled ? (value as string) : field.value)
   );
 
+  const isRtl =
+    typeof window !== "undefined" && localStorage.getItem("dir") === "rtl";
+
   useEffect(() => {
     setSelectedDate(
       parseDate(isControlled ? (value as string) : field.value)
@@ -103,17 +106,16 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
       <div
         className={`form-control d-flex align-items-center justify-content-between ${validationClass}`}
         onClick={!readOnly ? onClick : undefined}
-        ref={ref}
         style={{
-          width: "100%",
-          minHeight: "38px",
-          paddingRight: "3rem",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          position: "relative",
+          height: "38px",
+          padding: "6px 12px",
+          borderRadius: ".25rem",
+          fontSize: "0.875rem",
           cursor: readOnly ? "not-allowed" : "pointer",
+          position: "relative",
+          direction: isRtl ? "rtl" : "ltr",
         }}
+        ref={ref}
       >
         <span className="text-truncate">
           {selectedDate
@@ -135,7 +137,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
             }}
             style={{
               position: "absolute",
-              right: "2rem",
+              [isRtl ? "left" : "right"]: "2rem",
               top: "50%",
               transform: "translateY(-50%)",
               cursor: "pointer",
@@ -147,7 +149,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
           size={16}
           style={{
             position: "absolute",
-            right: "0.75rem",
+            [isRtl ? "left" : "right"]: "0.75rem",
             top: "50%",
             transform: "translateY(-50%)",
           }}
@@ -157,7 +159,10 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   );
 
   return (
-    <FormGroup style={{ display: "flex", flexDirection: "column" }}>
+    <FormGroup
+      style={{ display: "flex", flexDirection: "column" }}
+      dir={isRtl ? "rtl" : "ltr"}
+    >
       {label && (
         <Label
           htmlFor={name}
