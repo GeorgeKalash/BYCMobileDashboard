@@ -44,6 +44,8 @@ const Notification_Alert = () => {
   const handleModalClose = () => {
     setModalOpen(false);
     setSelectedRow(null);
+    setTemplateSelected(false);
+    formikRef.current?.setFieldValue("template", "");
   };
 
   const filters = {
