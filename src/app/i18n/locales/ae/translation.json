@@ -378,5 +378,14 @@
   "User": "المستخدم",
   "UserControl": "التحكم بالمستخدم",
   "AdditionalInfo": "معلومات إضافية",
-  "OTP": "رمز التحقق"
+  "OTP": "رمز التحقق",
+  "Search": "بحث",
+
+  "Delete": "حذف",
+  "Are you sure you want to delete the selected record?": "هل أنت متأكد أنك تريد حذف السجل المحدد؟",
+  "Displaying Records": "عرض السجلات",
+  "of": "من",
+  "Prev": "السابق",
+  "Next": "التالي",
+  "Select": "اختار"
 }

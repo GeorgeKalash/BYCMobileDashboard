@@ -6,6 +6,8 @@ import { useAppDispatch } from "@/Redux/Hooks";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { RefreshCw, XCircle } from "react-feather";
+import { useTranslation } from "@/app/i18n/client";
+import { useAppSelector } from "@/Redux/Hooks";
 
 type OptionType = {
   value: string | number;
@@ -49,6 +51,8 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   readOnly = false,
   clearable = true,
 }) => {
+  const { i18LangStatus } = useAppSelector((state) => state.langSlice);
+  const { t } = useTranslation(i18LangStatus);
   const [selectOptions, setSelectOptions] = useState<OptionType[]>(
     options || []
   );
@@ -192,7 +196,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
               disabled={readOnly}
             >
               <option value="" disabled hidden>
-                Select...
+                {t("Select")}
               </option>
               {selectOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>

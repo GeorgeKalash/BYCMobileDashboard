@@ -377,5 +377,14 @@
   "User": "User",
   "UserControl": "User Control",
   "AdditionalInfo": "Additional Info",
-  "OTP": "OTP"
+  "OTP": "OTP",
+  "Search": "Search",
+
+  "Delete": "Delete",
+  "Are you sure you want to delete the selected record?": "Are you sure you want to delete the selected record?",
+  "Displaying Records": "Displaying Records",
+  "of": "of",
+  "Prev": "Previous",
+  "Next": "Next",
+  "Select": "Select"
 }
