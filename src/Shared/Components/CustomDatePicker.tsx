@@ -58,6 +58,9 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
     parseDate(value)
   );
 
+  const isRtl =
+    typeof window !== "undefined" && localStorage.getItem("dir") === "rtl";
+
   useEffect(() => {
     setSelectedDate(parseDate(value));
   }, [value]);
@@ -84,6 +87,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
           fontSize: "0.875rem",
           cursor: readOnly ? "not-allowed" : "pointer",
           position: "relative",
+          direction: isRtl ? "rtl" : "ltr",
         }}
         onClick={onClick}
         ref={ref}
@@ -108,7 +112,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
             }}
             style={{
               position: "absolute",
-              right: "2rem",
+              [isRtl ? "left" : "right"]: "2rem",
               top: "50%",
               transform: "translateY(-50%)",
               cursor: "pointer",
@@ -120,7 +124,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
           size={16}
           style={{
             position: "absolute",
-            right: "0.75rem",
+            [isRtl ? "left" : "right"]: "0.75rem",
             top: "50%",
             transform: "translateY(-50%)",
           }}
@@ -130,7 +134,10 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   );
 
   return (
-    <FormGroup style={{ display: "flex", flexDirection: "column" }}>
+    <FormGroup
+      style={{ display: "flex", flexDirection: "column" }}
+      dir={isRtl ? "rtl" : "ltr"}
+    >
       {label && (
         <Label>
           {label} {isRequired && <span className="text-danger">*</span>}
