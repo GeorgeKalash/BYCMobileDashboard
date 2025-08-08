@@ -95,7 +95,7 @@ const LanguageSelection = () => {
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Languages Page")} />
+        <CommonCardHeader title={t("Activate Language")} />
         <CardBody>
           <DataTable
             data={data}

@@ -10,7 +10,7 @@ export const LogoWrapper = () => {
   return (
     <>
       <div className="logo-wrapper">
-        <Link href={`/${i18LangStatus}/Byc_Pages/Home_Page`}>
+        <Link href={`/${i18LangStatus}/Byc_Pages/Reports`}>
           <img className="img-fluid" src={`${ImagePath}/logo/الشعار-ابيض.png`} alt="" />
         </Link>
         <div className="back-btn" onClick={() => dispatch(handleResponsiveToggle())}>
@@ -21,7 +21,7 @@ export const LogoWrapper = () => {
         </div> */}
       </div>
       <div className="logo-icon-wrapper">
-        <Link href={`/${i18LangStatus}/Byc_Pages/Home_Page`}>
+        <Link href={`/${i18LangStatus}/Byc_Pages/Reports`}>
           <img className="img-fluid" src={`${ImagePath}/logo/logo-icon.png`} alt="" />
         </Link>
       </div>

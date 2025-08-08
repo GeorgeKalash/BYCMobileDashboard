@@ -104,6 +104,12 @@ const Notification = () => {
   }, [tableData.pagination.pageCount]);
 
   const columns = [
+  {
+      name: t("title"),
+      selector: (row: any) => row.title,
+      sortable: true,
+      id: "title",
+    },
     {
       name: t("Client Name"),
       selector: (row: any) => row.clientName,
@@ -119,7 +125,6 @@ const Notification = () => {
     {
       name: t("Type"),
       selector: (row: any) => row.typeName,
-
       sortable: true,
       id: "Type",
     },
@@ -171,6 +176,7 @@ const Notification = () => {
             <Col xs="2">
               <CustomDatePicker
                 name="fromDate"
+                isRequired
                 label={t("From Date")}
                 value={filters.fromDate}
                 onChange={(val) =>
@@ -181,6 +187,7 @@ const Notification = () => {
             <Col xs="2">
               <CustomDatePicker
                 name="toDate"
+                isRequired
                 label={t("To Date")}
                 value={filters.toDate}
                 onChange={(val) =>

@@ -116,12 +116,12 @@ const Payment = () => {
                           </Col>
                           <Col md={6} className="d-flex align-items-center">
                             <SharedCheckbox
-                              label={t("Active")}
-                              checked={!brand.isInactive}
+                              label={t("isInactive")}
+                              checked={brand.isInactive}
                               onChange={() =>
                                 setFieldValue(
                                   `brands.${index}.isInactive`,
-                                  !brand.isInactive
+                                  brand.isInactive
                                 )
                               }
                             />

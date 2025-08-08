@@ -118,7 +118,7 @@ export const login = createAsyncThunk(
       window.sessionStorage.setItem("userData", JSON.stringify(user));
       window.localStorage.setItem("languageId", String(user.languageId));
       document.cookie = `access_token=${user.accessToken}; path=/;`;
-      window.location.replace("/en/Byc_Pages/Home_Page");
+      window.location.replace("/en/Byc_Pages/Reports");
 
       return user;
     } catch (err: any) {

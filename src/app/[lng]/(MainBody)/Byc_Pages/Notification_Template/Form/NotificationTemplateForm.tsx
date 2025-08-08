@@ -183,18 +183,10 @@ const NotificationTemplateForm = ({
       {(formik) => (
         <Form>
           <Row>
-            <Col md={6}>
+            <Col md={5}>
               <CustomInput name="name" isRequired label={t("Template Name")} />
-              <SharedCheckbox
-                name="isPushNotification"
-                label={t("Push Notification")}
-                checked={formik.values.isPushNotification}
-                onChange={(checked) =>
-                  formik.setFieldValue("isPushNotification", checked)
-                }
-              />
             </Col>
-            <Col md={6}>
+            <Col md={5}>
               <CustomSelect
                 name="type"
                 label={t("Type")}
@@ -206,6 +198,16 @@ const NotificationTemplateForm = ({
                 }
                 valueKey="key"
                 labelKey="value"
+              />
+            </Col>
+            <Col md={2} className="d-flex align-items-center">
+              <SharedCheckbox
+                name="isPushNotification"
+                label={t("Push Notification")}
+                checked={formik.values.isPushNotification}
+                onChange={(checked) =>
+                  formik.setFieldValue("isPushNotification", checked)
+                }
               />
             </Col>
           </Row>

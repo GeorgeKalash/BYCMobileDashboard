@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
 
   if (isAuthRoute && hasToken) {
     return NextResponse.redirect(
-      new URL("/en/Byc_Pages/Home_Page", request.url)
+      new URL("/en/Byc_Pages/Reports", request.url)
     );
   }
 

@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
 import { Col, Row } from "reactstrap";
 import { withRequestTracking } from "@/utils/withRequestTracking";
-
 import { postMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
 import * as Yup from "yup";
@@ -83,10 +82,10 @@ const ActivateLanguageForm = ({
                   readOnly={true}
                 />
                 <SharedCheckbox
-                  label={t("Active")}
-                  checked={!values.isInactive}
+                  label={t("isInactive")}
+                  checked={values.isInactive}
                   onChange={() =>
-                    setFieldValue("isInactive", !values.isInactive)
+                    setFieldValue("isInactive", values.isInactive)
                   }
                 />
               </Col>

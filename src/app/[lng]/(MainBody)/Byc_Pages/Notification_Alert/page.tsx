@@ -285,6 +285,7 @@ const Notification_Alert = () => {
                   <Col md="3">
                     <CustomSelect
                       name="template"
+                      isRequired
                       label={t("Template")}
                       value={values.template}
                       onChange={(val) => {

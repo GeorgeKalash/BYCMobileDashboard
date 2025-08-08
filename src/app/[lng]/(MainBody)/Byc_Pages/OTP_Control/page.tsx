@@ -111,11 +111,14 @@ const MobileVerificationForm = () => {
                                 min={0}
                                 value={values.settings[index].timeFrame}
                                 onChange={(e) => {
-                                  const val = e.target.value.replace(/\D/g, "");
-                                  setFieldValue(
-                                    `settings[${index}].timeFrame`,
-                                    val
-                                  );
+                                  let val = e.target.value;
+                                  val = val.replace(/[^0-9.]/g, "");
+                                  const parts = val.split(".");
+                                  if (parts.length > 2) {
+                                    val = parts[0] + "." + parts.slice(1).join("");
+                                  }
+
+                                  setFieldValue(`settings[${index}].timeFrame`, val);
                                 }}
                               />
                             </Col>
