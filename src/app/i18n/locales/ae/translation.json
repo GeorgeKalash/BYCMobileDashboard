@@ -390,5 +390,8 @@
   "of": "من",
   "Prev": "السابق",
   "Next": "التالي",
-  "Select": "اختار"
+  "Select": "اختار",
+  "newClients": "عملاء جدد",
+  "onlineClients": "العملاء عبر الإنترنت",
+  "inactiveClients": "العملاء غير النشطين"
 }

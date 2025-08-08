@@ -35,8 +35,8 @@ const Reports = () => {
   const validationSchema = Yup.object({});
 
   const [filters, setFilters] = useState<Filters>({
-    fromDate: format(new Date(), "yyyy-MM-dd"),
-    toDate: format(new Date(), "yyyy-MM-dd"),
+    fromDate: format(new Date(), "MM-dd-yyyy"),
+    toDate: format(new Date(), "MM-dd-yyyy"),
   });
 
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -115,17 +115,27 @@ const Reports = () => {
                 <CardBody>
                   <Row>
                     <SimpleStatsGrid
-                      data={values}
-                     logoMap={{
-                      newClients: "user-plus",
-                      onlineClients: "user-check",
-                      inactiveClients: "user-x",
-                      outwardTransferAmount: "saudi-riyal",
-                      outwardTransferCount: "tally-5",
-                      paidReturnPercentage: "percent",
-                      returnAmount: "undo-2",
-                      returnCount: "activity"
-                    }}
+                      data={Object.fromEntries(
+                        Object.entries(values).map(([key, val]) => [
+                          key,
+                          typeof val === "number"
+                            ? val.toLocaleString(undefined, {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 2,
+                              })
+                            : val,
+                        ])
+                      )}
+                      logoMap={{
+                        newClients: "user-plus",
+                        onlineClients: "user-check",
+                        inactiveClients: "user-x",
+                        outwardTransferAmount: "saudi-riyal",
+                        outwardTransferCount: "tally-5",
+                        paidReturnPercentage: "percent",
+                        returnAmount: "undo-2",
+                        returnCount: "activity",
+                      }}
                     />
                   </Row>
                 </CardBody>
