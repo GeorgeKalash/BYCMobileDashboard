@@ -376,5 +376,11 @@
   "User": "User",
   "UserControl": "User Control",
   "AdditionalInfo": "Additional Info",
-  "OTP": "OTP"
+  "OTP": "OTP",
+  "outwardTransferAmount": "Outward Transfer Amount",
+  "outwardTransferCount": "Outward Transfer Count",
+  "paidReturnPercentage": "Paid Return Percentage",
+  "returnAmount": "Return Amount",
+  "returnCount": "Return Count",
+  "isSuspicious": "Is Suspicious"
 }

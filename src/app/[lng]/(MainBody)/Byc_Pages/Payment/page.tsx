@@ -34,7 +34,9 @@ const Payment = () => {
   const dispatch = useAppDispatch();
 
   const [paymentType, setPaymentType] = useState<1 | 2 | null>(1);
-  const [initialValues, setInitialValues] = useState<{ brands: { id: number; typeName: string; isInactive: boolean }[] }>({ brands: [] });
+  const [initialValues, setInitialValues] = useState<{
+    brands: { id: number; typeName: string; isInactive: boolean }[];
+  }>({ brands: [] });
 
   const handlePaymentChange = (e: string | number | null) => {
     const num = Number(e);
@@ -61,12 +63,11 @@ const Payment = () => {
   }, [paymentType]);
 
   const handleSubmit = async (values: typeof initialValues) => {
-
     await withRequestTracking(dispatch, () =>
       dispatch(
         postMobileRequest({
           extension: PaymentGatewayRepository.PaymentSupport.setPack,
-          body: {paymentGatewayId:paymentType,brands:values.brands},
+          body: { paymentGatewayId: paymentType, brands: values.brands },
           rawBody: true,
         })
       ).unwrap()
@@ -88,7 +89,7 @@ const Payment = () => {
               labelKey="value"
               value={paymentType ?? ""}
               onChange={handlePaymentChange}
-             />
+            />
           </div>
         </CommonCardHeader>
         <CardBody>
@@ -104,7 +105,7 @@ const Payment = () => {
                   {() => (
                     <>
                       {values.brands.map((brand, index) => (
-                        <Row key={brand.id} className="mb-3 align-items-end">
+                        <Row key={brand.id} className="mb-3">
                           <Col md={6}>
                             <CustomInput
                               name={`brands.${index}.name`}
@@ -113,12 +114,15 @@ const Payment = () => {
                               readOnly
                             />
                           </Col>
-                          <Col md={6}>
+                          <Col md={6} className="d-flex align-items-center">
                             <SharedCheckbox
                               label={t("Active")}
                               checked={!brand.isInactive}
                               onChange={() =>
-                                setFieldValue(`brands.${index}.isInactive`, !brand.isInactive)
+                                setFieldValue(
+                                  `brands.${index}.isInactive`,
+                                  !brand.isInactive
+                                )
                               }
                             />
                           </Col>
@@ -145,4 +149,3 @@ const Payment = () => {
 };
 
 export default Payment;
-

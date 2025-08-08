@@ -149,7 +149,7 @@ const UsersPage = () => {
       <Card>
         <CommonCardHeader title={t("Users")}>
           <Row className="w-100">
-            <Col md="2">
+            <Col>
               <CustomDatePicker
                 name="fromDate"
                 label={t("From Date")}
@@ -157,7 +157,7 @@ const UsersPage = () => {
                 onChange={(val) => setFilters((p) => ({ ...p, fromDate: val || "" }))}
               />
             </Col>
-            <Col md="2">
+            <Col>
               <CustomDatePicker
                 name="toDate"
                 label={t("To Date")}
@@ -165,7 +165,7 @@ const UsersPage = () => {
                 onChange={(val) => setFilters((p) => ({ ...p, toDate: val || "" }))}
               />
             </Col>
-            <Col md="2">
+            <Col>
               <CustomInput
                 name="phoneNumber"
                 label={t("Phone Number")}
@@ -176,7 +176,7 @@ const UsersPage = () => {
                 }
               />
             </Col>
-            <Col md="2">
+            <Col>
               <CustomInput
                 name="idNumber"
                 label={t("ID Number")}
@@ -187,7 +187,7 @@ const UsersPage = () => {
                 }
               />
             </Col>
-             <Col md="2">
+             <Col>
               <CustomInput
                 name="street"
                 label={t("street")}
@@ -198,7 +198,9 @@ const UsersPage = () => {
                 }
               />
             </Col>
-            <Col md="2">
+            </Row>
+          <Row className="w-100">
+            <Col>
               <CustomDateTimePicker
                 name="lastLogin"
                 label={t("Last Login")}
@@ -206,7 +208,7 @@ const UsersPage = () => {
                 onChange={(val) => setFilters((p) => ({ ...p, lastLogin: val || "" }))}
               />
             </Col>
-            <Col md="2">
+            <Col>
               <CustomSelect
                 name="nationality"
                 label={t("Nationality")}
@@ -217,7 +219,7 @@ const UsersPage = () => {
                 valueKey="recordId"
               />
             </Col>
-            <Col md="2">
+            <Col>
               <CustomSelect
                 name="country"
                 label={t("Country Of Residence")}
@@ -231,7 +233,7 @@ const UsersPage = () => {
                 valueKey="recordId"
               />
             </Col>
-            <Col md="2">
+            <Col>
               <CustomSelect
                 name="city"
                 label={t("city")}
@@ -244,7 +246,7 @@ const UsersPage = () => {
                 valueKey="recordId"
               />
             </Col>
-            <Col md="2" className="d-flex align-items-center">
+            <Col className="d-flex align-items-center">
               <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
             </Col>
           </Row>
@@ -268,7 +270,7 @@ const UsersPage = () => {
         onClose={handleModalClose}
         title={t("User")}
         width="50vw"
-        height="40vh"
+        height="45vh"
         onInfoClick={handleInfoClick}
         footerActions={
           <>

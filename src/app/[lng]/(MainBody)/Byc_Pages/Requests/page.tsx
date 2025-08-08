@@ -19,46 +19,50 @@ const Requests = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
-  const [data, setData] = useState<{ key: string; value: string }[]>([]);
-  const [selectedRow, setSelectedRow] = useState<any>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [eventType, setEventType] = useState<1 | 2 | null>(1);
-  const [totalRows, setTotalRows] = useState(0);
-  const [pageCount, setPageCount] = useState(0);
-  const formikRef = useRef<FormikProps<any>>(null);
-  const pageSize = 30
 
-  const fetchData = async (count = pageCount) => {
+  const [paginationState, setPaginationState] = useState({
+    pageCount: 0,       
+    totalRows: 0,
+    searchTerm: "",
+    eventType: 1 as 1 | 2 | null,
+  });
+
+  const [data, setData] = useState<any[]>([]);
+  const [modalState, setModalState] = useState({
+    open: false,
+    row: null as any,
+  });
+
+  const formikRef = useRef<FormikProps<any>>(null);
+  const pageSize = 30;
+
+  const fetchData = async () => {
+    const { pageCount, searchTerm, eventType } = paginationState;
     if (eventType === null) return;
+
+    const startAt = pageCount + 1;
 
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
-          extension: `${DashboardMobileRepository.Requests.get}`,
-          parameters: `_eventType=${eventType}&_startAt=${count}&_pageSize=${pageSize}`,
+          extension: DashboardMobileRepository.Requests.get,
+          parameters: `_eventType=${eventType}&_startAt=${startAt}&_pageSize=${pageSize}&_search=${encodeURIComponent(searchTerm)}`,
         })
       )
     );
 
     const rows = result?.payload?.data?.list;
-    setTotalRows(result?.payload?.data?.count)
+    const total = result?.payload?.data?.count;
+
     setData(Array.isArray(rows) ? rows : []);
+    if (typeof total === "number") {
+      setPaginationState((prev) => ({ ...prev, totalRows: total }));
+    }
   };
 
   useEffect(() => {
     fetchData();
-  }, [eventType, pageCount]);
-
-  const handleModalOpen = (row: any) => {
-    setSelectedRow(row);
-    setModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setModalOpen(false);
-    setSelectedRow(null);
-    fetchData();
-  };
+  }, [paginationState.pageCount, paginationState.searchTerm, paginationState.eventType]);
 
   const columns = [
     {
@@ -66,12 +70,14 @@ const Requests = () => {
       selector: (row: any) => row.accountId?.toString() || "",
       sortable: true,
       id: "accountId",
+      width: "120px",
     },
     {
       name: t("clientId"),
       selector: (row: any) => row.clientId?.toString() || "",
       sortable: true,
       id: "clientId",
+      width: "130px",
     },
     {
       name: t("clockStamp"),
@@ -86,6 +92,7 @@ const Requests = () => {
       selector: (row: any) => row.recordId?.toString() || "",
       sortable: true,
       id: "recordId",
+      width: "130px",
     },
     {
       name: t("requestBody"),
@@ -98,6 +105,7 @@ const Requests = () => {
       selector: (row: any) => row.requestType?.toString() || "",
       sortable: true,
       id: "requestType",
+      width: "130px",
     },
     {
       name: t("url"),
@@ -110,60 +118,97 @@ const Requests = () => {
       selector: (row: any) => row.userId?.toString() || "",
       sortable: true,
       id: "userId",
+      width: "130px",
     },
   ];
 
-  const handleEventChange = (e: string | number | null) => {
-    const num = Number(e);
-    setEventType([1, 2].includes(num) ? (num as 1 | 2) : null);
+  const handleEventChange = (val: string | number | null) => {
+    const num = Number(val);
+    setPaginationState((prev) => ({
+      ...prev,
+      eventType: [1, 2].includes(num) ? (num as 1 | 2) : null,
+      pageCount: 0,
+    }));
   };
 
-  const handlePageChange = (count: number) => {
-    setPageCount(count);
-    fetchData(count);
+  const handlePageChange = (startAt: number) => {
+    const newPage = Math.floor(startAt / pageSize);
+    setPaginationState((prev) => ({
+      ...prev,
+      pageCount: newPage,
+    }));
+  };
+
+  const handleSearchChange = (val: string) => {
+    setPaginationState((prev) => ({
+      ...prev,
+      searchTerm: val,
+      pageCount: 0, 
+    }));
+  };
+
+  const openModal = (row: any = null) => {
+    setModalState({
+      open: true,
+      row,
+    });
+  };
+
+  const handleModalClose = () => {
+    setModalState({
+      open: false,
+      row: null,
+    });
+    fetchData();
+  };
+
+  const handleSubmit = () => {
+    formikRef.current?.submitForm();
   };
 
   return (
     <Col xs="12">
       <Card>
         <CommonCardHeader title={t("Requests")}>
-         <div style={{ minWidth: 250, maxWidth: 400, width: "100%" }}>
-          <CustomSelect
-            name="eventType"
-            dataSetId={159}
-            valueKey="key"
-            labelKey="value"
-            value={eventType ?? ""}
-            onChange={handleEventChange}
-          />
-        </div>
+          <div style={{ minWidth: 250, maxWidth: 400, width: "100%" }}>
+            <CustomSelect
+              name="eventType"
+              dataSetId={159}
+              valueKey="key"
+              labelKey="value"
+              value={paginationState.eventType ?? ""}
+              onChange={handleEventChange}
+            />
+          </div>
         </CommonCardHeader>
         <CardBody>
           <DataTable
             data={data}
             columns={columns}
             pagination
-            Search={false}
             serverPagination={true}
-            showActions={true}
-            onEdit={(row) => handleModalOpen(row)}
-            onPageChange={handlePageChange}
-            totalRows={totalRows}
+            totalRows={paginationState.totalRows}
             pageSize={pageSize}
+            onPageChange={handlePageChange}
+            Search={true}
+            searchType="server"
+            searchableColumns={["requestBody", "url", "requestType"]}
+            onSearchChange={handleSearchChange}
+            showActions={true}
+            onEdit={openModal}
           />
         </CardBody>
       </Card>
+
       <SharedModal
-        visible={modalOpen}
+        visible={modalState.open}
         onClose={handleModalClose}
-        title={ t("Read Request")}
+        title={t("Read Request")}
         width="800px"
         height="80vh"
+        onSubmit={handleSubmit}
       >
-        <RequestsForm
-          rowData={selectedRow}
-          formikRef={formikRef}
-        />
+        <RequestsForm rowData={modalState.row} formikRef={formikRef} />
       </SharedModal>
     </Col>
   );

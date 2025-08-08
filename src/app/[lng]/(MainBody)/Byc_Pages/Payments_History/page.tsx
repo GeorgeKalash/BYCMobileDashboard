@@ -79,16 +79,19 @@ const PaymentsHistoryPage = () => {
       name: t("receipt ID"),
       selector: (row: any) => row.receiptId,
       id: "receiptId",
+      width:"100px"
     },
     {
       name: t("Card Holder Name"),
       selector: (row: any) => row.clientName,
       id: "CardHolderName",
+      width:"150px"
     },
     {
       name: t("Phone Number"),
       selector: (row: any) => row.cellPhone,
       id: "cellPhone",
+      width:"150px"
     },
     {
       name: t("Transaction Date"),
@@ -97,21 +100,25 @@ const PaymentsHistoryPage = () => {
           ? formatDate(row.transactionDate, "dd/MM/yyyy")
           : "",
       id: "TransactionDate",
+      width:"150px"
     },
     {
       name: t("Posting Date"),
       selector: (row: any) => row.postingDate ?? "",
       id: "PostingDate",
+      width:"175px"
     },
     {
       name: t("Amount"),
       selector: (row: any) => row.amount ?? "",
       id: "amount",
+      width:"100px"
     },
     {
       name: t("Bank Name"),
       selector: (row: any) => row.bankName,
       id: "bankName",
+      width:"200px"
     },
     {
       name: t("Gateway Type"),
@@ -122,56 +129,67 @@ const PaymentsHistoryPage = () => {
           ? "Moyasar"
           : "Unknown",
       id: "paymentGatewayType",
+      width:"130px"
     },
     {
       name: t("IBAN"),
       selector: (row: any) => row.iban,
       id: "iban",
+      width:"200px"
     },
     {
       name: t("currency"),
       selector: (row: any) => row.currency,
       id: "currency",
+      width:"100px"
     },
     {
       name: t("Payment Status"),
       selector: (row: any) => row.psName,
       id: "paymentStatus",
+      width:"150px"
     },
     {
       name: t("Payment Code"),
       selector: (row: any) => row.paymentCode,
       id: "paymentCode",
+      width:"150px"
     },
     {
       name: t("Payment Description"),
       selector: (row: any) => row.paymentDescription,
       id: "paymentDescription",
+      width:"175px"
     },
     {
       name: t("Payment Brand"),
       selector: (row: any) => row.network ?? "",
       id: "network",
+      width:"150px"
     },
     {
       name: t("Receipt Ref"),
       selector: (row: any) => row.receiptRef ?? "",
       id: "receiptRef",
+      width:"100px"
     },
     {
       name: t("owo Ref"),
       selector: (row: any) => row.owoRef ?? "",
       id: "owoRef",
+      width:"130px"
     },
     {
       name: t("Transaction ID"),
       selector: (row: any) => row.transactionId ?? "",
       id: "transactionId",
+      width:"200px"
     },
     {
       name: t("Transaction Ref"),
       selector: (row: any) => row.transactionRef ?? "",
       id: "transactionId",
+      width:"200px"
     },
   ];
 

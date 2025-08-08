@@ -124,8 +124,9 @@ const DataTableComponent = ({
     const styledColumns = columns.map((col) => {
       return {
         ...col,
-        grow: 1,
+        grow: col.grow ?? 1,
         wrap: true,
+        width: col.width || "auto",
         cell: col.cell
           ? col.cell
           : (row: any) => {

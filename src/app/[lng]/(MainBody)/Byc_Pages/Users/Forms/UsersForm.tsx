@@ -18,6 +18,7 @@ import TransactionLogForm from "./TransactionLogForm";
 import UserInfoForm from "./UserInfoForm";
 import OTPForm from "./OTPForm";
 import UserControlForm from "./UserControlForm";
+import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
 
 interface FormValues {
   username: string;
@@ -161,6 +162,13 @@ const UsersForm = forwardRef<
             label={t("Status")}
             value={user?.clientMaster?.statusName || ""}
             readOnly
+          />
+        </Col>
+        <Col md="6">
+          <SharedCheckbox
+            label={t("isSuspicious")}
+            checked={userData?.isSuspicious}
+            disabled={true}
           />
         </Col>
       </Row>

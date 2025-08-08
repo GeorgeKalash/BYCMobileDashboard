@@ -167,7 +167,7 @@ const Notification = () => {
       <Card>
         <CommonCardHeader title={t("Notifications")}>
           <Row>
-            <Col xs="2" className="mb-3">
+            <Col xs="2">
               <CustomDatePicker
                 name="fromDate"
                 label={t("From Date")}
@@ -177,7 +177,7 @@ const Notification = () => {
                 }
               />
             </Col>
-            <Col xs="2" className="mb-3">
+            <Col xs="2">
               <CustomDatePicker
                 name="toDate"
                 label={t("To Date")}
@@ -187,7 +187,7 @@ const Notification = () => {
                 }
               />
             </Col>
-            <Col xs="2" className="mb-3">
+            <Col xs="2">
               <CustomInput
                 name="title"
                 label={t("Title")}
@@ -196,7 +196,7 @@ const Notification = () => {
                 onChange={(e) => handleFilterChange("title", e.target.value)}
               />
             </Col>
-            <Col xs="2" className="mb-3">
+            <Col xs="2">
               <CustomInput
                 name="phoneNumber"
                 type="text"
@@ -209,7 +209,7 @@ const Notification = () => {
                 }}
               />
             </Col>
-            <Col xs="2" className="mb-3">
+            <Col xs="2">
               <CustomSelect
                 name="templateId"
                 label={t("Template Name")}
@@ -222,7 +222,7 @@ const Notification = () => {
                 labelKey="value"
               />
             </Col>
-            <Col xs="2" className="mb-3">
+            <Col xs="2" className="d-flex align-items-center">
               <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
             </Col>
           </Row>

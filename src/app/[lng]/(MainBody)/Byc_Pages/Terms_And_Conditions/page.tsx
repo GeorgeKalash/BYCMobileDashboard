@@ -143,7 +143,7 @@ const TermsAndConditions = () => {
         onClose={handleModalClose}
         title={modalAction === "add" ? t("Add Text") : t("Edit Text")}
         width="600px"
-        height="40vh"
+        height="50vh"
         onSubmit={handleSubmit}
       >
         <TermsAndConditionsForm

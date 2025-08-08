@@ -8,7 +8,7 @@ interface CustomDateTimePickerProps {
   name: string;
   label?: string;
   isRequired?: boolean;
-  value?: string; 
+  value?: string;
   onChange?: (value: string | null) => void;
   readOnly?: boolean;
   minDate?: Date;
@@ -27,7 +27,10 @@ const formatToMMDDYYYYHHmm = (date: Date): string =>
 const formatToMMYYYY = (date: Date): string =>
   `${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
 
-const parseDateTime = (value?: string, mode: "dateTime" | "monthYear" = "dateTime"): Date | null => {
+const parseDateTime = (
+  value?: string,
+  mode: "dateTime" | "monthYear" = "dateTime"
+): Date | null => {
   if (!value) return null;
   if (mode === "monthYear") {
     const [month, year] = value.split("-").map(Number);
@@ -75,70 +78,71 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
     onChange?.(formatted);
   };
 
-  const CustomInput = forwardRef<HTMLDivElement, any>(
-    ({ value, onClick }, ref) => (
-      <div
-        className="form-control form-select d-flex align-items-center justify-content-between"
-        onClick={!readOnly ? onClick : undefined}
-        ref={ref}
-        style={{
-          width: "100%",
-          minWidth: "200px",
-          paddingRight: "3rem",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          position: "relative",
-          cursor: readOnly ? "not-allowed" : "pointer",
-        }}
-      >
-        <span className="text-truncate">
-          {selectedDate
-            ? selectedDate.toLocaleDateString("en-GB", {
-                year: "numeric",
-                month: "2-digit",
-                ...(mode === "dateTime" && { day: "2-digit" }),
-                ...(mode === "dateTime" && {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }),
-              })
-            : placeholder}
-        </span>
-        {!readOnly && selectedDate && (
-          <XCircle
-            size={16}
-            className="text-danger"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDateChange(null);
-            }}
-            style={{
-              position: "absolute",
-              right: "2rem",
-              top: "50%",
-              transform: "translateY(-50%)",
-              cursor: "pointer",
-            }}
-          />
-        )}
-        <Calendar
+  const CustomInput = forwardRef<HTMLDivElement, any>(({ onClick }, ref) => (
+    <div
+      className="form-control form-select d-flex align-items-center justify-content-between"
+      onClick={!readOnly ? onClick : undefined}
+      ref={ref}
+      style={{
+        width: "100%",
+        minHeight: "38px",
+        paddingRight: "3rem",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        position: "relative",
+        cursor: readOnly ? "not-allowed" : "pointer",
+      }}
+    >
+      <span className="text-truncate">
+        {selectedDate
+          ? selectedDate.toLocaleDateString("en-GB", {
+              year: "numeric",
+              month: "2-digit",
+              ...(mode === "dateTime" && { day: "2-digit" }),
+              ...(mode === "dateTime" && {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            })
+          : placeholder}
+      </span>
+      {!readOnly && selectedDate && (
+        <XCircle
           size={16}
+          className="text-danger"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDateChange(null);
+          }}
           style={{
             position: "absolute",
-            right: "0.75rem",
+            right: "2rem",
             top: "50%",
             transform: "translateY(-50%)",
+            cursor: "pointer",
           }}
         />
-      </div>
-    )
-  );
+      )}
+      <Calendar
+        size={16}
+        style={{
+          position: "absolute",
+          right: "0.75rem",
+          top: "50%",
+          transform: "translateY(-50%)",
+        }}
+      />
+    </div>
+  ));
 
   return (
-    <FormGroup>
+    <FormGroup style={{ display: "flex", flexDirection: "column" }}>
       {label && (
-        <Label>
+        <Label
+          htmlFor={name}
+          style={{ display: "block", marginBottom: "0.25rem" }}
+        >
           {label} {isRequired && <span className="text-danger">*</span>}
         </Label>
       )}

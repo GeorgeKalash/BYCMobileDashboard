@@ -6,7 +6,6 @@ import React, {
   useId,
   useCallback,
 } from "react";
-import { Card, CardBody, Col, FormGroup, Row } from "reactstrap";
 import { ChooseActivities } from "@/Constant";
 
 type SharedCheckboxProps = {
@@ -164,19 +163,10 @@ export const VariationCheckbox: React.FC<VariationCheckboxProps> = ({
   );
 
   return (
-    <Col sm="12">
-      <Card>
-        <CardBody>
-          <Row className="g-3">
-            <Col xl="4" md="5">
-              <div className="card-wrapper border rounded-3 h-100 p-3">
-                <h6 className="sub-title mb-3">{ChooseActivities}</h6>
-                {data.map(renderCheckbox)}
-              </div>
-            </Col>
-          </Row>
-        </CardBody>
-      </Card>
-    </Col>
+    <div className="card-wrapper border rounded-3 h-100 p-3">
+      <h6 className="sub-title mb-3">{ChooseActivities}</h6>
+      {data.map(renderCheckbox)}
+    </div>
+           
   );
 };

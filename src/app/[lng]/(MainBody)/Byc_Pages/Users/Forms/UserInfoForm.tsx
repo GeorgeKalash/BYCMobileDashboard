@@ -177,7 +177,6 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
       width="50vw"
     >
       {questionsWithType.map((q) => {
-        console.log(q)
         return(
           <Row key={q.value} className="align-items-center mb-3">
             <Col xs="6">
@@ -195,7 +194,8 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
                   label={q.label}
                   isRequired={false}
                   ar={false}
-                  fileUrl={q.body || ""}
+                  clientId={userData.clientId}
+                  extraRowId={q.value}
                   fileName={q.body || ""}
                 />
               ) : (

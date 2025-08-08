@@ -80,9 +80,9 @@ const Reports = () => {
           return (
             <Form style={{ maxHeight: "85vh", overflowY: "auto" }}>
               <Card className="mb-3">
-                <CommonCardHeader title={t("Notifications")}>
-                  <Row className="w-100">
-                    <Col>
+                <CommonCardHeader title={t("Reports")}>
+                  <Row>
+                    <Col md={2}>
                       <CustomDatePicker
                         name="fromDate"
                         label={t("From Date")}
@@ -93,7 +93,7 @@ const Reports = () => {
                         }
                       />
                     </Col>
-                    <Col>
+                    <Col md={2}>
                       <CustomDatePicker
                         name="toDate"
                         label={t("To Date")}
@@ -104,7 +104,7 @@ const Reports = () => {
                         }
                       />
                     </Col>
-                    <Col className="d-flex align-items-center">
+                    <Col md={2} className="d-flex align-items-center">
                       <SharedButton
                         title={t("Filter")}
                         onClick={() => fetchAndSet()}
@@ -119,8 +119,8 @@ const Reports = () => {
                      logoMap={{
                       newClients: "user-plus",
                       onlineClients: "user-check",
-                      inactiveClients: "user-lock",
-                      outwardTransferAmount: "folder-sync",
+                      inactiveClients: "user-x",
+                      outwardTransferAmount: "saudi-riyal",
                       outwardTransferCount: "tally-5",
                       paidReturnPercentage: "percent",
                       returnAmount: "undo-2",
