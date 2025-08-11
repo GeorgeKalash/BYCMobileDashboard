@@ -6,6 +6,7 @@ import { useTranslation } from "@/app/i18n/client";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import ConfigDB from "@/Config/ThemeConfig";
+import axios from "axios";
 
 const Languages = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -27,7 +28,7 @@ const Languages = () => {
     },
   ];
 
-  const changeLng = (item: ChangeLngType) => {
+  const changeLng = async (item: ChangeLngType) => {
     const numericLangId = item.data === "ae" ? 2 : 1;
 
     dispatch(setLanguage(item.data));
@@ -46,6 +47,7 @@ const Languages = () => {
       sessionStorage.setItem("userData", JSON.stringify(userData));
     }
 
+    // Update the body class for layout direction (RTL or LTR)
     if (item.data === "ae") {
       document.body.classList.add("rtl");
       document.body.classList.remove("ltr", "box-layout");
@@ -61,30 +63,89 @@ const Languages = () => {
     const languageCodeRegex = /^\/[a-z]{2}(\/|$)/;
     const updatedPath = pathname.replace(languageCodeRegex, `/${item.data}$1`);
     router.push(updatedPath);
+
+    const userDataFromSession = sessionStorage.getItem("userData");
+    if (userDataFromSession) {
+      const userData = JSON.parse(userDataFromSession);
+      const email = userData.username;
+
+      const record = {
+        userTypeName: "Super User.",
+        employeeRef: null,
+        employeeName: null,
+        languageName: item.language,
+        activeStatusName: "Active",
+        nGroupName: null,
+        nGroupRef: null,
+        languageId: numericLangId,
+        username: email,
+        email: email,
+        cellPhone: "",
+        fullName: userData.fullName || email,
+        activeStatus: 1,
+        userType: 1,
+        employeeId: null,
+        notificationGroupId: null,
+        menuTheme: 2,
+        umcpnl: false,
+        emailVerified: null,
+        cellPhoneVerified: null,
+        dashboardId: null,
+        is2FAEnabled: null,
+        otpDevice: null,
+        platform: null,
+        recordId: userData.userId,
+      };
+
+      try {
+        const response = await axios.post(
+          "https://deploy.arguserp.net/SS.asmx/setUS",
+          new URLSearchParams({
+            record: JSON.stringify(record),
+          }),
+          {
+            headers: {
+              Authorization: `Bearer ${userData.accessToken}`,
+              LanguageId: String(numericLangId),
+              Accept: "application/json, text/plain, */*",
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+
+        if (response.data) {
+          console.log("User updated successfully:", response.data);
+        }
+      } catch (err) {
+        console.error("Error updating user data:", err);
+      }
+    }
   };
 
   useEffect(() => {
-    const pathSegments = pathname.split("/").filter(Boolean);
-    if (pathSegments.length > 0) {
-      const language = pathSegments[0];
-      if (language !== i18LangStatus) {
-        dispatch(setLanguage(language));
+    const savedLang = localStorage.getItem("lang");
+    const savedDir = localStorage.getItem("dir");
+    const savedLanguageId = localStorage.getItem("languageId");
+
+    if (savedLang && savedLanguageId) {
+      dispatch(setLanguage(savedLang));
+      dispatch(setLanguageId(Number(savedLanguageId)));
+
+      i18n.changeLanguage(savedLang);
+
+      if (savedDir === "rtl") {
+        document.body.classList.add("rtl");
+        document.body.classList.remove("ltr", "box-layout");
+        document.documentElement.dir = "rtl";
+        ConfigDB.data.settings.layout_type = "rtl";
+      } else {
+        document.body.classList.add("ltr");
+        document.body.classList.remove("rtl", "box-layout");
+        document.documentElement.dir = "ltr";
+        ConfigDB.data.settings.layout_type = "ltr";
       }
     }
-
-    const savedDir = localStorage.getItem("dir");
-    if (savedDir === "rtl") {
-      document.body.classList.add("rtl");
-      document.body.classList.remove("ltr", "box-layout");
-      document.documentElement.dir = "rtl";
-      ConfigDB.data.settings.layout_type = "rtl";
-    } else {
-      document.body.classList.add("ltr");
-      document.body.classList.remove("rtl", "box-layout");
-      document.documentElement.dir = "ltr";
-      ConfigDB.data.settings.layout_type = "ltr";
-    }
-  }, []);
+  }, [i18LangStatus, pathname, dispatch, i18n]);
 
   return (
     <li className="onhover-dropdown">
