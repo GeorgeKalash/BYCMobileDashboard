@@ -113,8 +113,8 @@ const withLoading = async (
     return await fn();
   } catch (error: any) {
     const message =
-      error?.response?.data?.message ||
-      error?.message ||
+      error?.response?.data ||
+      error?.response ||
       "Unknown error occurred";
 
     if (throwError) throw error;
