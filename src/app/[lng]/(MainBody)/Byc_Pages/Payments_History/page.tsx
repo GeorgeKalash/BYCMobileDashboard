@@ -103,16 +103,22 @@ const PaymentsHistoryPage = () => {
       width:"150px"
     },
     {
+      
       name: t("Posting Date"),
-      selector: (row: any) => row.postingDate ?? "",
+      selector: (row: any) =>
+        row.postingDate ? formatDate(row.postingDate, "dd/MM/yyyy") : "",
+      sortable: true,
       id: "PostingDate",
       width:"175px"
     },
-    {
+   {
       name: t("Amount"),
-      selector: (row: any) => row.amount ?? "",
+      selector: (row: any) =>
+        row.amount != null
+          ? Number(row.amount).toLocaleString(i18LangStatus || undefined)
+          : "",
       id: "amount",
-      width:"100px"
+      width: "100px",
     },
     {
       name: t("Bank Name"),

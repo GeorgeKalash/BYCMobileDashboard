@@ -22,7 +22,7 @@ const Requests = () => {
   const dispatch = useAppDispatch();
 
   const [paginationState, setPaginationState] = useState({
-    pageCount: 0,       
+    pageCount: 0,
     totalRows: 0,
     searchTerm: "",
     eventType: 1 as 1 | 2 | null,
@@ -47,7 +47,9 @@ const Requests = () => {
       dispatch(
         getMobileRequest({
           extension: DashboardMobileRepository.Requests.get,
-          parameters: `_eventType=${eventType}&_startAt=${startAt}&_pageSize=${pageSize}&_search=${encodeURIComponent(searchTerm)}`,
+          parameters: `_eventType=${eventType}&_startAt=${startAt}&_pageSize=${pageSize}&_filter=${encodeURIComponent(
+            searchTerm
+          )}`,
         })
       )
     );
@@ -63,7 +65,11 @@ const Requests = () => {
 
   useEffect(() => {
     fetchData();
-  }, [paginationState.pageCount, paginationState.searchTerm, paginationState.eventType]);
+  }, [
+    paginationState.pageCount,
+    paginationState.searchTerm,
+    paginationState.eventType,
+  ]);
 
   const columns = [
     {
@@ -144,7 +150,7 @@ const Requests = () => {
     setPaginationState((prev) => ({
       ...prev,
       searchTerm: val,
-      pageCount: 0, 
+      pageCount: 0,
     }));
   };
 

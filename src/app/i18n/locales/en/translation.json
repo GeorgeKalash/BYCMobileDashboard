@@ -391,5 +391,8 @@
   "Prev": "Previous",
   "Next": "Next",
   "Select": "Select",
-  "Activate Language": "Activate Language"
+  "Activate Language": "Activate Language",
+  "From Creation Date": "From Creation Date",
+  "To Creation Date": "To Creation Date",
+  "Preview": "Preview"
 }

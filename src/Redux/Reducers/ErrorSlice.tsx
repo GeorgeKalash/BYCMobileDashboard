@@ -1,4 +1,3 @@
-// Redux/Reducers/ErrorSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ErrorState {

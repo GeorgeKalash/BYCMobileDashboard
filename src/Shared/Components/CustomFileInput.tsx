@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { FormGroup, Label } from "reactstrap";
+import { Col, Row } from "reactstrap";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
+import CustomInput from "./CustomInput";
+import SharedButton from "./SharedButton";
 
 type CustomPdfDisplayInputProps = {
   name: string;
@@ -21,7 +23,6 @@ type CustomPdfDisplayInputProps = {
 const CustomPdfDisplayInput: React.FC<CustomPdfDisplayInputProps> = ({
   name,
   label = "",
-  isRequired = false,
   fileName,
   clientId,
   extraRowId,
@@ -62,20 +63,25 @@ const CustomPdfDisplayInput: React.FC<CustomPdfDisplayInputProps> = ({
 
 
   return (
-    <FormGroup>
-      <Label htmlFor={name}>
-        {label} {isRequired && <span className="text-danger">*</span>}
-      </Label>
-      <div
-        id={name}
-        className="form-control"
-        style={{ cursor: "pointer", opacity: loading ? 0.6 : 1 }}
-        dir={ar ? "rtl" : "ltr"}
-        onClick={handleOpenPdf}
-      >
-        {loading ? t("Loading...") : fileName || t("No file selected")}
-      </div>
-    </FormGroup>
+    <Row>
+      <Col xs="9">
+        <CustomInput
+          name={name}
+          label={label}
+          type="text"
+          value={loading ? t("Loading...") : fileName || t("No file selected")}
+          readOnly={!fileName}
+        />
+        </Col>
+        <Col xs="3" style={{ marginTop: "23px"}}>
+        <SharedButton
+          title={ t("Preview") }
+          onClick={() => handleOpenPdf()}
+          disabled={!fileName}
+          color="secondary"
+        />
+      </Col>
+    </Row>
   );
 };
 
