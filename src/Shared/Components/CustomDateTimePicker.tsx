@@ -8,7 +8,7 @@ interface CustomDateTimePickerProps {
   name: string;
   label?: string;
   isRequired?: boolean;
-  value?: string;
+  value?: string | null; // nullable now
   onChange?: (value: string | null) => void;
   readOnly?: boolean;
   minDate?: Date;
@@ -28,7 +28,7 @@ const formatToMMYYYY = (date: Date): string =>
   `${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
 
 const parseDateTime = (
-  value?: string,
+  value?: string | null,
   mode: "dateTime" | "monthYear" = "dateTime"
 ): Date | null => {
   if (!value) return null;
@@ -52,7 +52,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
   name,
   label = "",
   isRequired = false,
-  value,
+  value = null,
   onChange,
   readOnly = false,
   minDate,
@@ -167,6 +167,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
         showPopperArrow={false}
         popperPlacement="bottom-start"
         customInput={<CustomInput />}
+        isClearable // allow manual clear from input
         popperModifiers={[
           {
             name: "zIndex",

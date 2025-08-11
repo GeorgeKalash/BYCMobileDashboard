@@ -10,7 +10,6 @@ import { useTranslation } from "@/app/i18n/client";
 import { postMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { FormikProps } from "formik";
 import { withRequestTracking } from "@/utils/withRequestTracking";
-
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import UsersForm, { UsersFormHandle } from "./Forms/UsersForm";
 import SharedButton from "@/Shared/Components/SharedButton";
@@ -35,17 +34,29 @@ const UsersPage = () => {
     pageCount: 0,
     totalRows: 0,
   });
-  const [filters, setFilters] = useState({
-    fromDate: format(new Date(), "MM-dd-yyyy"),
-    toDate: format(new Date(), "MM-dd-yyyy"),
+
+  const [filters, setFilters] = useState<{
+    fromCreationDate: string;
+    toCreationDate: string;
+    name: string;
+    phoneNumber: string;
+    idNumber: string;
+    nationality: string;
+    cityId: number | null;
+    street: string;
+    lastLogin: string | null;
+    countryId: number | null;
+  }>({
+    fromCreationDate: format(new Date(), "yyyy-MM-dd"),
+    toCreationDate: format(new Date(), "yyyy-MM-dd"),
     name: "",
     phoneNumber: "",
     idNumber: "",
     nationality: "",
     cityId: null,
     street: "",
-    lastLogin: format(new Date(), "MM-dd-yyyy HH:mm"),
-    countryId: null
+    lastLogin: null,
+    countryId: null,
   });
 
   const pageSize = 30;
@@ -53,18 +64,32 @@ const UsersPage = () => {
   const formLogicRef = useRef<UsersFormHandle>(null);
 
   const fetchData = async (page = 0) => {
+    // Parse filters.fromCreationDate to Date
+    const fromDate = filters.fromCreationDate ? new Date(filters.fromCreationDate) : null;
+    const fromCreationDateISO = fromDate
+      ? new Date(Date.UTC(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate(), 0, 0, 0, 0)).toISOString()
+      : null;
+
+    // Parse filters.toCreationDate to Date
+    const toDate = filters.toCreationDate ? new Date(filters.toCreationDate) : null;
+    const toCreationDateISO = toDate
+      ? new Date(Date.UTC(toDate.getFullYear(), toDate.getMonth(), toDate.getDate(), 23, 59, 59, 999)).toISOString()
+      : null;
+
     const payload = {
       startAt: page,
       pageSize,
       filters: {
-        fromDate: filters.fromDate ? new Date(filters?.fromDate).toISOString() : null,
-        toDate: filters?.toDate? new Date(filters?.toDate).toISOString() : null,
+        fromCreationDate: fromCreationDateISO,
+        toCreationDate: toCreationDateISO,
         username: filters.phoneNumber || null,
-        nationalityId: filters.nationality ? Number(filters?.nationality) : null,
+        nationalityId: filters.nationality ? Number(filters.nationality) : null,
         idNo: filters.idNumber || null,
         cityId: filters.cityId || null,
         street: filters.street || "",
-        lastLogin: parseDateTime(filters?.lastLogin)?.toISOString() ?? null,
+        lastLogin: filters.lastLogin ? parseDateTime(filters.lastLogin)?.toISOString() : null,
+        fromBirthDate: null,
+        toBirthDate: null,
       },
     };
 
@@ -152,18 +177,18 @@ const UsersPage = () => {
           <Row className="w-100">
             <Col>
               <CustomDatePicker
-                name="fromDate"
-                label={t("From Date")}
-                value={filters.fromDate}
-                onChange={(val) => setFilters((p) => ({ ...p, fromDate: val || "" }))}
+                name="fromCreationDate"
+                label={t("From Creation Date")}
+                value={filters.fromCreationDate}
+                onChange={(val) => setFilters((p) => ({ ...p, fromCreationDate: val || "" }))}
               />
             </Col>
             <Col>
               <CustomDatePicker
-                name="toDate"
-                label={t("To Date")}
-                value={filters.toDate}
-                onChange={(val) => setFilters((p) => ({ ...p, toDate: val || "" }))}
+                name="toCreationDate"
+                label={t("To Creation Date")}
+                value={filters.toCreationDate}
+                onChange={(val) => setFilters((p) => ({ ...p, toCreationDate: val || "" }))}
               />
             </Col>
             <Col>
@@ -183,23 +208,19 @@ const UsersPage = () => {
                 label={t("ID Number")}
                 placeholder={t("Search by ID Number")}
                 value={filters.idNumber}
-                onChange={(e) =>
-                  handleFilterChange("idNumber", e.target.value.replace(/\D/g, ""))
-                }
+                onChange={(e) => handleFilterChange("idNumber", e.target.value.replace(/\D/g, ""))}
               />
             </Col>
-             <Col>
+            <Col>
               <CustomInput
                 name="street"
                 label={t("street")}
                 placeholder={t("Search by Street")}
                 value={filters.street}
-                onChange={(e) =>
-                  handleFilterChange("street", e.target.value)
-                }
+                onChange={(e) => handleFilterChange("street", e.target.value)}
               />
             </Col>
-            </Row>
+          </Row>
           <Row className="w-100">
             <Col>
               <CustomDateTimePicker
@@ -241,7 +262,7 @@ const UsersPage = () => {
                 value={filters.cityId}
                 onChange={(val) => handleFilterChange("cityId", val ?? "")}
                 endpointId={DashboardMobileRepository.city.getall}
-                parameters={`_countryId=${filters?.countryId}`}
+                parameters={`_countryId=${filters.countryId}`}
                 readOnly={!filters.countryId}
                 labelKey="name"
                 valueKey="recordId"

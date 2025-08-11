@@ -394,5 +394,8 @@
   "newClients": "عملاء جدد",
   "onlineClients": "العملاء عبر الإنترنت",
   "inactiveClients": "العملاء غير النشطين",
-  "Activate Language": "تفعيل اللغة"
+  "Activate Language": "تفعيل اللغة",
+  "From Creation Date": "من تاريخ الإنشاء",
+  "To Creation Date": "إلى تاريخ الإنشاء",
+  "Preview": "معاينة"
 }

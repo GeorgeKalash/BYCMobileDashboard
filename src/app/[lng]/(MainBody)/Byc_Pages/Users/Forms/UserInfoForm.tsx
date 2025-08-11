@@ -174,7 +174,7 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
       onClose={onClose}
       title={t("Additional Data")}
       height="60vh"
-      width="50vw"
+      width="60vw"
     >
       {questionsWithType.map((q) => {
         return(
@@ -192,7 +192,6 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
                 <CustomPdfDisplayInput
                   name={`file_${q.value}`}
                   label={q.label}
-                  isRequired={false}
                   ar={false}
                   clientId={userData.clientId}
                   extraRowId={q.value}
