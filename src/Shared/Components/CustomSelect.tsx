@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { FormGroup, Label, Spinner, Button } from "reactstrap";
 import { useSelector } from "react-redux";
@@ -7,15 +9,18 @@ import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { RefreshCw, XCircle } from "react-feather";
 import { useTranslation } from "@/app/i18n/client";
+
 type OptionType = {
   value: string | number;
   label: string;
 };
+
 interface CustomSelectProps {
   name: string;
   label?: string;
   options?: OptionType[] | null;
   endpointId?: string;
+  parameters?: string;
   dataSetId?: number | string;
   dashboardDatasetId?: number | string;
   isRequired?: boolean;
@@ -29,11 +34,13 @@ interface CustomSelectProps {
   readOnly?: boolean;
   clearable?: boolean;
 }
+
 const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   name,
   label = "",
   options = null,
   endpointId,
+  parameters,
   dataSetId,
   dashboardDatasetId,
   isRequired = false,
@@ -54,6 +61,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
     (state: RootState) => state.authSlice.languageId
   );
   const langId = parseInt(localStorage.getItem("languageId") || "1", 10);
+
   const isRtl =
     typeof window !== "undefined" && localStorage.getItem("dir") === "rtl";
   const [selectOptions, setSelectOptions] = useState<OptionType[]>(
@@ -70,6 +78,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
     transform: "translateY(-50%)",
     padding: 0,
   } as const;
+
   const clearIconStyle = {
     position: "absolute",
     top: "50%",
@@ -79,43 +88,55 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   } as const;
   const loadOptions = useCallback(
     async (preserveSelected = false) => {
-      let url = "";
-      let params = "";
-      if (dashboardDatasetId) {
-        url = "/api/KVS/Dashboard/getAllKVS";
-        params = `_dataset=${dashboardDatasetId}&_language=${langId}`;
-      } else if (dataSetId) {
-        url = "/api/KVS/getAllKVS";
-        params = `_dataset=${dataSetId}&_language=${langId}`;
-      } else if (endpointId) {
-        url = endpointId;
+    let url = "";
+    let params = "";
+
+    if (dashboardDatasetId) {
+      url = "/api/KVS/Dashboard/getAllKVS";
+      params = `_dataset=${dashboardDatasetId}&_language=${langId}`;
+    } else if (dataSetId) {
+      url = "/api/KVS/getAllKVS";
+      params = `_dataset=${dataSetId}&_language=${langId}`;
+    } else if (endpointId) {
+      url = endpointId;
+      params = parameters
+        ? endpointId.includes("?")
+          ? parameters
+          : `?${parameters}`
+        : "";
+    }
+
+    if (!url) return;
+
+    setIsLoading(true);
+    const action = await withRequestTracking(dispatch, () =>
+      dispatch(
+        getMobileRequest({
+          extension: url,
+          parameters: params,
+        })
+      )
+    );
+
+    const data = action.payload?.data ?? [];
+    const mapped: OptionType[] = data.map((item: any) => ({
+      value: item[valueKey],
+      label: item[labelKey],
+    }));
+
+    setSelectOptions(mapped);
+
+    if (!preserveSelected) {
+      if (typeof value !== "undefined" && value !== null) {
+        onChange?.(value);
+      } else if (typeof defaultIndex === "number" && mapped[defaultIndex]) {
+        onChange?.(mapped[defaultIndex].value);
+      } else {
+        onChange?.(null);
       }
-      if (!url) return;
-      setIsLoading(true);
-      const action = await withRequestTracking(dispatch, () =>
-        dispatch(
-          getMobileRequest({
-            extension: url,
-            parameters: params,
-          })
-        )
-      );
-      const data = action.payload?.data ?? [];
-      const mapped: OptionType[] = data.map((item: any) => ({
-        value: item[valueKey],
-        label: item[labelKey],
-      }));
-      setSelectOptions(mapped);
-      if (!preserveSelected) {
-        if (typeof value !== "undefined" && value !== null) {
-          onChange?.(value);
-        } else if (typeof defaultIndex === "number" && mapped[defaultIndex]) {
-          onChange?.(mapped[defaultIndex].value);
-        } else {
-          onChange?.(null);
-        }
-      }
-      setIsLoading(false);
+    }
+
+    setIsLoading(false);
     },
     [
       dashboardDatasetId,
@@ -141,6 +162,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
     dashboardDatasetId,
     dataSetId,
     endpointId,
+    parameters,
     selectOptions.length,
     loadOptions,
   ]);
@@ -166,10 +188,12 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
     setSearchTerm(opt.label);
     setShowDropdown(false);
   };
+  
   const clearSelection = () => {
     onChange?.(null);
     setSearchTerm("");
   };
+
   const isFieldFilled =
     value !== "" && value !== null && typeof value !== "undefined";
   const validationClass = isRequired && !isFieldFilled ? "is-invalid" : "";
@@ -232,9 +256,9 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
                           : "white",
                     }}
                   >
-                    {opt.label}
+                  {opt.label}
                   </div>
-                ))}
+              ))}
               </div>
             )}
             {!readOnly && (
@@ -273,4 +297,5 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
     </FormGroup>
   );
 };
+
 export default CustomSelectInlineIcons;

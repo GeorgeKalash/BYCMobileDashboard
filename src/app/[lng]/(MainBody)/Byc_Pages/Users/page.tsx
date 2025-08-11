@@ -241,7 +241,7 @@ const UsersPage = () => {
                 value={filters.cityId}
                 onChange={(val) => handleFilterChange("cityId", val ?? "")}
                 endpointId={DashboardMobileRepository.city.getall}
-                parameters={`_countryId=${filters.countryId}`}
+                parameters={`_countryId=${filters?.countryId}`}
                 readOnly={!filters.countryId}
                 labelKey="name"
                 valueKey="recordId"
