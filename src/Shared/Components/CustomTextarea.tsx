@@ -55,6 +55,11 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
         value={isControlled ? value ?? "" : field.value}
         onChange={isControlled ? onChange : field.onChange}
         onBlur={isControlled ? onBlur : field.onBlur}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.stopPropagation();
+          }
+        }}
       />
     </FormGroup>
   );

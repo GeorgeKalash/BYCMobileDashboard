@@ -6,7 +6,10 @@ import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
 import { Col, Row } from "reactstrap";
-import { getMobileRequest, postMobileRequest } from "@/Redux/Reducers/RequestThunks";
+import {
+  getMobileRequest,
+  postMobileRequest,
+} from "@/Redux/Reducers/RequestThunks";
 import * as Yup from "yup";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";
 import { withRequestTracking } from "@/utils/withRequestTracking";
@@ -36,11 +39,26 @@ const TermsAndConditionsForm = ({
     { id: 2, text: "" },
   ]);
 
+  // Current UTC date-time
+  const now = new Date();
+  const utcNow = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      now.getUTCHours(),
+      now.getUTCMinutes(),
+      now.getUTCSeconds(),
+      now.getUTCMilliseconds()
+    )
+  );
+  const initialPublishingDate = format(utcNow, "MM-dd-yyyy");
+
   const initialValues = {
     header: {
       recordId: recordId,
       version: "",
-      publishingDate: format(new Date(), "MM-dd-yyyy"),
+      publishingDate: initialPublishingDate,
     },
     languages: supportedLanguagesRef.current.map((lang) => ({
       termsId: recordId,
@@ -50,7 +68,6 @@ const TermsAndConditionsForm = ({
   };
 
   const validationSchema = Yup.object().shape({
-   
     languages: Yup.array().of(
       Yup.object().shape({
         text: Yup.string().required(t("Text is required")),
@@ -59,9 +76,21 @@ const TermsAndConditionsForm = ({
   });
 
   const handleSubmit = async (
-    values: typeof initialValues,
-    { setSubmitting }: FormikHelpers<typeof initialValues>
+  values: typeof initialValues,
+  { setSubmitting }: FormikHelpers<typeof initialValues>
   ) => {
+    const now = new Date();
+    const utcNow = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        now.getUTCHours(),
+        now.getUTCMinutes(),
+        now.getUTCSeconds(),
+        now.getUTCMilliseconds()
+      )
+    );
 
     await withRequestTracking(dispatch, () =>
       dispatch(
@@ -71,7 +100,7 @@ const TermsAndConditionsForm = ({
             ...values,
             header: {
               ...values.header,
-              publishingDate: new Date(values.header.publishingDate).toISOString(),
+              publishingDate: utcNow.toISOString(),
             },
           },
           rawBody: true,
@@ -103,55 +132,58 @@ const TermsAndConditionsForm = ({
       innerRef={formikRef}
     >
       {({ submitForm, setValues, values, setFieldValue }) => {
-       useEffect(() => {
-        const fetchData = async () => {
-          if (recordId) {
-            const result = await withRequestTracking(dispatch, () =>
-              dispatch(
-                getMobileRequest({
-                  extension: DashboardMobileRepository.TermsAndConditions.getpack,
-                  parameters: `_recordId=${recordId}`,
-                })
-              )
-            );
+        useEffect(() => {
+          const fetchData = async () => {
+            if (recordId) {
+              const result = await withRequestTracking(dispatch, () =>
+                dispatch(
+                  getMobileRequest({
+                    extension:
+                      DashboardMobileRepository.TermsAndConditions.getpack,
+                    parameters: `_recordId=${recordId}`,
+                  })
+                )
+              );
 
-            if (result?.payload?.data) {
-              const apiData = result.payload.data;
+              if (result?.payload?.data) {
+                const apiData = result.payload.data;
 
-              const mergedLanguages = supportedLanguagesRef.current.map((lang) => {
-                const existing = apiData.languages?.find(
-                  (l: any) => l.languageId === lang.id
+                const mergedLanguages = supportedLanguagesRef.current.map(
+                  (lang) => {
+                    const existing = apiData.languages?.find(
+                      (l: any) => l.languageId === lang.id
+                    );
+                    return {
+                      termsId: recordId,
+                      languageId: lang.id,
+                      text: existing?.text || "",
+                    };
+                  }
                 );
-                return {
-                  termsId: recordId,
-                  languageId: lang.id,
-                  text: existing?.text || "",
-                };
-              });
 
-              const rawDate = apiData?.header?.publishingDate;
-              let safePublishingDate: string;
+                const rawDate = apiData?.header?.publishingDate;
+                let safePublishingDate: string;
 
-              if (rawDate && !isNaN(new Date(rawDate).getTime())) {
-                safePublishingDate = format(new Date(rawDate), "MM-dd-yyyy");
-              } else {
-                safePublishingDate = format(new Date(), "MM-dd-yyyy");
+                if (rawDate && !isNaN(new Date(rawDate).getTime())) {
+                  safePublishingDate = format(new Date(rawDate), "MM-dd-yyyy");
+                } else {
+                  safePublishingDate = initialPublishingDate;
+                }
+
+                setValues({
+                  header: {
+                    ...apiData.header,
+                    version: String(apiData.header.version ?? ""),
+                    publishingDate: safePublishingDate,
+                  },
+                  languages: mergedLanguages,
+                });
               }
-
-              setValues({
-                header: {
-                  ...apiData.header,
-                  version: String(apiData.header.version ?? ""),
-                  publishingDate: safePublishingDate,
-                },
-                languages: mergedLanguages,
-              });
             }
-          }
-        };
+          };
 
-        fetchData();
-      }, [recordId, dispatch, setValues]);
+          fetchData();
+        }, [recordId, dispatch, setValues, initialPublishingDate]);
 
         return (
           <Form onKeyDown={(e) => handleKeyDown(e, submitForm)}>
@@ -173,6 +205,7 @@ const TermsAndConditionsForm = ({
                   label={t("publishingDate")}
                   value={values?.header?.publishingDate}
                   onChange={(val) => setFieldValue("header.publishingDate", val)}
+                  readOnly={true}
                 />
               </Col>
               {values.languages.map((lang, index) => (

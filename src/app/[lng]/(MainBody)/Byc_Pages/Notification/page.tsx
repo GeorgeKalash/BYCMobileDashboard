@@ -58,8 +58,26 @@ const Notification = () => {
   });
 
   const fetchData = async (page = tableData.pagination.pageCount) => {
+    const fromDateUtc = filters.fromDate
+      ? new Date(Date.UTC(
+          new Date(filters.fromDate).getFullYear(),
+          new Date(filters.fromDate).getMonth(),
+          new Date(filters.fromDate).getDate(),
+          0, 0, 0, 0
+        )).toISOString()
+      : "";
+
+    const toDateUtc = filters.toDate
+      ? new Date(Date.UTC(
+          new Date(filters.toDate).getFullYear(),
+          new Date(filters.toDate).getMonth(),
+          new Date(filters.toDate).getDate(),
+          23, 59, 59, 999
+        )).toISOString()
+      : "";
+
     const query =
-      `_fromDate=${filters.fromDate}&_toDate=${filters.toDate}` +
+      `_fromDate=${fromDateUtc}&_toDate=${toDateUtc}` +
       `&_startAt=${page}&_pageSize=${tableData.pagination.pageSize}` +
       `&_title=${filters.title}&_templateId=${filters.templateId}` +
       `&_destination=${filters.phoneNumber}`;
