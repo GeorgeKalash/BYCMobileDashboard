@@ -99,7 +99,7 @@ const Menulist: React.FC<MenuListType> = ({ menu, setActiveMenu, activeMenu, lev
             {item.icon && <SVG className={`${sidebarIconType}-icon`} iconId={`${sidebarIconType}-${item.icon}`} />}
             <span className={item.lanClass && item.lanClass}>{t(item.title)}</span>
             {item.children && (
-              <div className="according-menu">
+              <div className={`according-menu ${i18LangStatus === "ae" ? "rtl" : ""}`}>
                 <i className="fa fa-angle-right" />
               </div>
             )}
@@ -115,10 +115,14 @@ const Menulist: React.FC<MenuListType> = ({ menu, setActiveMenu, activeMenu, lev
 
       <style jsx>{`
         .according-menu .fa-angle-right {
-          font-size: 1.6rem; /* increase from default (usually 1rem or 1.2rem) */
+          font-size: 1.6rem;
           transition: transform 0.3s ease;
         }
+        .according-menu.rtl .fa-angle-right {
+          transform: rotate(180deg);
+        }
       `}</style>
+
     </>
   );
 };
