@@ -36,13 +36,43 @@ const PaymentsHistoryPage = () => {
   });
 
   const fetchData = async (page = paginationState.pageCount) => {
+    // Convert fromDate to 00:00:00.000 UTC ISO string
+    const fromDateUtc = filters.fromDate
+      ? new Date(
+          Date.UTC(
+            new Date(filters.fromDate).getFullYear(),
+            new Date(filters.fromDate).getMonth(),
+            new Date(filters.fromDate).getDate(),
+            0,
+            0,
+            0,
+            0
+          )
+        ).toISOString()
+      : "";
+
+    // Convert toDate to 23:59:59.999 UTC ISO string
+    const toDateUtc = filters.toDate
+      ? new Date(
+          Date.UTC(
+            new Date(filters.toDate).getFullYear(),
+            new Date(filters.toDate).getMonth(),
+            new Date(filters.toDate).getDate(),
+            23,
+            59,
+            59,
+            999
+          )
+        ).toISOString()
+      : "";
+
     const queryParams = new URLSearchParams({
       _startAt: page.toString(),
       _pageSize: pageSize.toString(),
     });
 
-    if (filters.fromDate) queryParams.append("_fromDate", filters.fromDate);
-    if (filters.toDate) queryParams.append("_toDate", filters.toDate);
+    if (fromDateUtc) queryParams.append("_fromDate", fromDateUtc);
+    if (toDateUtc) queryParams.append("_toDate", toDateUtc);
     if (filters.paymentGatewayId)
       queryParams.append("_paymentGatewayId", filters.paymentGatewayId);
     if (filters.paymentStatus)
@@ -79,39 +109,36 @@ const PaymentsHistoryPage = () => {
       name: t("receipt ID"),
       selector: (row: any) => row.receiptId,
       id: "receiptId",
-      width:"100px"
+      width: "100px",
     },
     {
       name: t("Card Holder Name"),
       selector: (row: any) => row.clientName,
       id: "CardHolderName",
-      width:"150px"
+      width: "150px",
     },
     {
       name: t("Phone Number"),
       selector: (row: any) => row.cellPhone,
       id: "cellPhone",
-      width:"150px"
+      width: "150px",
     },
     {
       name: t("Transaction Date"),
       selector: (row: any) =>
-        row.transactionDate
-          ? formatDate(row.transactionDate, "dd/MM/yyyy")
-          : "",
+        row.transactionDate ? formatDate(row.transactionDate, "dd/MM/yyyy") : "",
       id: "TransactionDate",
-      width:"150px"
+      width: "150px",
     },
     {
-      
       name: t("Posting Date"),
       selector: (row: any) =>
         row.postingDate ? formatDate(row.postingDate, "dd/MM/yyyy") : "",
       sortable: true,
       id: "PostingDate",
-      width:"175px"
+      width: "175px",
     },
-   {
+    {
       name: t("Amount"),
       selector: (row: any) =>
         row.amount != null
@@ -124,7 +151,7 @@ const PaymentsHistoryPage = () => {
       name: t("Bank Name"),
       selector: (row: any) => row.bankName,
       id: "bankName",
-      width:"200px"
+      width: "200px",
     },
     {
       name: t("Gateway Type"),
@@ -135,67 +162,67 @@ const PaymentsHistoryPage = () => {
           ? "Moyasar"
           : "Unknown",
       id: "paymentGatewayType",
-      width:"130px"
+      width: "130px",
     },
     {
       name: t("IBAN"),
       selector: (row: any) => row.iban,
       id: "iban",
-      width:"200px"
+      width: "200px",
     },
     {
       name: t("currency"),
       selector: (row: any) => row.currency,
       id: "currency",
-      width:"100px"
+      width: "100px",
     },
     {
       name: t("Payment Status"),
       selector: (row: any) => row.psName,
       id: "paymentStatus",
-      width:"150px"
+      width: "150px",
     },
     {
       name: t("Payment Code"),
       selector: (row: any) => row.paymentCode,
       id: "paymentCode",
-      width:"150px"
+      width: "150px",
     },
     {
       name: t("Payment Description"),
       selector: (row: any) => row.paymentDescription,
       id: "paymentDescription",
-      width:"175px"
+      width: "175px",
     },
     {
       name: t("Payment Brand"),
       selector: (row: any) => row.network ?? "",
       id: "network",
-      width:"150px"
+      width: "150px",
     },
     {
       name: t("Receipt Ref"),
       selector: (row: any) => row.receiptRef ?? "",
       id: "receiptRef",
-      width:"100px"
+      width: "100px",
     },
     {
       name: t("owo Ref"),
       selector: (row: any) => row.owoRef ?? "",
       id: "owoRef",
-      width:"130px"
+      width: "130px",
     },
     {
       name: t("Transaction ID"),
       selector: (row: any) => row.transactionId ?? "",
       id: "transactionId",
-      width:"200px"
+      width: "200px",
     },
     {
       name: t("Transaction Ref"),
       selector: (row: any) => row.transactionRef ?? "",
-      id: "transactionId",
-      width:"200px"
+      id: "transactionRef",
+      width: "200px",
     },
   ];
 
