@@ -2,6 +2,8 @@ import NoSsr from "@/utils/NoSsr";
 import "../../src/index.scss";
 import MainProvider from "./MainProvider";
 import GlobalErrorBoundary from "@/Redux/GlobalErrorBoundary";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning={true}>
         <NoSsr>
           <MainProvider>
+            <ToastContainer />
             <GlobalErrorBoundary>
               {children}
             </GlobalErrorBoundary>

@@ -14,50 +14,54 @@ const GlobalErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children
     dispatch(clearError());
   };
 
-  if (errorMessage) {
-    return (
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 9999,
-        }}
-      >
+  return (
+    <>
+      {children}
+
+      {errorMessage && (
         <div
           style={{
-            padding: "20px",
-            borderRadius: "8px",
-            width: "500px",
-            maxWidth: "90%",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+            position: "fixed",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
           }}
         >
-          <h3 style={{ marginTop: 0 }}>{t("Error")}</h3>
-          <p style={{ color: "red", whiteSpace: "pre-wrap" }}>{errorMessage}</p>
-          <div style={{ textAlign: "right", marginTop: "15px" }}>
-            <button
-              onClick={handleClose}
-              style={{
-                padding: "8px 16px",
-                backgroundColor: "#d33",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              {t("Close")}
-            </button>
+          <div
+            style={{
+              padding: "20px",
+              borderRadius: "8px",
+              width: "500px",
+              maxWidth: "90%",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+              backgroundColor: "#fff",
+            }}
+          >
+            <h3 style={{ marginTop: 0 }}>{t("Error")}</h3>
+            <p style={{ color: "red", whiteSpace: "pre-wrap" }}>{errorMessage}</p>
+            <div style={{ textAlign: "right", marginTop: "15px" }}>
+              <button
+                onClick={handleClose}
+                style={{
+                  padding: "8px 16px",
+                  backgroundColor: "#d33",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                {t("Close")}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
+      )}
+    </>
+  );
 };
 
 export default GlobalErrorBoundary;

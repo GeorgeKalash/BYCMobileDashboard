@@ -174,12 +174,12 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
       onClose={onClose}
       title={t("Additional Data")}
       height="60vh"
-      width="60vw"
+      width="65vw"
     >
       {questionsWithType.map((q) => {
         return(
           <Row key={q.value} className="align-items-center mb-3">
-            <Col xs="6">
+            <Col xs="8">
               {q.type === "Text Field" || q.type === "Number Field" ? (
                 <CustomInput
                   name={`field_${q.value}`}
@@ -201,14 +201,14 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
                 <strong>{q.label}</strong>
               )}
             </Col>
-            <Col xs="3">
+            <Col xs="2">
               <SharedButton
                 title={q.isRequested ? t("Cancel") : t("Request")}
                 onClick={() => handleRequest(q)}
                 color={q.isRequested ? "danger" : "success"}
               />
             </Col>
-            <Col xs="3">
+            <Col xs="2">
               <SharedButton
                 title={q.isValid ? t("Revoke") : t("Validate")}
                 onClick={() => handleValidate(q)}
