@@ -39,11 +39,26 @@ const TermsAndConditionsForm = ({
     { id: 2, text: "" },
   ]);
 
+  // Current UTC date-time
+  const now = new Date();
+  const utcNow = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      now.getUTCHours(),
+      now.getUTCMinutes(),
+      now.getUTCSeconds(),
+      now.getUTCMilliseconds()
+    )
+  );
+  const initialPublishingDate = format(utcNow, "MM-dd-yyyy");
+
   const initialValues = {
     header: {
       recordId: recordId,
       version: "",
-      publishingDate: format(new Date(), "MM-dd-yyyy"),
+      publishingDate: initialPublishingDate,
     },
     languages: supportedLanguagesRef.current.map((lang) => ({
       termsId: recordId,
@@ -61,9 +76,22 @@ const TermsAndConditionsForm = ({
   });
 
   const handleSubmit = async (
-    values: typeof initialValues,
-    { setSubmitting }: FormikHelpers<typeof initialValues>
+  values: typeof initialValues,
+  { setSubmitting }: FormikHelpers<typeof initialValues>
   ) => {
+    const now = new Date();
+    const utcNow = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        now.getUTCHours(),
+        now.getUTCMinutes(),
+        now.getUTCSeconds(),
+        now.getUTCMilliseconds()
+      )
+    );
+
     await withRequestTracking(dispatch, () =>
       dispatch(
         postMobileRequest({
@@ -72,9 +100,7 @@ const TermsAndConditionsForm = ({
             ...values,
             header: {
               ...values.header,
-              publishingDate: new Date(
-                values.header.publishingDate
-              ).toISOString(),
+              publishingDate: utcNow.toISOString(),
             },
           },
           rawBody: true,
@@ -141,7 +167,7 @@ const TermsAndConditionsForm = ({
                 if (rawDate && !isNaN(new Date(rawDate).getTime())) {
                   safePublishingDate = format(new Date(rawDate), "MM-dd-yyyy");
                 } else {
-                  safePublishingDate = format(new Date(), "MM-dd-yyyy");
+                  safePublishingDate = initialPublishingDate;
                 }
 
                 setValues({
@@ -157,7 +183,7 @@ const TermsAndConditionsForm = ({
           };
 
           fetchData();
-        }, [recordId, dispatch, setValues]);
+        }, [recordId, dispatch, setValues, initialPublishingDate]);
 
         return (
           <Form onKeyDown={(e) => handleKeyDown(e, submitForm)}>
@@ -178,9 +204,7 @@ const TermsAndConditionsForm = ({
                   name="header.publishingDate"
                   label={t("publishingDate")}
                   value={values?.header?.publishingDate}
-                  onChange={(val) =>
-                    setFieldValue("header.publishingDate", val)
-                  }
+                  onChange={(val) => setFieldValue("header.publishingDate", val)}
                   readOnly={true}
                 />
               </Col>
