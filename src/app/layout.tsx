@@ -1,7 +1,7 @@
 import NoSsr from "@/utils/NoSsr";
 import "../../src/index.scss";
 import MainProvider from "./MainProvider";
-import ErrorListener from "@/Shared/Components/ErrorListener";
+import GlobalErrorBoundary from "@/Redux/GlobalErrorBoundary";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -28,8 +28,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning={true}>
         <NoSsr>
           <MainProvider>
-            <ErrorListener />
-            {children}
+            <GlobalErrorBoundary>
+              {children}
+            </GlobalErrorBoundary>
           </MainProvider>
         </NoSsr>
       </body>
