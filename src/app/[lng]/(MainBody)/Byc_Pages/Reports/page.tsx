@@ -35,8 +35,8 @@ const Reports = () => {
   const validationSchema = Yup.object({});
 
   const [filters, setFilters] = useState<Filters>({
-    fromDate: format(new Date(), "MM-dd-yyyy"),
-    toDate: format(new Date(), "MM-dd-yyyy"),
+    fromDate: format(new Date(), "yyyy-MM-dd"),
+    toDate: format(new Date(), "yyyy-MM-dd"),
   });
 
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -53,11 +53,36 @@ const Reports = () => {
       >
         {({ values, setValues }) => {
           const fetchAndSet = async () => {
+            const fromDate = new Date(filters.fromDate);
+            const fromISO = new Date(
+              Date.UTC(
+                fromDate.getFullYear(),
+                fromDate.getMonth(),
+                fromDate.getDate(),
+                0,
+                0,
+                0
+              )
+            ).toISOString();
+
+            const toDate = new Date(filters.toDate);
+            const toISO = new Date(
+              Date.UTC(
+                toDate.getFullYear(),
+                toDate.getMonth(),
+                toDate.getDate(),
+                23,
+                59,
+                59,
+                999
+              )
+            ).toISOString();
+
             const result = await withRequestTracking(dispatch, () =>
               dispatch(
                 getMobileRequest({
                   extension: ReportsRepository.MobileStatistics,
-                  parameters: `_from=${filters.fromDate}&_to=${filters.toDate}`,
+                  parameters: `_from=${fromISO}&_to=${toISO}`,
                 })
               ).unwrap()
             );
@@ -66,10 +91,11 @@ const Reports = () => {
               dispatch(
                 getMobileRequest({
                   extension: ReportsRepository.RT405,
-                  parameters: `_from=${filters.fromDate}&_to=${filters.toDate}`,
+                  parameters: `_from=${fromISO}&_to=${toISO}`,
                 })
               ).unwrap()
             );
+
             setValues({ ...initialValues, ...result.data, ...result2.data });
           };
 
@@ -89,7 +115,10 @@ const Reports = () => {
                         value={filters.fromDate}
                         onChange={(val) =>
                           val &&
-                          setFilters((prev) => ({ ...prev, fromDate: val }))
+                          setFilters((prev) => ({
+                            ...prev,
+                            fromDate: format(new Date(val), "yyyy-MM-dd"),
+                          }))
                         }
                       />
                     </Col>
@@ -100,7 +129,10 @@ const Reports = () => {
                         value={filters.toDate}
                         onChange={(val) =>
                           val &&
-                          setFilters((prev) => ({ ...prev, toDate: val }))
+                          setFilters((prev) => ({
+                            ...prev,
+                            toDate: format(new Date(val), "yyyy-MM-dd"),
+                          }))
                         }
                       />
                     </Col>

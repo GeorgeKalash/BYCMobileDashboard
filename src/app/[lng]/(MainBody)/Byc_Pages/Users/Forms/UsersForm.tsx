@@ -171,6 +171,13 @@ const UsersForm = forwardRef<
             disabled={true}
           />
         </Col>
+        <Col md="6">
+          <SharedCheckbox
+            label={t("lastTermsConfirmation")}
+            checked={userData?.lastTermsConfirmation}
+            disabled={true}
+          />
+        </Col>
       </Row>
       <TransactionLogForm
         visible={showMoreInfoModal}

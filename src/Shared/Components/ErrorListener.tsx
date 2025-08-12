@@ -1,42 +1,32 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "@/Redux/Hooks";
 import { clearError } from "@/Redux/Reducers/ErrorSlice";
-import SharedModal from "@/Shared/Components/SharedModal";
-import { useTranslation } from "@/app/i18n/client";
+import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const ErrorListener = () => {
   const errorMessage = useAppSelector((state) => state.error.message);
   const dispatch = useAppDispatch();
-  const { t } = useTranslation("en"); 
-
-  const [modalVisible, setModalVisible] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (errorMessage) {
-      setModalVisible(true);
+      toast.error(t(errorMessage), {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
+      dispatch(clearError());
     }
-  }, [errorMessage]);
+  }, [errorMessage, dispatch, t]);
 
-  const handleClose = () => {
-    setModalVisible(false);
-    dispatch(clearError());
-  };
-
-  return (
-    <SharedModal
-      visible={modalVisible}
-      onClose={handleClose}
-      title={t("Error")}
-      width="500px"
-      height="100px"
-    >
-      <div style={{ color: "red", whiteSpace: "pre-wrap" }}>
-        {errorMessage}
-      </div>
-    </SharedModal>
-  );
+  return null;
 };
 
 export default ErrorListener;
