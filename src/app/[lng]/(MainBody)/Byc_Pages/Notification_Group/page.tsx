@@ -110,14 +110,6 @@ const Notification_Group = () => {
     }
   };
 
-  const handlePageChange = (startAt: number) => {
-    const newPage = Math.floor(startAt / pageSize);
-    setPaginationState((prev) => ({
-      ...prev,
-      pageCount: newPage,
-    }));
-  };
-
   return (
     <Col xs="12">
       <Card>
@@ -130,23 +122,14 @@ const Notification_Group = () => {
             data={data}
             columns={columns}
             pagination
-            serverPagination={true}
-            totalRows={paginationState.totalRows}
+            serverPagination={false}
             pageSize={pageSize}
-            onPageChange={handlePageChange}
             showActions={true}
             onEdit={(row) => openModal(row, "edit")}
             onDelete={handleDelete}
             Search={true}
-            searchType="server"
-            searchableColumns={["title", "description"]}
-            onSearchChange={(val) => {
-              setPaginationState((prev) => ({
-                ...prev,
-                searchTerm: val,
-                pageCount: 0,
-              }));
-            }}
+            searchType="local"
+            searchableColumns={["name"]}
           />
         </CardBody>
       </Card>
