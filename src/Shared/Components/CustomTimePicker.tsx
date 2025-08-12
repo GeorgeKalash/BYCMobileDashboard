@@ -50,39 +50,37 @@ const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
     handleChange(now);
   };
 
-  const CustomInput = forwardRef<HTMLDivElement, any>(
-    ({ onClick }, ref) => (
-      <div
-        ref={ref}
-        onClick={!readOnly && !datePickerDisabled ? onClick : undefined}
-        className={`form-control d-flex align-items-center justify-content-between ${
-          !readOnly && !datePickerDisabled ? "form-select" : ""
-        }`}
-        style={{
-          cursor: readOnly || datePickerDisabled ? "default" : "pointer",
-          width: "100%",
-          opacity: readOnly || datePickerDisabled ? 0.7 : 1,
-          appearance: readOnly || datePickerDisabled ? "none" : undefined,
-          WebkitAppearance: readOnly || datePickerDisabled ? "none" : undefined,
-          backgroundImage: readOnly || datePickerDisabled ? "none" : undefined,
-        }}
-      >
-        <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>
-          {selectedDate
-            ? selectedDate.toLocaleString("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : placeholder}
-        </span>
+  const CustomInput = forwardRef<HTMLDivElement, any>(({ onClick }, ref) => (
+    <div
+      ref={ref}
+      onClick={!readOnly && !datePickerDisabled ? onClick : undefined}
+      className={`form-control d-flex align-items-center justify-content-between ${
+        !readOnly && !datePickerDisabled ? "form-select" : ""
+      }`}
+      style={{
+        cursor: readOnly || datePickerDisabled ? "default" : "pointer",
+        width: "100%",
+        opacity: readOnly || datePickerDisabled ? 0.7 : 1,
+        appearance: readOnly || datePickerDisabled ? "none" : undefined,
+        WebkitAppearance: readOnly || datePickerDisabled ? "none" : undefined,
+        backgroundImage: readOnly || datePickerDisabled ? "none" : undefined,
+      }}
+    >
+      <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>
+        {selectedDate
+          ? selectedDate.toLocaleString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : placeholder}
+      </span>
 
-        {!readOnly && !datePickerDisabled && <Calendar size={16} />}
-      </div>
-    )
-  );
+      {!readOnly && !datePickerDisabled && <Calendar size={16} />}
+    </div>
+  ));
   CustomInput.displayName = "CustomDateInput";
 
   return (

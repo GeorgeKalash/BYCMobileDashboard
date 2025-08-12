@@ -18,6 +18,8 @@ import { CSS } from "@dnd-kit/utilities";
 import { Table } from "reactstrap";
 import { DragEndEvent } from "@dnd-kit/core";
 import SharedButton from "@/Shared/Components/SharedButton";
+import { useTranslation } from "@/app/i18n/client";
+import { useAppSelector } from "@/Redux/Hooks";
 type FileItem = { file: File; Link: string };
 
 type Column = {
@@ -61,7 +63,6 @@ const SortableFileTable = ({
     updated[index].Link = newDesc;
     onChange(updated);
   };
-
   return (
     <DndContext
       sensors={sensors}
@@ -146,7 +147,9 @@ const SortableRow = ({
     setPreviewUrl(objectUrl);
     return () => URL.revokeObjectURL(objectUrl);
   }, [file]);
+  const { i18LangStatus } = useAppSelector((state) => state.langSlice);
 
+  const { t } = useTranslation(i18LangStatus);
   return (
     <tr ref={setNodeRef} style={style}>
       <td>{index + 1}</td>
@@ -160,7 +163,7 @@ const SortableRow = ({
             color: "#555",
             userSelect: "none",
           }}
-          title="Drag to reorder"
+          title={t("Drag to reorder")}
         >
           ⠿
         </span>
@@ -187,7 +190,7 @@ const SortableRow = ({
           type="text"
           value={Link}
           onChange={(e) => onLinkChange(e.target.value)}
-          placeholder="Add Link"
+          placeholder={t("Add Link")}
           style={{
             width: "100%",
             padding: "4px 8px",
@@ -200,7 +203,7 @@ const SortableRow = ({
       <td style={{ verticalAlign: "middle" }}>{file.name}</td>
       <td style={{ textAlign: "center", verticalAlign: "middle" }}>
         <SharedButton
-          title="Remove"
+          title={t("Remove")}
           onClick={onRemove}
           color="danger"
           outline={true}

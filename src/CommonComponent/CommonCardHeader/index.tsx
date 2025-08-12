@@ -24,16 +24,12 @@ const CommonCardHeader: React.FC<CommonCardHeaderProp> = ({
         </h4>
         {onAdd && (
           <Button color="primary" onClick={onAdd}>
-            Add
+            {t("Add")}
           </Button>
         )}
       </div>
 
-      {children && (
-        <div className="w-100">
-          {children}
-        </div>
-      )}
+      {children && <div className="w-100">{children}</div>}
 
       {span && (
         <p className="f-m-light mb-0">
