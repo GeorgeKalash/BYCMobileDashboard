@@ -64,13 +64,11 @@ const UsersPage = () => {
   const formLogicRef = useRef<UsersFormHandle>(null);
 
   const fetchData = async (page = 0) => {
-    // Parse filters.fromCreationDate to Date
     const fromDate = filters.fromCreationDate ? new Date(filters.fromCreationDate) : null;
     const fromCreationDateISO = fromDate
       ? new Date(Date.UTC(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate(), 0, 0, 0, 0)).toISOString()
       : null;
 
-    // Parse filters.toCreationDate to Date
     const toDate = filters.toCreationDate ? new Date(filters.toCreationDate) : null;
     const toCreationDateISO = toDate
       ? new Date(Date.UTC(toDate.getFullYear(), toDate.getMonth(), toDate.getDate(), 23, 59, 59, 999)).toISOString()
