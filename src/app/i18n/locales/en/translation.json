@@ -394,5 +394,13 @@
   "Activate Language": "Activate Language",
   "From Creation Date": "From Creation Date",
   "To Creation Date": "To Creation Date",
-  "Preview": "Preview"
+  "Preview": "Preview",
+  "Select…": "Select...",
+  "Loading…": "Loading...",
+  "No results": "No results",
+  "Required": "Required",
+  "Invalid email address": "Invalid email address",
+  "Select...": "Select...",
+  "Refresh": "Refresh",
+  "Clear": "Clear"
 }

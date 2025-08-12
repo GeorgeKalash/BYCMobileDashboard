@@ -47,7 +47,6 @@ const Languages = () => {
       sessionStorage.setItem("userData", JSON.stringify(userData));
     }
 
-    // Update the body class for layout direction (RTL or LTR)
     if (item.data === "ae") {
       document.body.classList.add("rtl");
       document.body.classList.remove("ltr", "box-layout");
@@ -99,7 +98,7 @@ const Languages = () => {
 
       try {
         const response = await axios.post(
-          "https://deploy.arguserp.net/SS.asmx/setUS",
+          `${process.env.NEXT_PUBLIC_AuthURL1}/SS.asmx/setUS`,
           new URLSearchParams({
             record: JSON.stringify(record),
           }),

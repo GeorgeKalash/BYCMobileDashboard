@@ -397,5 +397,12 @@
   "Activate Language": "تفعيل اللغة",
   "From Creation Date": "من تاريخ الإنشاء",
   "To Creation Date": "إلى تاريخ الإنشاء",
-  "Preview": "معاينة"
+  "Preview": "معاينة",
+  "Loading…": "جاري التحميل...",
+  "No results": "لا توجد نتائج",
+  "Required": "مطلوب",
+  "Invalid email address": "عنوان بريد إلكتروني غير صالح",
+  "Select…": "اختر...",
+  "Refresh": "تحديث",
+  "Clear": "مسح"
 }
