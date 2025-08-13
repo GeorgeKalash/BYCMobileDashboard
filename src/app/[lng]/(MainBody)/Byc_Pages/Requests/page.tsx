@@ -1,207 +1,219 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
-import { Card, CardBody, Col } from "reactstrap";
+import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { Card, CardBody, Col, Row } from "reactstrap";
+import { FormikProps } from "formik";
+import { format, startOfDay, endOfDay } from "date-fns";
 import DataTable from "../../../../../Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedModal from "../../../../../Shared/Components/SharedModal";
+import CustomSelect from "@/Shared/Components/CustomSelect";
+import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
+import SharedButton from "@/Shared/Components/SharedButton";
+import ResourceLookup from "@/Shared/Components/ResourceLookup";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
-import { FormikProps } from "formik";
-import CustomSelect from "@/Shared/Components/CustomSelect";
 import { withRequestTracking } from "@/utils/withRequestTracking";
-
 import formatDate from "@/utils/DateFormatter";
 import RequestsForm from "./Form/RequestsForm";
 
-const Requests = () => {
+type FilterState = {
+  fromDate: string;
+  toDate: string;
+  eventType: 1 | 2 | null;
+  clientId: string | null;
+};
+
+type PaginationState = {
+  pageCount: number;
+  totalRows: number;
+  searchTerm: string;
+};
+
+const PAGE_SIZE = 30;
+
+const Requests: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
-  const dispatch = useAppDispatch();
+  const formikRef = useRef<FormikProps<any>>(null);
 
-  const [paginationState, setPaginationState] = useState({
+  const [filters, setFilters] = useState<FilterState>({
+    fromDate: format(new Date(), "MM-dd-yyyy"),
+    toDate: format(new Date(), "MM-dd-yyyy"),
+    eventType: 1,
+    clientId: null,
+  });
+
+  const [pagination, setPagination] = useState<PaginationState>({
     pageCount: 0,
     totalRows: 0,
     searchTerm: "",
-    eventType: 1 as 1 | 2 | null,
   });
 
   const [data, setData] = useState<any[]>([]);
-  const [modalState, setModalState] = useState({
+  const [modalState, setModalState] = useState<{ open: boolean; row: any | null }>({
     open: false,
-    row: null as any,
+    row: null,
   });
 
-  const formikRef = useRef<FormikProps<any>>(null);
-  const pageSize = 30;
-
-  const fetchData = async () => {
-    const { pageCount, searchTerm, eventType } = paginationState;
-    if (eventType === null) return;
-
-    const startAt = pageCount + 1;
-
-    const result = await withRequestTracking(dispatch, () =>
-      dispatch(
-        getMobileRequest({
-          extension: DashboardMobileRepository.Requests.get,
-          parameters: `_eventType=${eventType}&_startAt=${startAt}&_pageSize=${pageSize}&_filter=${encodeURIComponent(
-            searchTerm
-          )}`,
-        })
+  const toUtcString = useCallback((dateStr: string, isEndOfDay = false) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    const utcDate = isEndOfDay ? endOfDay(date) : startOfDay(date);
+    return new Date(
+      Date.UTC(
+        utcDate.getFullYear(),
+        utcDate.getMonth(),
+        utcDate.getDate(),
+        utcDate.getHours(),
+        utcDate.getMinutes(),
+        utcDate.getSeconds(),
+        utcDate.getMilliseconds()
       )
-    );
+    ).toISOString();
+  }, []);
 
-    const rows = result?.payload?.data?.list;
-    const total = result?.payload?.data?.count;
+  const fetchData = useCallback(
+    async (page = pagination.pageCount) => {
+      if (!filters.eventType) return;
 
-    setData(Array.isArray(rows) ? rows : []);
-    if (typeof total === "number") {
-      setPaginationState((prev) => ({ ...prev, totalRows: total }));
-    }
-  };
+      const startAt = page * PAGE_SIZE;
+      const fromDateUtc = toUtcString(filters.fromDate);
+      const toDateUtc = toUtcString(filters.toDate, true);
+
+      const query = `_eventType=${filters.eventType}&_clientId=${filters.clientId ?? ""}&_startAt=${startAt}&_pageSize=${PAGE_SIZE}` +
+        `&_fromDate=${fromDateUtc}&_toDate=${toDateUtc}` +
+        `&_url=${encodeURIComponent(pagination.searchTerm)}`;
+
+      const result = await withRequestTracking(dispatch, () =>
+        dispatch(
+          getMobileRequest({
+            extension: DashboardMobileRepository.Requests.get,
+            parameters: query,
+          })
+        )
+      );
+
+      const rows = result?.payload?.data?.list ?? [];
+      const total = result?.payload?.data?.count ?? 0;
+
+      setData(rows);
+      setPagination((prev) => ({ ...prev, totalRows: total }));
+    },
+    [dispatch, pagination.searchTerm, pagination.pageCount, toUtcString]
+  );
 
   useEffect(() => {
     fetchData();
-  }, [
-    paginationState.pageCount,
-    paginationState.searchTerm,
-    paginationState.eventType,
-  ]);
+  }, [fetchData]);
 
-  const columns = [
-    {
-      name: t("accountId"),
-      selector: (row: any) => row.accountId?.toString() || "",
-      sortable: true,
-      id: "accountId",
-      width: "120px",
-    },
-    {
-      name: t("clientId"),
-      selector: (row: any) => row.clientId?.toString() || "",
-      sortable: true,
-      id: "clientId",
-      width: "130px",
-    },
-    {
-      name: t("clockStamp"),
-      selector: (row: any) => row.clockStamp,
-      cell: (row: any) =>
-        row.clockStamp ? formatDate(row.clockStamp, "dd/MM/yyyy HH:mm:ss") : "",
-      sortable: true,
-      id: "clockStamp",
-    },
-    {
-      name: t("recordId"),
-      selector: (row: any) => row.recordId?.toString() || "",
-      sortable: true,
-      id: "recordId",
-      width: "130px",
-    },
-    {
-      name: t("requestBody"),
-      selector: (row: any) => row.requestBody?.toString() || "",
-      sortable: true,
-      id: "requestBody",
-    },
-    {
-      name: t("requestType"),
-      selector: (row: any) => row.requestType?.toString() || "",
-      sortable: true,
-      id: "requestType",
-      width: "130px",
-    },
-    {
-      name: t("url"),
-      selector: (row: any) => row.url?.toString() || "",
-      sortable: true,
-      id: "url",
-    },
-    {
-      name: t("userId"),
-      selector: (row: any) => row.userId?.toString() || "",
-      sortable: true,
-      id: "userId",
-      width: "130px",
-    },
-  ];
+  const columns = useMemo(
+    () => [
+      { name: t("accountId"), selector: (row: any) => row.accountId?.toString() ?? "", sortable: true, id: "accountId", width: "120px" },
+      { name: t("clientId"), selector: (row: any) => row.clientId?.toString() ?? "", sortable: true, id: "clientId", width: "130px" },
+      {
+        name: t("clockStamp"),
+        selector: (row: any) => row.clockStamp,
+        cell: (row: any) => (row.clockStamp ? formatDate(row.clockStamp, "dd/MM/yyyy HH:mm:ss") : ""),
+        sortable: true,
+        id: "clockStamp",
+      },
+      { name: t("recordId"), selector: (row: any) => row.recordId?.toString() ?? "", sortable: true, id: "recordId", width: "130px" },
+      { name: t("requestBody"), selector: (row: any) => row.requestBody?.toString() ?? "", sortable: true, id: "requestBody" },
+      { name: t("requestType"), selector: (row: any) => row.requestType?.toString() ?? "", sortable: true, id: "requestType", width: "130px" },
+      { name: t("url"), selector: (row: any) => row.url?.toString() ?? "", sortable: true, id: "url" },
+      { name: t("userId"), selector: (row: any) => row.userId?.toString() ?? "", sortable: true, id: "userId", width: "130px" },
+    ],
+    [t]
+  );
 
-  const handleEventChange = (val: string | number | null) => {
-    const num = Number(val);
-    setPaginationState((prev) => ({
-      ...prev,
-      eventType: [1, 2].includes(num) ? (num as 1 | 2) : null,
-      pageCount: 0,
-    }));
+  const handleFilterChange = (field: keyof FilterState, value: any) => {
+    setFilters((prev) => ({ ...prev, [field]: value }));
+    setPagination((prev) => ({ ...prev, pageCount: 0 }));
   };
 
   const handlePageChange = (startAt: number) => {
-    const newPage = Math.floor(startAt / pageSize);
-    setPaginationState((prev) => ({
-      ...prev,
-      pageCount: newPage,
-    }));
+    setPagination((prev) => ({ ...prev, pageCount: Math.floor(startAt / PAGE_SIZE) }));
   };
 
   const handleSearchChange = (val: string) => {
-    setPaginationState((prev) => ({
-      ...prev,
-      searchTerm: val,
-      pageCount: 0,
-    }));
+    setPagination((prev) => ({ ...prev, searchTerm: val, pageCount: 0 }));
   };
 
-  const openModal = (row: any = null) => {
-    setModalState({
-      open: true,
-      row,
-    });
-  };
-
-  const handleModalClose = () => {
-    setModalState({
-      open: false,
-      row: null,
-    });
+  const openModal = (row: any = null) => setModalState({ open: true, row });
+  const closeModal = () => {
+    setModalState({ open: false, row: null });
     fetchData();
   };
 
-  const handleSubmit = () => {
-    formikRef.current?.submitForm();
-  };
+  const handleSubmit = () => formikRef.current?.submitForm();
 
   return (
     <Col xs="12">
       <Card>
         <CommonCardHeader title={t("Requests")}>
-          <div style={{ minWidth: 250, maxWidth: 400, width: "100%" }}>
-            <CustomSelect
-              name="eventType"
-              dataSetId={159}
-              valueKey="key"
-              labelKey="value"
-              value={paginationState.eventType ?? ""}
-              onChange={handleEventChange}
-            />
-          </div>
+          <Row className="align-items-center">
+            <Col xs="2">
+              <CustomDatePicker
+                name="fromDate"
+                label={t("From Date")}
+                value={filters.fromDate}
+                onChange={(val) => handleFilterChange("fromDate", val || null)}
+              />
+            </Col>
+            <Col xs="2">
+              <CustomDatePicker
+                name="toDate"
+                label={t("To Date")}
+                value={filters.toDate}
+                onChange={(val) => handleFilterChange("toDate", val || null)}
+              />
+            </Col>
+            <Col xs="2">
+              <CustomSelect
+                name="eventType"
+                label={t("eventType")}
+                dataSetId={159}
+                valueKey="key"
+                labelKey="value"
+                value={filters.eventType ?? ""}
+                onChange={(val) => handleFilterChange("eventType", [1, 2].includes(Number(val)) ? Number(val) : null)}
+              />
+            </Col>
+            <Col xs="2">
+              <ResourceLookup
+                name="clientId"
+                label={t("Phone Number")}
+                endpoint={DashboardMobileRepository.mobileUser.snapshot}
+                searchParamKey="_username"
+                columns={[{ key: "username", label: "Phone Number" }]}
+                minChars={3}
+                onChange={(selectedUser) => handleFilterChange("clientId", selectedUser?.clientId||0)}
+                value={filters.clientId}
+              />
+            </Col>
+            <Col xs="2" className="d-flex align-items-center">
+              <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
+            </Col>
+          </Row>
         </CommonCardHeader>
         <CardBody>
           <DataTable
             data={data}
             columns={columns}
             pagination
-            serverPagination={true}
-            totalRows={paginationState.totalRows}
-            pageSize={pageSize}
+            serverPagination
+            totalRows={pagination.totalRows}
+            pageSize={PAGE_SIZE}
             onPageChange={handlePageChange}
-            Search={true}
+            Search
             searchType="server"
             searchableColumns={["requestBody", "url", "requestType"]}
             onSearchChange={handleSearchChange}
-            showActions={true}
+            showActions
             onEdit={openModal}
           />
         </CardBody>
@@ -209,7 +221,7 @@ const Requests = () => {
 
       <SharedModal
         visible={modalState.open}
-        onClose={handleModalClose}
+        onClose={closeModal}
         title={t("Read Request")}
         width="800px"
         height="80vh"

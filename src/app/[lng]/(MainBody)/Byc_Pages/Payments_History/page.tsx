@@ -27,22 +27,22 @@ const PaymentsHistoryPage = () => {
     totalRows: 0,
   });
   const pageSize = 10;
+
   const [filters, setFilters] = useState({
-    fromDate: "",
-    toDate: "",
+    fromTrxDate: "",
+    toTrxDate: "",
     paymentGatewayId: "",
     paymentStatus: "",
     cellphone: "",
   });
 
   const fetchData = async (page = paginationState.pageCount) => {
-    // Convert fromDate to 00:00:00.000 UTC ISO string
-    const fromDateUtc = filters.fromDate
+    const fromTrxDateUtc = filters.fromTrxDate
       ? new Date(
           Date.UTC(
-            new Date(filters.fromDate).getFullYear(),
-            new Date(filters.fromDate).getMonth(),
-            new Date(filters.fromDate).getDate(),
+            new Date(filters.fromTrxDate).getFullYear(),
+            new Date(filters.fromTrxDate).getMonth(),
+            new Date(filters.fromTrxDate).getDate(),
             0,
             0,
             0,
@@ -51,13 +51,12 @@ const PaymentsHistoryPage = () => {
         ).toISOString()
       : "";
 
-    // Convert toDate to 23:59:59.999 UTC ISO string
-    const toDateUtc = filters.toDate
+    const toTrxDateUtc = filters.toTrxDate
       ? new Date(
           Date.UTC(
-            new Date(filters.toDate).getFullYear(),
-            new Date(filters.toDate).getMonth(),
-            new Date(filters.toDate).getDate(),
+            new Date(filters.toTrxDate).getFullYear(),
+            new Date(filters.toTrxDate).getMonth(),
+            new Date(filters.toTrxDate).getDate(),
             23,
             59,
             59,
@@ -71,8 +70,8 @@ const PaymentsHistoryPage = () => {
       _pageSize: pageSize.toString(),
     });
 
-    if (fromDateUtc) queryParams.append("_fromDate", fromDateUtc);
-    if (toDateUtc) queryParams.append("_toDate", toDateUtc);
+    if (fromTrxDateUtc) queryParams.append("_fromTrxDate", fromTrxDateUtc);
+    if (toTrxDateUtc) queryParams.append("_toTrxDate", toTrxDateUtc);
     if (filters.paymentGatewayId)
       queryParams.append("_paymentGatewayId", filters.paymentGatewayId);
     if (filters.paymentStatus)
@@ -112,6 +111,18 @@ const PaymentsHistoryPage = () => {
       width: "100px",
     },
     {
+      name: t("Receipt Ref"),
+      selector: (row: any) => row.receiptRef ?? "",
+      id: "receiptRef",
+      width: "100px",
+    },
+    {
+      name: t("owo Ref"),
+      selector: (row: any) => row.owoRef ?? "",
+      id: "owoRef",
+      width: "130px",
+    },
+    {
       name: t("Card Holder Name"),
       selector: (row: any) => row.clientName,
       id: "CardHolderName",
@@ -126,14 +137,18 @@ const PaymentsHistoryPage = () => {
     {
       name: t("Transaction Date"),
       selector: (row: any) =>
-        row.transactionDate ? formatDate(row.transactionDate, "dd/MM/yyyy") : "",
+        row.transactionDate
+          ? formatDate(row.transactionDate, "dd/MM/yyyy HH:mm")
+          : "",
       id: "TransactionDate",
       width: "150px",
     },
     {
       name: t("Posting Date"),
       selector: (row: any) =>
-        row.postingDate ? formatDate(row.postingDate, "dd/MM/yyyy") : "",
+        row.postingDate
+          ? formatDate(row.postingDate, "dd/MM/yyyy HH:mm")
+          : "",
       sortable: true,
       id: "PostingDate",
       width: "175px",
@@ -155,17 +170,24 @@ const PaymentsHistoryPage = () => {
     },
     {
       name: t("Gateway Type"),
-      selector: (row: any) =>
-        row.paymentGatewayType === 1
-          ? "HyperPay"
-          : row.paymentGatewayType === 2
-          ? "Moyasar"
-          : "Unknown",
+      selector: (row: any) => row.pgName,
       id: "paymentGatewayType",
       width: "130px",
     },
     {
-      name: t("IBAN"),
+      name: t("Transaction ID"),
+      selector: (row: any) => row.transactionId ?? "",
+      id: "transactionId",
+      width: "200px",
+    },
+    {
+      name: t("Transaction Ref"),
+      selector: (row: any) => row.transactionRef ?? "",
+      id: "transactionRef",
+      width: "200px",
+    },
+    {
+      name: t("Card Number"),
       selector: (row: any) => row.iban,
       id: "iban",
       width: "200px",
@@ -200,30 +222,6 @@ const PaymentsHistoryPage = () => {
       id: "network",
       width: "150px",
     },
-    {
-      name: t("Receipt Ref"),
-      selector: (row: any) => row.receiptRef ?? "",
-      id: "receiptRef",
-      width: "100px",
-    },
-    {
-      name: t("owo Ref"),
-      selector: (row: any) => row.owoRef ?? "",
-      id: "owoRef",
-      width: "130px",
-    },
-    {
-      name: t("Transaction ID"),
-      selector: (row: any) => row.transactionId ?? "",
-      id: "transactionId",
-      width: "200px",
-    },
-    {
-      name: t("Transaction Ref"),
-      selector: (row: any) => row.transactionRef ?? "",
-      id: "transactionRef",
-      width: "200px",
-    },
   ];
 
   const handlePageChange = (startAt: number) => {
@@ -237,25 +235,25 @@ const PaymentsHistoryPage = () => {
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Payment History")}></CommonCardHeader>
-        <Row className="w-100 px-2 ">
+        <CommonCardHeader title={t("Payment History")} />
+        <Row className="w-100 px-2">
           <Col md="2">
             <CustomDatePicker
-              name="fromDate"
+              name="fromTrxDate"
               label={t("From Date")}
-              value={filters.fromDate}
+              value={filters.fromTrxDate}
               onChange={(val) =>
-                val && setFilters((prev) => ({ ...prev, fromDate: val }))
+                setFilters((prev) => ({ ...prev, fromTrxDate: val || "" }))
               }
             />
           </Col>
           <Col md="2">
             <CustomDatePicker
-              name="toDate"
+              name="toTrxDate"
               label={t("To Date")}
-              value={filters.toDate}
+              value={filters.toTrxDate}
               onChange={(val) =>
-                val && setFilters((prev) => ({ ...prev, toDate: val }))
+                setFilters((prev) => ({ ...prev, toTrxDate: val || "" }))
               }
             />
           </Col>
@@ -270,7 +268,7 @@ const PaymentsHistoryPage = () => {
               onChange={(val) =>
                 setFilters((prev) => ({
                   ...prev,
-                  paymentGatewayId: val?.toString() ?? "",
+                  paymentGatewayId: val?.toString() || "",
                 }))
               }
             />
@@ -286,7 +284,7 @@ const PaymentsHistoryPage = () => {
               onChange={(val) =>
                 setFilters((prev) => ({
                   ...prev,
-                  paymentStatus: val?.toString() ?? "",
+                  paymentStatus: val?.toString() || "",
                 }))
               }
             />
@@ -299,16 +297,16 @@ const PaymentsHistoryPage = () => {
               searchParamKey="_username"
               columns={[{ key: "username", label: "Phone Number" }]}
               minChars={3}
-              onChange={(selectedUser) => {
+              onChange={(selectedUser) =>
                 setFilters((prev) => ({
                   ...prev,
                   cellphone: selectedUser?.username || "",
-                }));
-              }}
+                }))
+              }
               value={filters.cellphone}
             />
           </Col>
-          <Col md="2" className="d-flex align-items-center">
+          <Col md="2" className="d-flex align-items-center gap-2">
             <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
           </Col>
         </Row>

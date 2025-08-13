@@ -315,6 +315,7 @@
   "New Clients": "العملاء الجدد",
   "Online Clients": "العملاء المتصلون",
   "Inactive Clients": "العملاء غير النشطين",
+  "guestClients": "العملاء الضيوف",
   "Outward Transfer Amount": "مبلغ التحويل الصادر",
   "Outward Transfer Count": "عدد التحويلات الصادرة",
   "Paid Return Percentage": "نسبة المرتجعات المدفوعة",
@@ -416,7 +417,6 @@
   "View Notification": "عرض الإشعارات",
   "From Birth Date": "من تاريخ الميلاد",
   "To Birth Date": "إلى تاريخ الميلاد",
-
   "Search by ID": "بحث برقم الهوية",
   "Sponsor Name": "اسم الكفيل",
   "Enter Sponsor Name": "أدخل اسم الكفيل",
@@ -427,5 +427,7 @@
   "Drag to reorder": "اسحب لإعادة الترتيب",
   "Add Link": "إضافة رابط",
   "Remove": "حذف",
-  "Add FAQ": "أضف الأسئلة الشائعة"
+  "Add FAQ": "أضف الأسئلة الشائعة",
+  "Card Number": "رقم البطاقة",
+  "islastTermsConfirm": "تم تأكيد الشروط الأخيرة؟"
 }

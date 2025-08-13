@@ -4,7 +4,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { Formik, Form, FormikHelpers, FormikProps } from "formik";
 import { Col, Row, Card, CardBody, CardTitle } from "reactstrap";
 import * as Yup from "yup";
-
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import {
@@ -13,7 +12,6 @@ import {
 } from "@/Redux/Reducers/RequestThunks";
 import { NotificationAlertRepository } from "@/Repositories/NotificatioAlert";
 import { NotificationMobileRepository } from "@/Repositories/NotificationMobileRepository";
-
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomTextarea from "@/Shared/Components/CustomTextarea";
 import { showToast } from "@/Shared/Components/showToast";
@@ -154,7 +152,7 @@ const NotificationForm = ({
       onSubmit={handleSubmit}
       innerRef={formikRef}
     >
-      {({ isSubmitting }) => (
+      {() => (
         <Form>
           <Row className="gy-4">
             {supportedLanguagesRef.current.map((lang) => (

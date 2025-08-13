@@ -10,7 +10,7 @@ import { FormikProps } from "formik";
 import { useTranslation } from "@/app/i18n/client";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import CustomInput from "@/Shared/Components/CustomInput";
-import {  Col, Row } from "reactstrap";
+import { Col, Row } from "reactstrap";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 import { withRequestTracking } from "@/utils/withRequestTracking";
@@ -19,6 +19,9 @@ import UserInfoForm from "./UserInfoForm";
 import OTPForm from "./OTPForm";
 import UserControlForm from "./UserControlForm";
 import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
+import CustomDateTimePicker, {
+  parseDateTime,
+} from "@/Shared/Components/CustomDateTimePicker";
 
 interface FormValues {
   username: string;
@@ -44,6 +47,7 @@ const UsersForm = forwardRef<
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
+
   const [showMoreInfoModal, setShowMoreInfoModal] = useState(false);
   const [showUserInfoModal, setShowUserInfoModal] = useState(false);
   const [showUserControlModal, setShowUserControlModal] = useState(false);
@@ -53,13 +57,13 @@ const UsersForm = forwardRef<
 
   useEffect(() => {
     if (!user) return;
-
     setInitialValues({
       username: user?.clientMaster?.cellPhone ?? "",
       isInactive: user?.clientMaster?.status === 0,
       reason: user?.clientMaster?.inactiveReason ?? "",
     });
   }, [user]);
+
   useEffect(() => {
     if (!initialValues?.username) return;
     fetchUserData();
@@ -81,18 +85,10 @@ const UsersForm = forwardRef<
   };
 
   useImperativeHandle(ref, () => ({
-    logFormValues: () => {
-      setShowMoreInfoModal(true);
-    },
-    openUserInfoModal: () => {
-      setShowUserInfoModal(true);
-    },
-    openUserControlModal: () => {
-      setShowUserControlModal(true);
-    },
-    openOtpModal: () => {
-      setShowOtpModal(true);
-    },
+    logFormValues: () => setShowMoreInfoModal(true),
+    openUserInfoModal: () => setShowUserInfoModal(true),
+    openUserControlModal: () => setShowUserControlModal(true),
+    openOtpModal: () => setShowOtpModal(true),
   }));
 
   if (!initialValues) return null;
@@ -165,37 +161,67 @@ const UsersForm = forwardRef<
           />
         </Col>
         <Col md="6">
-          <SharedCheckbox
-            label={t("isSuspicious")}
-            checked={userData?.isSuspicious}
-            disabled={true}
+          <CustomDateTimePicker
+            label={t("lastTermsConfirmation")}
+            value={
+              (() => {
+                const parsed = parseDateTime(userData?.lastTermsConfirmation);
+                return parsed && !isNaN(parsed.getTime())
+                  ? parsed.toISOString()
+                  : null;
+              })()
+            }
+            readOnly
           />
         </Col>
-        <Col md="6">
+        <Col md="6"></Col>
+        <Col md="4">
           <SharedCheckbox
-            label={t("lastTermsConfirmation")}
-            checked={userData?.lastTermsConfirmation}
-            disabled={true}
+            label={t("isSuspicious")}
+            checked={!!userData?.isSuspicious}
+            disabled
+          />
+        </Col>
+        <Col md="4">
+          <SharedCheckbox
+            label={t("isInactive")}
+            checked={!!userData?.isInactive}
+            disabled
+          />
+        </Col>
+        <Col md="4">
+          <SharedCheckbox
+            label={t("islastTermsConfirm")}
+            checked={!!userData?.islastTermsConfirm}
+            disabled
           />
         </Col>
       </Row>
+
       <TransactionLogForm
         visible={showMoreInfoModal}
         onClose={() => setShowMoreInfoModal(false)}
         phoneNumber={initialValues?.username}
       />
+
       <UserInfoForm
         visible={showUserInfoModal}
         onClose={() => setShowUserInfoModal(false)}
         userData={userData}
       />
+
       <UserControlForm
         visible={showUserControlModal}
         onClose={() => setShowUserControlModal(false)}
+        onSuccessSubmit={() => {
+          fetchUserData();
+          window.dispatchEvent(new Event("refreshUsersTable"));
+        }}
         phoneNumber={initialValues?.username}
         isInactive={user?.user?.isInactive ?? false}
         inactiveReason={user?.user?.inactiveReason ?? ""}
       />
+
       <OTPForm
         visible={showOtpModal}
         onClose={() => setShowOtpModal(false)}

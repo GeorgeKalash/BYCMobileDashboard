@@ -17,6 +17,7 @@ import * as Yup from "yup";
 interface UserControlFormProps {
   visible: boolean;
   onClose: () => void;
+  onSuccessSubmit?: () => void; // ✅ new prop
   phoneNumber?: string;
   isInactive?: boolean;
   inactiveReason?: string;
@@ -25,6 +26,7 @@ interface UserControlFormProps {
 const UserControlForm: React.FC<UserControlFormProps> = ({
   visible,
   onClose,
+  onSuccessSubmit,
   phoneNumber,
   isInactive = false,
   inactiveReason = "",
@@ -51,6 +53,11 @@ const UserControlForm: React.FC<UserControlFormProps> = ({
     );
 
     showToast("success");
+
+    if (onSuccessSubmit) {
+      onSuccessSubmit(); // ✅ trigger refresh in parent
+    }
+
     onClose();
   };
 
@@ -80,11 +87,7 @@ const UserControlForm: React.FC<UserControlFormProps> = ({
             <Form>
               <Row>
                 <Col md={6}>
-                  <CustomInput
-                    name="username"
-                    label={t("username")}
-                    readOnly
-                  />
+                  <CustomInput name="username" label={t("username")} readOnly />
                 </Col>
                 <Col md={6} className="d-flex align-items-center">
                   <div className="w-100">
@@ -99,11 +102,7 @@ const UserControlForm: React.FC<UserControlFormProps> = ({
                   </div>
                 </Col>
                 <Col md={12}>
-                  <CustomTextarea
-                    name="reason"
-                    label={t("reason")}
-                    rows={3}
-                  />
+                  <CustomTextarea name="reason" label={t("reason")} rows={3} />
                 </Col>
               </Row>
             </Form>

@@ -84,8 +84,8 @@ const ActivateLanguageForm = ({
                 <SharedCheckbox
                   label={t("isInactive")}
                   checked={values.isInactive}
-                  onChange={() =>
-                    setFieldValue("isInactive", values.isInactive)
+                  onChange={(checked) =>
+                    setFieldValue("isInactive", checked)
                   }
                 />
               </Col>

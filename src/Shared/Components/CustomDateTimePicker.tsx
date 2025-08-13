@@ -5,10 +5,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Calendar, XCircle } from "react-feather";
 
 interface CustomDateTimePickerProps {
-  name: string;
+  name?: string;
   label?: string;
   isRequired?: boolean;
-  value?: string | null; // nullable now
+  value?: string | null;
   onChange?: (value: string | null) => void;
   readOnly?: boolean;
   minDate?: Date;
@@ -32,16 +32,25 @@ const parseDateTime = (
   mode: "dateTime" | "monthYear" = "dateTime"
 ): Date | null => {
   if (!value) return null;
+
+  // Try native ISO parse first
+  const isoDate = new Date(value);
+  if (!isNaN(isoDate.getTime())) return isoDate;
+
+  // Fallback to manual parsing
   if (mode === "monthYear") {
     const [month, year] = value.split("-").map(Number);
     if (!month || !year) return null;
-    return new Date(year, month - 1, 1);
+    const date = new Date(year, month - 1, 1);
+    return isNaN(date.getTime()) ? null : date;
   }
+
   const [datePart, timePart] = value.split(" ");
   if (!datePart) return null;
   const [month, day, year] = datePart.split("-").map(Number);
   const [hours, minutes] = timePart ? timePart.split(":").map(Number) : [0, 0];
-  return new Date(year, month - 1, day, hours, minutes);
+  const date = new Date(year, month - 1, day, hours, minutes);
+  return isNaN(date.getTime()) ? null : date;
 };
 
 const renderMonthContent = (month: number) => (
@@ -167,7 +176,6 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
         showPopperArrow={false}
         popperPlacement="bottom-start"
         customInput={<CustomInput />}
-        isClearable // allow manual clear from input
         popperModifiers={[
           {
             name: "zIndex",

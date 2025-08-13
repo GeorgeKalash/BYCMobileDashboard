@@ -160,7 +160,7 @@ const Notification = () => {
     {
       name: t("Date"),
       selector: (row: any) =>
-        row.date ? formatDate(row.date, "dd/MM/yyyy") : "-",
+        row.date ? formatDate(row.date, "dd/MM/yyyy HH:mm") : "-",
       sortable: true,
       id: "Date",
     },

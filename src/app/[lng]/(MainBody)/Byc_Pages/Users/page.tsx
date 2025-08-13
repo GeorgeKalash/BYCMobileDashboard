@@ -16,7 +16,6 @@ import SharedButton from "@/Shared/Components/SharedButton";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 import CustomSelect from "@/Shared/Components/CustomSelect";
-import { format } from "date-fns";
 import CustomDateTimePicker, { parseDateTime } from "@/Shared/Components/CustomDateTimePicker";
 
 const UsersPage = () => {
@@ -24,39 +23,25 @@ const UsersPage = () => {
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
 
-  const [data, setData] = useState<{ key: string; value: string }[]>([]);
-  const [modalState, setModalState] = useState({
-    open: false,
-    row: null as any,
-  });
+  const [data, setData] = useState<any[]>([]);
+  const [modalState, setModalState] = useState({ open: false, row: null as any });
+  const [paginationState, setPaginationState] = useState({ pageCount: 0, totalRows: 0 });
 
-  const [paginationState, setPaginationState] = useState({
-    pageCount: 0,
-    totalRows: 0,
-  });
-
-  const [filters, setFilters] = useState<{
-    fromCreationDate: string;
-    toCreationDate: string;
-    name: string;
-    phoneNumber: string;
-    idNumber: string;
-    nationality: string;
-    cityId: number | null;
-    street: string;
-    lastLogin: string | null;
-    countryId: number | null;
-  }>({
-    fromCreationDate: format(new Date(), "yyyy-MM-dd"),
-    toCreationDate: format(new Date(), "yyyy-MM-dd"),
-    name: "",
+  const [filters, setFilters] = useState({
+    fromCreationDate: "",
+    toCreationDate: "",
+    fromBirthDate: "",
+    toBirthDate: "",
+    username: "",
     phoneNumber: "",
-    idNumber: "",
-    nationality: "",
-    cityId: null,
+    nationalityId: null as number | null,
+    idNo: "",
+    sponsors: "",
+    cityId: null as number | null,
     street: "",
-    lastLogin: null,
-    countryId: null,
+    lastLogin: "",
+    userMode: null as number | null,
+    countryId: null as number | null,
   });
 
   const pageSize = 30;
@@ -64,30 +49,22 @@ const UsersPage = () => {
   const formLogicRef = useRef<UsersFormHandle>(null);
 
   const fetchData = async (page = 0) => {
-    const fromDate = filters.fromCreationDate ? new Date(filters.fromCreationDate) : null;
-    const fromCreationDateISO = fromDate
-      ? new Date(Date.UTC(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate(), 0, 0, 0, 0)).toISOString()
-      : null;
-
-    const toDate = filters.toCreationDate ? new Date(filters.toCreationDate) : null;
-    const toCreationDateISO = toDate
-      ? new Date(Date.UTC(toDate.getFullYear(), toDate.getMonth(), toDate.getDate(), 23, 59, 59, 999)).toISOString()
-      : null;
-
     const payload = {
       startAt: page,
       pageSize,
       filters: {
-        fromCreationDate: fromCreationDateISO,
-        toCreationDate: toCreationDateISO,
-        username: filters.phoneNumber || null,
-        nationalityId: filters.nationality ? Number(filters.nationality) : null,
-        idNo: filters.idNumber || null,
-        cityId: filters.cityId || null,
+        fromBirthDate: filters.fromBirthDate ? new Date(filters.fromBirthDate).toISOString() : null,
+        toBirthDate: filters.toBirthDate ? new Date(filters.toBirthDate).toISOString() : null,
+        username: filters.username || null,
+        nationalityId: filters.nationalityId ?? null,
+        idNo: filters.idNo || null,
+        sponsors: filters.sponsors ? [filters.sponsors] : [],
+        cityId: filters.cityId ?? null,
         street: filters.street || "",
         lastLogin: filters.lastLogin ? parseDateTime(filters.lastLogin)?.toISOString() : null,
-        fromBirthDate: null,
-        toBirthDate: null,
+        fromCreationDate: filters.fromCreationDate ? new Date(filters.fromCreationDate).toISOString() : null,
+        toCreationDate: filters.toCreationDate ? new Date(filters.toCreationDate).toISOString() : null,
+        userMode: filters.userMode ?? null,
       },
     };
 
@@ -113,15 +90,18 @@ const UsersPage = () => {
     fetchData(paginationState.pageCount);
   }, [paginationState.pageCount]);
 
+  useEffect(() => {
+    const refreshHandler = () => fetchData(paginationState.pageCount);
+    window.addEventListener("refreshUsersTable", refreshHandler);
+    return () => window.removeEventListener("refreshUsersTable", refreshHandler);
+  }, [paginationState.pageCount]);
+
   const handleFilterChange = (field: string, value: string | number | null) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
   const handlePageChange = (startAt: number) => {
-    setPaginationState((prev) => ({
-      ...prev,
-      pageCount: startAt,
-    }));
+    setPaginationState((prev) => ({ ...prev, pageCount: startAt }));
   };
 
   const openModal = (row: any = null) => {
@@ -133,21 +113,10 @@ const UsersPage = () => {
     fetchData(paginationState.pageCount);
   };
 
-  const handleOTPPress = () => {
-    formLogicRef.current?.openOtpModal();
-  };
-
-  const handleInfoClick = () => {
-    formLogicRef.current?.logFormValues();
-  };
-
-  const handleUserInfoPress = () => {
-    formLogicRef.current?.openUserInfoModal();
-  };
-
-  const handleUserControlPress = () => {
-    formLogicRef.current?.openUserControlModal();
-  };
+  const handleOTPPress = () => formLogicRef.current?.openOtpModal();
+  const handleInfoClick = () => formLogicRef.current?.logFormValues();
+  const handleUserInfoPress = () => formLogicRef.current?.openUserInfoModal();
+  const handleUserControlPress = () => formLogicRef.current?.openUserControlModal();
 
   const columns = [
     { name: t("Name"), selector: (row: any) => row.clientMaster?.name ?? "", sortable: true },
@@ -178,7 +147,7 @@ const UsersPage = () => {
                 name="fromCreationDate"
                 label={t("From Creation Date")}
                 value={filters.fromCreationDate}
-                onChange={(val) => setFilters((p) => ({ ...p, fromCreationDate: val || "" }))}
+                onChange={(val) => handleFilterChange("fromCreationDate", val || "")}
               />
             </Col>
             <Col>
@@ -186,7 +155,7 @@ const UsersPage = () => {
                 name="toCreationDate"
                 label={t("To Creation Date")}
                 value={filters.toCreationDate}
-                onChange={(val) => setFilters((p) => ({ ...p, toCreationDate: val || "" }))}
+                onChange={(val) => handleFilterChange("toCreationDate", val || "")}
               />
             </Col>
             <Col>
@@ -195,9 +164,7 @@ const UsersPage = () => {
                 label={t("Phone Number")}
                 placeholder={t("Search by Phone Number")}
                 value={filters.phoneNumber}
-                onChange={(e) =>
-                  handleFilterChange("phoneNumber", e.target.value.replace(/\D/g, ""))
-                }
+                onChange={(e) => handleFilterChange("username", e.target.value.replace(/\D/g, ""))}
               />
             </Col>
             <Col>
@@ -205,35 +172,35 @@ const UsersPage = () => {
                 name="idNumber"
                 label={t("ID Number")}
                 placeholder={t("Search by ID Number")}
-                value={filters.idNumber}
-                onChange={(e) => handleFilterChange("idNumber", e.target.value.replace(/\D/g, ""))}
+                value={filters.idNo}
+                onChange={(e) => handleFilterChange("idNo", e.target.value.replace(/\D/g, ""))}
               />
             </Col>
             <Col>
               <CustomInput
                 name="street"
-                label={t("street")}
+                label={t("Street")}
                 placeholder={t("Search by Street")}
                 value={filters.street}
                 onChange={(e) => handleFilterChange("street", e.target.value)}
               />
             </Col>
           </Row>
-          <Row className="w-100">
+          <Row className="w-100 mt-2">
             <Col>
               <CustomDateTimePicker
                 name="lastLogin"
                 label={t("Last Login")}
                 value={filters.lastLogin}
-                onChange={(val) => setFilters((p) => ({ ...p, lastLogin: val || "" }))}
+                onChange={(val) => handleFilterChange("lastLogin", val || "")}
               />
             </Col>
             <Col>
               <CustomSelect
                 name="nationality"
                 label={t("Nationality")}
-                value={filters.nationality}
-                onChange={(val) => handleFilterChange("nationality", val ?? "")}
+                value={filters.nationalityId ?? ""}
+                onChange={(val) => handleFilterChange("nationalityId", val ?? null)}
                 endpointId={DashboardMobileRepository.country.getall}
                 labelKey="name"
                 valueKey="recordId"
@@ -243,9 +210,9 @@ const UsersPage = () => {
               <CustomSelect
                 name="country"
                 label={t("Country Of Residence")}
-                value={filters.countryId}
+                value={filters.countryId ?? ""}
                 onChange={(val) => {
-                  handleFilterChange("countryId", val || null);
+                  handleFilterChange("countryId", val ?? null);
                   handleFilterChange("cityId", null);
                 }}
                 endpointId={DashboardMobileRepository.country.getall}
@@ -256,9 +223,9 @@ const UsersPage = () => {
             <Col>
               <CustomSelect
                 name="city"
-                label={t("city")}
-                value={filters.cityId}
-                onChange={(val) => handleFilterChange("cityId", val ?? "")}
+                label={t("City")}
+                value={filters.cityId ?? ""}
+                onChange={(val) => handleFilterChange("cityId", val ?? null)}
                 endpointId={DashboardMobileRepository.city.getall}
                 parameters={`_countryId=${filters.countryId}`}
                 readOnly={!filters.countryId}
@@ -266,7 +233,18 @@ const UsersPage = () => {
                 valueKey="recordId"
               />
             </Col>
-            <Col className="d-flex align-items-center">
+            <Col md="2">
+              <CustomSelect
+                name="userMode"
+                label={t("User Mode")}
+                dashboardDatasetId={3}
+                valueKey="key"
+                labelKey="value"
+                value={filters.userMode ?? undefined}
+                onChange={(val) => handleFilterChange("userMode", val ?? null)}
+              />
+            </Col>
+            <Col md="1" className="d-flex align-items-center">
               <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
             </Col>
           </Row>
@@ -281,7 +259,7 @@ const UsersPage = () => {
             pageSize={pageSize}
             onPageChange={handlePageChange}
             showActions
-            onEdit={(row) => openModal(row)}
+            onEdit={openModal}
           />
         </CardBody>
       </Card>
@@ -290,7 +268,7 @@ const UsersPage = () => {
         onClose={handleModalClose}
         title={t("User")}
         width="50vw"
-        height="45vh"
+        height="47vh"
         onInfoClick={handleInfoClick}
         footerActions={
           <>

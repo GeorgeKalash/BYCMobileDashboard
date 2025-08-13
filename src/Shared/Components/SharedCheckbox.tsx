@@ -1,4 +1,5 @@
 "use client";
+
 import React, {
   useState,
   useEffect,
@@ -72,6 +73,7 @@ export const SharedCheckbox = forwardRef<HTMLInputElement, SharedCheckboxProps>(
     );
   }
 );
+
 SharedCheckbox.displayName = "SharedCheckbox";
 
 type CheckboxOption = {
@@ -106,12 +108,13 @@ export const SharedCheckboxGroup: React.FC<SharedCheckboxGroupProps> = ({
     ) {
       setSelected(selectedValues);
     }
-  }, [selectedValues]);
+  }, [selectedValues, selected]);
 
   const handleCheckboxChange = (value: string, checked: boolean) => {
     const updated = checked
       ? [...selected, value]
       : selected.filter((v) => v !== value);
+
     setSelected(updated);
     onChange?.(updated);
   };
@@ -167,6 +170,5 @@ export const VariationCheckbox: React.FC<VariationCheckboxProps> = ({
       <h6 className="sub-title mb-3">{ChooseActivities}</h6>
       {data.map(renderCheckbox)}
     </div>
-           
   );
 };

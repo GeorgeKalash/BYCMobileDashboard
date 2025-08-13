@@ -215,6 +215,7 @@
   "newClients": "New Clients",
   "onlineClients": "Online Clients",
   "inactiveClients": "Inactive Clients",
+  "guestClients": "Guest Clients",
   "Maintenance Mode": "Maintenance Mode",
   "Enable Maintenance Mode": "Enable Maintenance Mode",
   "Payment Methods": "Payment Methods",
@@ -424,5 +425,7 @@
   "Drag to reorder": "اسحب لإعادة الترتيب",
   "Add Link": "إضافة رابط",
   "Remove": "حذف",
-  "Add FAQ": "Add FAQ"
+  "Add FAQ": "Add FAQ",
+  "Card Number": "Card Number",
+  "islastTermsConfirm": "Is Last Terms Confirmed"
 }
