@@ -1,7 +1,7 @@
 import { MenuItem } from "@/Types/LayoutTypes";
 
 export const MenuList: MenuItem[] | undefined = [
-   {
+  {
     title: "Navigation Menu",
     menucontent: "BYC Pages to use",
     lanClass: "lan-1",
@@ -46,7 +46,7 @@ export const MenuList: MenuItem[] | undefined = [
             path: "/Byc_Pages/Notification_Group",
             type: "link",
             title: "Notification Group",
-          },  
+          },
           {
             path: "/Byc_Pages/Notification_Alert",
             type: "link",
@@ -89,6 +89,11 @@ export const MenuList: MenuItem[] | undefined = [
             title: "Payments History",
           },
         ],
+      },
+      {
+        path: "/Byc_Pages/Theme_Selection",
+        type: "link",
+        title: "Theme Page",
       },
       {
         path: "/Byc_Pages/Language_Selection",
