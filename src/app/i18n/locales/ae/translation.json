@@ -429,5 +429,6 @@
   "Remove": "حذف",
   "Add FAQ": "أضف الأسئلة الشائعة",
   "Card Number": "رقم البطاقة",
-  "islastTermsConfirm": "تم تأكيد الشروط الأخيرة؟"
+  "islastTermsConfirm": "تم تأكيد الشروط الأخيرة؟",
+  "OnlineStatus": "حالة الاتصال"
 }

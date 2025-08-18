@@ -118,20 +118,18 @@ const withLoading = async (
       "Unknown error occurred";
 
     if (throwError) throw error;
-
     dispatch(setError(message));
     return null;
-  } finally {
-    dispatch(decrementRequests());
-  }
-};
+    } finally {
+      dispatch(decrementRequests());
+    }
+  };
 
-
-export const getRequest = createAsyncThunk<
-  any,
-  RequestProps,
-  { state: RootState }
->("request/getRequest", async (body, { getState, dispatch }) => {
+  export const getRequest = createAsyncThunk<
+    any,
+    RequestProps,
+    { state: RootState }
+  >("request/getRequest", async (body, { getState, dispatch }) => {
   const { user } = getState().authSlice;
   const token = await dispatch(getAccessToken()).unwrap();
   const apiUrl = localStorage.getItem("apiUrl") || "";

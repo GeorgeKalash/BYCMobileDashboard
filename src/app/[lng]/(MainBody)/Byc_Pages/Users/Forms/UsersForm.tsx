@@ -155,7 +155,7 @@ const UsersForm = forwardRef<
         <Col md="6">
           <CustomInput
             name="status"
-            label={t("Status")}
+            label={t("OnlineStatus")}
             value={user?.clientMaster?.statusName || ""}
             readOnly
           />

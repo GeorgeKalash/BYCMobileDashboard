@@ -22,9 +22,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning={true}>
         <NoSsr>
           <MainProvider>
-            <ToastContainer />
             <GlobalErrorBoundary>
               {children}
+              <ToastContainer />
             </GlobalErrorBoundary>
           </MainProvider>
         </NoSsr>

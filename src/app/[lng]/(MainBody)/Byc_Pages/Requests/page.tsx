@@ -24,6 +24,7 @@ type FilterState = {
   toDate: string;
   eventType: 1 | 2 | null;
   clientId: string | null;
+  phoneNumber: string | null;
 };
 
 type PaginationState = {
@@ -45,6 +46,7 @@ const Requests: React.FC = () => {
     toDate: format(new Date(), "MM-dd-yyyy"),
     eventType: 1,
     clientId: null,
+    phoneNumber: null
   });
 
   const [pagination, setPagination] = useState<PaginationState>({
@@ -84,7 +86,7 @@ const Requests: React.FC = () => {
       const fromDateUtc = toUtcString(filters.fromDate);
       const toDateUtc = toUtcString(filters.toDate, true);
 
-      const query = `_eventType=${filters.eventType}&_clientId=${filters.clientId ?? ""}&_startAt=${startAt}&_pageSize=${PAGE_SIZE}` +
+      const query = `_eventType=${filters?.eventType || ""}&_clientId=${filters?.clientId || ""}&_startAt=${startAt}&_pageSize=${PAGE_SIZE}` +
         `&_fromDate=${fromDateUtc}&_toDate=${toDateUtc}` +
         `&_url=${encodeURIComponent(pagination.searchTerm)}`;
 
@@ -185,14 +187,17 @@ const Requests: React.FC = () => {
             </Col>
             <Col xs="2">
               <ResourceLookup
-                name="clientId"
+                name="phoneNumber"
                 label={t("Phone Number")}
                 endpoint={DashboardMobileRepository.mobileUser.snapshot}
                 searchParamKey="_username"
                 columns={[{ key: "username", label: "Phone Number" }]}
                 minChars={3}
-                onChange={(selectedUser) => handleFilterChange("clientId", selectedUser?.clientId||0)}
-                value={filters.clientId}
+                onChange={(selectedUser) => {
+                  handleFilterChange("clientId", selectedUser?.clientId || null)
+                  handleFilterChange("phoneNumber", selectedUser?.username || null)
+                }}
+                value={filters.phoneNumber}
               />
             </Col>
             <Col xs="2" className="d-flex align-items-center">

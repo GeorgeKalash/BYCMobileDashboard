@@ -56,14 +56,8 @@ const toastMessages = {
 
 export const showToast = (
   key: keyof typeof toastMessages,
-  overrideMessage?: string,
+  overrideMessage?: string
 ) => {
-  const suppressedKeys: Array<keyof typeof toastMessages> = ["success", "postSuccess"];
-
-  if (suppressedKeys.includes(key)) {
-    return;
-  }
-
   const toastData = toastMessages[key];
   if (toastData) {
     toast(overrideMessage || toastData.message, toastData.options);

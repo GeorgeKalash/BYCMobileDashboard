@@ -119,6 +119,7 @@ const UsersPage = () => {
   const handleUserControlPress = () => formLogicRef.current?.openUserControlModal();
 
   const columns = [
+    { name: t("username"), selector: (row: any) => row.user?.username ?? "" },
     { name: t("Name"), selector: (row: any) => row.clientMaster?.name ?? "", sortable: true },
     { name: t("Phone Number"), selector: (row: any) => row.clientMaster?.cellPhone ?? "" },
     { name: t("Nationality"), selector: (row: any) => row.clientMaster?.nationalityName ?? "" },

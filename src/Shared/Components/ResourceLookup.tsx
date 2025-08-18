@@ -26,6 +26,7 @@ interface SearchableLookupProps {
   placeholder?: string;
   disabled?: boolean;
   searchParamKey?: string;
+  triggerOnTyping?: boolean;
 }
 
 const SearchableLookup: React.FC<SearchableLookupProps> = ({
@@ -41,11 +42,12 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
   placeholder = "Search...",
   disabled = false,
   searchParamKey = "_filter",
+  triggerOnTyping = false,
 }) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
 
-  const [inputValue, setInputValue] = useState(value || "");
+  const [inputValue, setInputValue] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -54,22 +56,24 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (value == null) {
+      setInputValue("");
+    } else if (typeof value === "object" && columns.length > 0) {
+      setInputValue(value[columns[0].key] || "");
+    } else {
+      setInputValue(String(value));
+    }
+  }, [value, columns]);
+
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        if (showDropdown && results.length > 0) {
-          handleSelect(results[0]);
-        } else {
-          setShowDropdown(false);
-        }
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [results, showDropdown]);
+  }, []);
 
   const fetchData = async (query: string) => {
     if (query.length < minChars) {
@@ -105,6 +109,13 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
     onChange(item);
   };
 
+  const handleClear = () => {
+    setInputValue("");
+    setResults([]);
+    setShowDropdown(false);
+    onChange(null);
+  };
+
   const tableColumns = useMemo(() => {
     return columns.map((col) => ({
       name: col.label,
@@ -126,13 +137,6 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
   }, [columns]);
 
   const isFieldInvalid = isRequired && touched && !inputValue;
-
-  const handleClear = () => {
-    setInputValue("");
-    setResults([]);
-    setShowDropdown(false);
-    onChange(null);
-  };
 
   return (
     <div ref={containerRef} style={{ position: "relative" }}>
@@ -158,8 +162,11 @@ const SearchableLookup: React.FC<SearchableLookupProps> = ({
             onChange={(e) => {
               const val = e.target.value;
               setInputValue(val);
-              fetchData(val);
               setTouched(true);
+              fetchData(val);
+              if (triggerOnTyping) {
+                onChange(val);
+              }
             }}
             onClick={() => {
               setTouched(true);
