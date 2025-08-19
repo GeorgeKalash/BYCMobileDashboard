@@ -8,11 +8,10 @@ import SharedModal from "../../../../../Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
-import { SystemMobileRepository } from "@/Repositories/SystemMobileRepository";
-import ActivateLanguageForm from "./Form/ActivateThemeForm";
+import ActivateThemeForm from "./Form/ActivateThemeForm";
 import { withRequestTracking } from "@/utils/withRequestTracking";
-
 import { FormikProps } from "formik";
+import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
 
 const ThemeSelection = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -22,9 +21,6 @@ const ThemeSelection = () => {
   const [data, setData] = useState<any[]>([]);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"edit" | "delete" | null>(
-    null
-  );
 
   const formikRef = useRef<FormikProps<any>>(null);
 
@@ -32,7 +28,7 @@ const ThemeSelection = () => {
     const result = await withRequestTracking(dispatch, () =>
       dispatch(
         getMobileRequest({
-          extension: `${SystemMobileRepository.Languages.get}`,
+          extension: `${DashboardMobileRepository.Templates.get}`,
           parameters: "",
         })
       )
@@ -49,16 +45,14 @@ const ThemeSelection = () => {
     fetchData();
   }, []);
 
-  const handleModalOpen = (row: any, action: "edit" | "delete") => {
+  const handleModalOpen = (row: any) => {
     setSelectedRow(row);
-    setModalAction(action);
     setModalOpen(true);
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
     setSelectedRow(null);
-    setModalAction(null);
     fetchData();
   };
 
@@ -70,7 +64,7 @@ const ThemeSelection = () => {
 
   const columns = [
     {
-      name: t("Translation Name"),
+      name: t("Theme Name"),
       selector: (row: any) => row.name || "",
       sortable: true,
       id: "name",
@@ -95,7 +89,7 @@ const ThemeSelection = () => {
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Activate Language")} />
+        <CommonCardHeader title={t("Activate Theme")} />
         <CardBody>
           <DataTable
             data={data}
@@ -103,21 +97,22 @@ const ThemeSelection = () => {
             highlightOnHover
             pagination
             showActions
-            onEdit={(row) => handleModalOpen(row, "edit")}
+            onEdit={(row) => handleModalOpen(row)}
           />
         </CardBody>
       </Card>
       <SharedModal
-        visible={modalOpen && modalAction === "edit"}
+        visible={modalOpen}
         onClose={handleModalClose}
-        title={t("Languages Page")}
-        width="95vw"
+        title={t("Theme Page")}
+        width="60vw"
         height="80vh"
         onSubmit={handleSubmit}
       >
-        <ActivateLanguageForm
+        <ActivateThemeForm
           rowData={selectedRow}
           formikRef={formikRef}
+          allData={data}
           onSuccessSubmit={handleModalClose}
         />
       </SharedModal>
