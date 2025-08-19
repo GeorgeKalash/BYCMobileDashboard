@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { Formik, Form, FormikHelpers } from "formik";
-import { Card, CardBody, CardHeader, Row, Col } from "reactstrap";
+import { CardBody, Card, Col, Row } from "reactstrap";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
 import SharedButton from "@/Shared/Components/SharedButton";
 import CustomInput from "../../../../../Shared/Components/CustomInput";
