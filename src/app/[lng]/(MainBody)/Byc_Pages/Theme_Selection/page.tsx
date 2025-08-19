@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { Card, CardBody, Col } from "reactstrap";
-import DataTable from "../../../../../Shared/Components/DataTable";
+import DataTable from "@/Shared/Components/DataTable";
 import CommonCardHeader from "@/CommonComponent/CommonCardHeader";
-import SharedModal from "../../../../../Shared/Components/SharedModal";
+import SharedModal from "@/Shared/Components/SharedModal";
 import { useAppDispatch, useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
 import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";

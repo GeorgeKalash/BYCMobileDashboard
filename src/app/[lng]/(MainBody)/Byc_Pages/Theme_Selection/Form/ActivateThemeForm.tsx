@@ -12,8 +12,8 @@ import * as Yup from "yup";
 import { showToast } from "@/Shared/Components/showToast";
 import { SharedCheckbox } from "@/Shared/Components/SharedCheckbox";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
-import ColorPreview from "./ColorPreview";
-import PhoneSkeletonPreview from "./PhoneSkeletonPreview";
+import ColorPreview from "@/Shared/Components/ColorPreview";
+import PhoneSkeletonPreview from "@/Shared/Components/PhoneSkeletonPreview";
 
 type Palette = Record<string, string>;
 
