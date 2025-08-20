@@ -7,7 +7,7 @@ type Palette = Record<string, string>;
 const PhoneSkeletonPreview: React.FC<{
   height?: number | string;
   palette: Palette;
-}> = ({ height = "70vh", palette }) => {
+}> = ({ height = "60vh", palette }) => {
   const pick = (k: string, fb: string) =>
     palette?.[k] ? String(palette[k]) : fb;
 
@@ -44,7 +44,7 @@ const PhoneSkeletonPreview: React.FC<{
 
       <div
         style={{
-          width: 320,
+          width: 290,
           height,
           borderRadius: 36,
           background:

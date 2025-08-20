@@ -108,7 +108,7 @@ const ColorPreview: React.FC<{ palette: Palette }> = ({ palette }) => {
         display: "flex",
         flexWrap: "wrap",
         gap: 12,
-        maxHeight: "70vh",
+        maxHeight: "60vh",
         overflowY: "auto",
         paddingRight: 12,
       }}
