@@ -64,4 +64,8 @@ export const DashboardMobileRepository = {
     setpack: service + "TermsAndConditions/setPack",
     getpack: service + "TermsAndConditions/getPack",
   },
+  Templates: {
+    get: service + "Templates/getAllThemes",
+    set: service + "Templates/updateAllThemes",
+  },
 };
