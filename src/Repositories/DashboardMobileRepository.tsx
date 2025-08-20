@@ -50,6 +50,8 @@ export const DashboardMobileRepository = {
     validate: service +  "ClientExtraInfo/validate",
     request: service + "ClientExtraInfo/request",
     cancel: service + "ClientExtraInfo/cancel",  
+    getPdf: service + "ClientExtraInfo/getPdf",
+    Broadcastrequest: service +"ClientExtraInfo/Broadcast/request"
   },
   country: {
     getall: service + "System/Country/getAll",
