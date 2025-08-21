@@ -22,6 +22,7 @@ const DataTableComponent = ({
   searchType,
   onSearchChange,
   onRowClicked,
+  canEditRow,
 }: {
   data: any[];
   columns: any[];
@@ -31,6 +32,7 @@ const DataTableComponent = ({
   showActions?: boolean;
   Search?: boolean;
   onEdit?: (row: any) => void;
+  canEditRow?: (row: any) => boolean;
   onDelete?: (row: any) => void;
   serverPagination?: boolean;
   totalRows?: number;
@@ -47,6 +49,7 @@ const DataTableComponent = ({
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [rowToDelete, setRowToDelete] = useState<any>(null);
+  const _canEditRow = (row: any) => true;
 
   const filteredItems = useMemo(() => {
     if (searchType === "server") return data;
@@ -90,34 +93,39 @@ const DataTableComponent = ({
 
   const actionColumn = {
     name: t("Actions"),
-    cell: (row: any) => (
-      <div className="d-flex gap-2">
-        {onEdit && (
-          <i
-            className="fa fa-edit text-primary cursor-pointer"
-            style={{ fontSize: "20px" }}
-            onClick={() => onEdit(row)}
-            title={t("Edit")}
-          />
-        )}
-        {onDelete && (
-          <i
-            className="fa fa-trash text-danger cursor-pointer"
-            style={{ fontSize: "20px" }}
-            onClick={() => {
-              setRowToDelete(row);
-              setShowDeleteConfirm(true);
-            }}
-            title={t("Delete")}
-          />
-        )}
-      </div>
-    ),
+    id: "actions",
+    width: "100px",
+    cell: (row: any) => {
+      const allowEdit = (
+        typeof canEditRow === "function" ? canEditRow : _canEditRow
+      )(row);
+      return (
+        <div className="d-flex gap-2">
+          {onEdit && allowEdit && (
+            <i
+              className="fa fa-edit text-primary cursor-pointer"
+              style={{ fontSize: "20px" }}
+              onClick={() => onEdit(row)}
+              title={t("Edit")}
+            />
+          )}
+          {onDelete && (
+            <i
+              className="fa fa-trash text-danger cursor-pointer"
+              style={{ fontSize: "20px" }}
+              onClick={() => {
+                setRowToDelete(row);
+                setShowDeleteConfirm(true);
+              }}
+              title={t("Delete")}
+            />
+          )}
+        </div>
+      );
+    },
     ignoreRowClick: true,
     allowOverflow: true,
     button: true,
-    id: "actions",
-    width: "100px",
   };
 
   const finalColumns = useMemo(() => {

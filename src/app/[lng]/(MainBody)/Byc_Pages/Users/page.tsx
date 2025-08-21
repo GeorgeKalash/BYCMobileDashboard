@@ -16,7 +16,9 @@ import SharedButton from "@/Shared/Components/SharedButton";
 import CustomInput from "@/Shared/Components/CustomInput";
 import CustomDatePicker from "@/Shared/Components/CustomDatePicker";
 import CustomSelect from "@/Shared/Components/CustomSelect";
-import CustomDateTimePicker, { parseDateTime } from "@/Shared/Components/CustomDateTimePicker";
+import CustomDateTimePicker, {
+  parseDateTime,
+} from "@/Shared/Components/CustomDateTimePicker";
 
 const UsersPage = () => {
   const { i18LangStatus } = useAppSelector((state) => state.langSlice);
@@ -24,8 +26,14 @@ const UsersPage = () => {
   const dispatch = useAppDispatch();
 
   const [data, setData] = useState<any[]>([]);
-  const [modalState, setModalState] = useState({ open: false, row: null as any });
-  const [paginationState, setPaginationState] = useState({ pageCount: 0, totalRows: 0 });
+  const [modalState, setModalState] = useState({
+    open: false,
+    row: null as any,
+  });
+  const [paginationState, setPaginationState] = useState({
+    pageCount: 0,
+    totalRows: 0,
+  });
 
   const [filters, setFilters] = useState({
     fromCreationDate: "",
@@ -53,17 +61,27 @@ const UsersPage = () => {
       startAt: page,
       pageSize,
       filters: {
-        fromBirthDate: filters.fromBirthDate ? new Date(filters.fromBirthDate).toISOString() : null,
-        toBirthDate: filters.toBirthDate ? new Date(filters.toBirthDate).toISOString() : null,
+        fromBirthDate: filters.fromBirthDate
+          ? new Date(filters.fromBirthDate).toISOString()
+          : null,
+        toBirthDate: filters.toBirthDate
+          ? new Date(filters.toBirthDate).toISOString()
+          : null,
         username: filters.username || null,
         nationalityId: filters.nationalityId ?? null,
         idNo: filters.idNo || null,
         sponsors: filters.sponsors ? [filters.sponsors] : [],
         cityId: filters.cityId ?? null,
         street: filters.street || "",
-        lastLogin: filters.lastLogin ? parseDateTime(filters.lastLogin)?.toISOString() : null,
-        fromCreationDate: filters.fromCreationDate ? new Date(filters.fromCreationDate).toISOString() : null,
-        toCreationDate: filters.toCreationDate ? new Date(filters.toCreationDate).toISOString() : null,
+        lastLogin: filters.lastLogin
+          ? parseDateTime(filters.lastLogin)?.toISOString()
+          : null,
+        fromCreationDate: filters.fromCreationDate
+          ? new Date(filters.fromCreationDate).toISOString()
+          : null,
+        toCreationDate: filters.toCreationDate
+          ? new Date(filters.toCreationDate).toISOString()
+          : null,
         userMode: filters.userMode ?? null,
       },
     };
@@ -93,7 +111,8 @@ const UsersPage = () => {
   useEffect(() => {
     const refreshHandler = () => fetchData(paginationState.pageCount);
     window.addEventListener("refreshUsersTable", refreshHandler);
-    return () => window.removeEventListener("refreshUsersTable", refreshHandler);
+    return () =>
+      window.removeEventListener("refreshUsersTable", refreshHandler);
   }, [paginationState.pageCount]);
 
   const handleFilterChange = (field: string, value: string | number | null) => {
@@ -116,21 +135,43 @@ const UsersPage = () => {
   const handleOTPPress = () => formLogicRef.current?.openOtpModal();
   const handleInfoClick = () => formLogicRef.current?.logFormValues();
   const handleUserInfoPress = () => formLogicRef.current?.openUserInfoModal();
-  const handleUserControlPress = () => formLogicRef.current?.openUserControlModal();
+  const handleUserControlPress = () =>
+    formLogicRef.current?.openUserControlModal();
 
   const columns = [
     { name: t("username"), selector: (row: any) => row.user?.username ?? "" },
-    { name: t("Name"), selector: (row: any) => row.clientMaster?.name ?? "", sortable: true },
-    { name: t("Phone Number"), selector: (row: any) => row.clientMaster?.cellPhone ?? "" },
-    { name: t("Nationality"), selector: (row: any) => row.clientMaster?.nationalityName ?? "" },
-    { name: t("ID Number"), selector: (row: any) => row.clientRemittance?.idNo ?? "" },
+    {
+      name: t("Name"),
+      selector: (row: any) => row.clientMaster?.name ?? "",
+      sortable: true,
+    },
+    {
+      name: t("Phone Number"),
+      selector: (row: any) => row.clientMaster?.cellPhone ?? "",
+    },
+    {
+      name: t("Nationality"),
+      selector: (row: any) => row.clientMaster?.nationalityName ?? "",
+    },
+    {
+      name: t("ID Number"),
+      selector: (row: any) => row.clientRemittance?.idNo ?? "",
+    },
     { name: t("City"), selector: (row: any) => row.address?.city ?? "" },
-    { name: t("District"), selector: (row: any) => row.address?.cityDistrict ?? "" },
+    {
+      name: t("District"),
+      selector: (row: any) => row.address?.cityDistrict ?? "",
+    },
     { name: t("Street"), selector: (row: any) => row.address?.street1 ?? "" },
     {
       name: t("Active"),
       cell: (row: any) => (
-        <span style={{ color: row.user?.isInactive ? "red" : "green", fontWeight: "bold" }}>
+        <span
+          style={{
+            color: row.user?.isInactive ? "red" : "green",
+            fontWeight: "bold",
+          }}
+        >
           {row.user?.isInactive ? t("InActive") : t("Active")}
         </span>
       ),
@@ -148,7 +189,9 @@ const UsersPage = () => {
                 name="fromCreationDate"
                 label={t("From Creation Date")}
                 value={filters.fromCreationDate}
-                onChange={(val) => handleFilterChange("fromCreationDate", val || "")}
+                onChange={(val) =>
+                  handleFilterChange("fromCreationDate", val || "")
+                }
               />
             </Col>
             <Col>
@@ -156,7 +199,9 @@ const UsersPage = () => {
                 name="toCreationDate"
                 label={t("To Creation Date")}
                 value={filters.toCreationDate}
-                onChange={(val) => handleFilterChange("toCreationDate", val || "")}
+                onChange={(val) =>
+                  handleFilterChange("toCreationDate", val || "")
+                }
               />
             </Col>
             <Col>
@@ -165,7 +210,12 @@ const UsersPage = () => {
                 label={t("Phone Number")}
                 placeholder={t("Search by Phone Number")}
                 value={filters.phoneNumber}
-                onChange={(e) => handleFilterChange("username", e.target.value.replace(/\D/g, ""))}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "username",
+                    e.target.value.replace(/\D/g, "")
+                  )
+                }
               />
             </Col>
             <Col>
@@ -174,7 +224,9 @@ const UsersPage = () => {
                 label={t("ID Number")}
                 placeholder={t("Search by ID Number")}
                 value={filters.idNo}
-                onChange={(e) => handleFilterChange("idNo", e.target.value.replace(/\D/g, ""))}
+                onChange={(e) =>
+                  handleFilterChange("idNo", e.target.value.replace(/\D/g, ""))
+                }
               />
             </Col>
             <Col>
@@ -201,7 +253,9 @@ const UsersPage = () => {
                 name="nationality"
                 label={t("Nationality")}
                 value={filters.nationalityId ?? ""}
-                onChange={(val) => handleFilterChange("nationalityId", val ?? null)}
+                onChange={(val) =>
+                  handleFilterChange("nationalityId", val ?? null)
+                }
                 endpointId={DashboardMobileRepository.country.getall}
                 labelKey="name"
                 valueKey="recordId"
@@ -260,6 +314,9 @@ const UsersPage = () => {
             pageSize={pageSize}
             onPageChange={handlePageChange}
             showActions
+            canEditRow={(row: any) =>
+              !!(row?.clientMaster || row?.clientRemittance || row?.address)
+            }
             onEdit={openModal}
           />
         </CardBody>
