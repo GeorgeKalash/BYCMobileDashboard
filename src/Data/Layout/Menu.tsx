@@ -115,6 +115,11 @@ export const MenuList: MenuItem[] | undefined = [
         type: "link",
         title: "FAQ",
       },
+      {
+        path: "/Byc_Pages/Request_Info",
+        type: "link",
+        title: "RequestInfo",
+      },
     ],
   },
 ];
