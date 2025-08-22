@@ -82,7 +82,7 @@ const RequestInfoForm: React.FC<RequestInfoFormProps> = ({ visible, filters }) =
         extraRowId: field.value,
         type: field.typeId,
         body: field.body || null,
-        isValid: true,
+        isValid: false,
         isActive: true,
       },
       filter: {
@@ -104,7 +104,7 @@ const RequestInfoForm: React.FC<RequestInfoFormProps> = ({ visible, filters }) =
         toCreationDate: null,
         userMode: 1,
     };
-console.log(payload)
+
     if (field.isActive) {
       await withRequestTracking(dispatch, () =>
         dispatch(
