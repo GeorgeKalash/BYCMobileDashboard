@@ -7,9 +7,9 @@ import { useTranslation } from "@/app/i18n/client";
 import {
   getMobileRequest,
   postMobileRequest,
-  putMobileRequest,
+  deleteMobileRequest,
 } from "@/Redux/Reducers/RequestThunks";
-import { Card, CardBody, CardHeader, Col, Row } from "reactstrap";
+import { Col, Row } from "reactstrap";
 import CustomInput from "@/Shared/Components/CustomInput";
 import SharedButton from "@/Shared/Components/SharedButton";
 import { DashboardMobileRepository } from "@/Repositories/DashboardMobileRepository";
@@ -19,7 +19,6 @@ import { showToast } from "@/Shared/Components/showToast";
 interface UserInfoFormProps {
   visible: boolean;
   onClose: () => void;
-
   userData?: any;
 }
 
@@ -36,7 +35,6 @@ type QuestionWithType = {
 const UserInfoForm: React.FC<UserInfoFormProps> = ({
   visible,
   onClose,
-
   userData,
 }) => {
   const reduxLangId = useAppSelector((state) => state.langSlice.i18LangStatus);
@@ -100,50 +98,42 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({
   const handleRequest = async (field: QuestionWithType) => {
     if (!userData?.clientId) return;
 
-    const otherRequestedItems = questionsWithType
-      .filter((q) => q.isRequested && q.value !== field.value)
-      .map((q) => ({
-        clientId: userData.clientId,
-        extraRowId: q.value,
-        type: q.typeId,
-        body: q.body || "",
-        isValid: q.isValid ?? false,
-        isActive: true,
-      }));
-
-    let updatedPack;
-
-    if (field.isRequested) {
-      updatedPack = otherRequestedItems;
-    } else {
-      const newField = {
+        const payload = {
         clientId: userData.clientId,
         extraRowId: field.value,
         type: field.typeId,
         body: field.body || "",
-        isValid: false,
-        isActive: true,
+        isValid: field.isValid ?? false,
+        isActive: !field.isRequested,
       };
-      updatedPack = [...otherRequestedItems, newField];
+
+    if (field.isRequested) {
+      await withRequestTracking(dispatch, () =>
+        dispatch(
+          deleteMobileRequest({
+            extension: DashboardMobileRepository.ExtraInfo.cancel, 
+            body: payload,
+            rawBody: true,
+          })
+        ).unwrap()
+      );
+
+      showToast("success", t("Request canceled"));
+    } else {
+      await withRequestTracking(dispatch, () =>
+        dispatch(
+          postMobileRequest({
+            extension: DashboardMobileRepository.ExtraInfo.request,
+            body: payload,
+            rawBody: true,
+          })
+        ).unwrap()
+      );
+
+      showToast("success", t("Request sent successfully"));
     }
 
-    await withRequestTracking(dispatch, () =>
-      dispatch(
-        putMobileRequest({
-          extension: DashboardMobileRepository.ExtraInfo.update,
-          parameters: `_clientId=${userData.clientId}`,
-          body: updatedPack,
-          rawBody: true,
-        })
-      ).unwrap()
-    );
-
     await fetchAllData();
-
-    showToast(
-      "success",
-      t(field.isRequested ? "Request canceled" : "Request sent successfully")
-    );
   };
 
   const handleValidate = async (field: QuestionWithType) => {
