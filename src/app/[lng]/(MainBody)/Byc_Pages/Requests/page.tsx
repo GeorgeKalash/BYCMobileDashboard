@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { Card, CardBody, Col, Row } from "reactstrap";
 import { FormikProps } from "formik";
 import { format, startOfDay, endOfDay } from "date-fns";
@@ -46,7 +52,7 @@ const Requests: React.FC = () => {
     toDate: format(new Date(), "MM-dd-yyyy"),
     eventType: 1,
     clientId: null,
-    phoneNumber: null
+    phoneNumber: null,
   });
 
   const [pagination, setPagination] = useState<PaginationState>({
@@ -56,7 +62,10 @@ const Requests: React.FC = () => {
   });
 
   const [data, setData] = useState<any[]>([]);
-  const [modalState, setModalState] = useState<{ open: boolean; row: any | null }>({
+  const [modalState, setModalState] = useState<{
+    open: boolean;
+    row: any | null;
+  }>({
     open: false,
     row: null,
   });
@@ -86,7 +95,10 @@ const Requests: React.FC = () => {
       const fromDateUtc = toUtcString(filters.fromDate);
       const toDateUtc = toUtcString(filters.toDate, true);
 
-      const query = `_eventType=${filters?.eventType || ""}&_clientId=${filters?.clientId || ""}&_startAt=${startAt}&_pageSize=${PAGE_SIZE}` +
+      const query =
+        `_eventType=${filters?.eventType || ""}&_clientId=${
+          filters?.clientId || ""
+        }&_startAt=${startAt}&_pageSize=${PAGE_SIZE}` +
         `&_fromDate=${fromDateUtc}&_toDate=${toDateUtc}` +
         `&_url=${encodeURIComponent(pagination.searchTerm)}`;
 
@@ -114,20 +126,63 @@ const Requests: React.FC = () => {
 
   const columns = useMemo(
     () => [
-      { name: t("accountId"), selector: (row: any) => row.accountId?.toString() ?? "", sortable: true, id: "accountId", width: "120px" },
-      { name: t("clientId"), selector: (row: any) => row.clientId?.toString() ?? "", sortable: true, id: "clientId", width: "130px" },
+      {
+        name: t("accountId"),
+        selector: (row: any) => row.accountId?.toString() ?? "",
+        sortable: true,
+        id: "accountId",
+        width: "120px",
+      },
+      {
+        name: t("clientId"),
+        selector: (row: any) => row.clientId?.toString() ?? "",
+        sortable: true,
+        id: "clientId",
+        width: "130px",
+      },
       {
         name: t("clockStamp"),
         selector: (row: any) => row.clockStamp,
-        cell: (row: any) => (row.clockStamp ? formatDate(row.clockStamp, "dd/MM/yyyy HH:mm:ss") : ""),
+        cell: (row: any) =>
+          row.clockStamp
+            ? formatDate(row.clockStamp, "dd/MM/yyyy HH:mm:ss")
+            : "",
         sortable: true,
         id: "clockStamp",
       },
-      { name: t("recordId"), selector: (row: any) => row.recordId?.toString() ?? "", sortable: true, id: "recordId", width: "130px" },
-      { name: t("requestBody"), selector: (row: any) => row.requestBody?.toString() ?? "", sortable: true, id: "requestBody" },
-      { name: t("requestType"), selector: (row: any) => row.requestType?.toString() ?? "", sortable: true, id: "requestType", width: "130px" },
-      { name: t("url"), selector: (row: any) => row.url?.toString() ?? "", sortable: true, id: "url" },
-      { name: t("userId"), selector: (row: any) => row.userId?.toString() ?? "", sortable: true, id: "userId", width: "130px" },
+      {
+        name: t("recordId"),
+        selector: (row: any) => row.recordId?.toString() ?? "",
+        sortable: true,
+        id: "recordId",
+        width: "130px",
+      },
+      {
+        name: t("requestBody"),
+        selector: (row: any) => row.requestBody?.toString() ?? "",
+        sortable: true,
+        id: "requestBody",
+      },
+      {
+        name: t("requestType"),
+        selector: (row: any) => row.requestType?.toString() ?? "",
+        sortable: true,
+        id: "requestType",
+        width: "130px",
+      },
+      {
+        name: t("url"),
+        selector: (row: any) => row.url?.toString() ?? "",
+        sortable: true,
+        id: "url",
+      },
+      {
+        name: t("userId"),
+        selector: (row: any) => row.userId?.toString() ?? "",
+        sortable: true,
+        id: "userId",
+        width: "130px",
+      },
     ],
     [t]
   );
@@ -138,7 +193,10 @@ const Requests: React.FC = () => {
   };
 
   const handlePageChange = (startAt: number) => {
-    setPagination((prev) => ({ ...prev, pageCount: Math.floor(startAt / PAGE_SIZE) }));
+    setPagination((prev) => ({
+      ...prev,
+      pageCount: Math.floor(startAt / PAGE_SIZE),
+    }));
   };
 
   const handleSearchChange = (val: string) => {
@@ -157,8 +215,8 @@ const Requests: React.FC = () => {
     <Col xs="12">
       <Card>
         <CommonCardHeader title={t("Requests")}>
-          <Row className="align-items-center">
-            <Col xs="2">
+          <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+            <Col>
               <CustomDatePicker
                 name="fromDate"
                 label={t("From Date")}
@@ -166,7 +224,7 @@ const Requests: React.FC = () => {
                 onChange={(val) => handleFilterChange("fromDate", val || null)}
               />
             </Col>
-            <Col xs="2">
+            <Col>
               <CustomDatePicker
                 name="toDate"
                 label={t("To Date")}
@@ -174,7 +232,7 @@ const Requests: React.FC = () => {
                 onChange={(val) => handleFilterChange("toDate", val || null)}
               />
             </Col>
-            <Col xs="2">
+            <Col>
               <CustomSelect
                 name="eventType"
                 label={t("eventType")}
@@ -182,10 +240,15 @@ const Requests: React.FC = () => {
                 valueKey="key"
                 labelKey="value"
                 value={filters.eventType ?? ""}
-                onChange={(val) => handleFilterChange("eventType", [1, 2].includes(Number(val)) ? Number(val) : null)}
+                onChange={(val) =>
+                  handleFilterChange(
+                    "eventType",
+                    [1, 2].includes(Number(val)) ? Number(val) : null
+                  )
+                }
               />
             </Col>
-            <Col xs="2">
+            <Col>
               <ResourceLookup
                 name="phoneNumber"
                 label={t("Phone Number")}
@@ -194,13 +257,19 @@ const Requests: React.FC = () => {
                 columns={[{ key: "username", label: "Phone Number" }]}
                 minChars={3}
                 onChange={(selectedUser) => {
-                  handleFilterChange("clientId", selectedUser?.clientId || null)
-                  handleFilterChange("phoneNumber", selectedUser?.username || null)
+                  handleFilterChange(
+                    "clientId",
+                    selectedUser?.clientId || null
+                  );
+                  handleFilterChange(
+                    "phoneNumber",
+                    selectedUser?.username || null
+                  );
                 }}
                 value={filters.phoneNumber}
               />
             </Col>
-            <Col xs="2" className="d-flex align-items-center">
+            <Col className="d-flex align-items-center">
               <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
             </Col>
           </Row>

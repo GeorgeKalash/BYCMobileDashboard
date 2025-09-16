@@ -146,9 +146,7 @@ const PaymentsHistoryPage = () => {
     {
       name: t("Posting Date"),
       selector: (row: any) =>
-        row.postingDate
-          ? formatDate(row.postingDate, "dd/MM/yyyy HH:mm")
-          : "",
+        row.postingDate ? formatDate(row.postingDate, "dd/MM/yyyy HH:mm") : "",
       sortable: true,
       id: "PostingDate",
       width: "175px",
@@ -235,81 +233,82 @@ const PaymentsHistoryPage = () => {
   return (
     <Col xs="12">
       <Card>
-        <CommonCardHeader title={t("Payment History")} />
-        <Row className="w-100 px-2">
-          <Col md="2">
-            <CustomDatePicker
-              name="fromTrxDate"
-              label={t("From Date")}
-              value={filters.fromTrxDate}
-              onChange={(val) =>
-                setFilters((prev) => ({ ...prev, fromTrxDate: val || "" }))
-              }
-            />
-          </Col>
-          <Col md="2">
-            <CustomDatePicker
-              name="toTrxDate"
-              label={t("To Date")}
-              value={filters.toTrxDate}
-              onChange={(val) =>
-                setFilters((prev) => ({ ...prev, toTrxDate: val || "" }))
-              }
-            />
-          </Col>
-          <Col md="2">
-            <CustomSelect
-              name="paymentGatewayId"
-              label={t("Payment Gateway")}
-              dashboardDatasetId={2}
-              valueKey="key"
-              labelKey="value"
-              value={filters.paymentGatewayId || undefined}
-              onChange={(val) =>
-                setFilters((prev) => ({
-                  ...prev,
-                  paymentGatewayId: val?.toString() || "",
-                }))
-              }
-            />
-          </Col>
-          <Col md="2">
-            <CustomSelect
-              name="paymentStatus"
-              label={t("Payment Status")}
-              endpointId={PaymentGatewayRepository.status.getAll}
-              valueKey="key"
-              labelKey="value"
-              value={filters.paymentStatus || undefined}
-              onChange={(val) =>
-                setFilters((prev) => ({
-                  ...prev,
-                  paymentStatus: val?.toString() || "",
-                }))
-              }
-            />
-          </Col>
-          <Col md="2">
-            <ResourceLookup
-              name="username"
-              label={t("Phone Number")}
-              endpoint={DashboardMobileRepository.mobileUser.snapshot}
-              searchParamKey="_username"
-              columns={[{ key: "username", label: "Phone Number" }]}
-              minChars={3}
-              onChange={(selectedUser) =>
-                setFilters((prev) => ({
-                  ...prev,
-                  cellphone: selectedUser?.username || "",
-                }))
-              }
-              value={filters.cellphone}
-            />
-          </Col>
-          <Col md="2" className="d-flex align-items-center gap-2">
-            <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
-          </Col>
-        </Row>
+        <CommonCardHeader title={t("Payment History")}>
+          <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+            <Col>
+              <CustomDatePicker
+                name="fromTrxDate"
+                label={t("From Date")}
+                value={filters.fromTrxDate}
+                onChange={(val) =>
+                  setFilters((prev) => ({ ...prev, fromTrxDate: val || "" }))
+                }
+              />
+            </Col>
+            <Col>
+              <CustomDatePicker
+                name="toTrxDate"
+                label={t("To Date")}
+                value={filters.toTrxDate}
+                onChange={(val) =>
+                  setFilters((prev) => ({ ...prev, toTrxDate: val || "" }))
+                }
+              />
+            </Col>
+            <Col>
+              <CustomSelect
+                name="paymentGatewayId"
+                label={t("Payment Gateway")}
+                dashboardDatasetId={2}
+                valueKey="key"
+                labelKey="value"
+                value={filters.paymentGatewayId || undefined}
+                onChange={(val) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    paymentGatewayId: val?.toString() || "",
+                  }))
+                }
+              />
+            </Col>
+            <Col>
+              <CustomSelect
+                name="paymentStatus"
+                label={t("Payment Status")}
+                endpointId={PaymentGatewayRepository.status.getAll}
+                valueKey="key"
+                labelKey="value"
+                value={filters.paymentStatus || undefined}
+                onChange={(val) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    paymentStatus: val?.toString() || "",
+                  }))
+                }
+              />
+            </Col>
+            <Col>
+              <ResourceLookup
+                name="username"
+                label={t("Phone Number")}
+                endpoint={DashboardMobileRepository.mobileUser.snapshot}
+                searchParamKey="_username"
+                columns={[{ key: "username", label: "Phone Number" }]}
+                minChars={3}
+                onChange={(selectedUser) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    cellphone: selectedUser?.username || "",
+                  }))
+                }
+                value={filters.cellphone}
+              />
+            </Col>
+            <Col className="d-flex align-items-center gap-2">
+              <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
+            </Col>
+          </Row>
+        </CommonCardHeader>
         <CardBody>
           <DataTable
             data={data}

@@ -59,21 +59,31 @@ const Notification = () => {
 
   const fetchData = async (page = tableData.pagination.pageCount) => {
     const fromDateUtc = filters.fromDate
-      ? new Date(Date.UTC(
-          new Date(filters.fromDate).getFullYear(),
-          new Date(filters.fromDate).getMonth(),
-          new Date(filters.fromDate).getDate(),
-          0, 0, 0, 0
-        )).toISOString()
+      ? new Date(
+          Date.UTC(
+            new Date(filters.fromDate).getFullYear(),
+            new Date(filters.fromDate).getMonth(),
+            new Date(filters.fromDate).getDate(),
+            0,
+            0,
+            0,
+            0
+          )
+        ).toISOString()
       : "";
 
     const toDateUtc = filters.toDate
-      ? new Date(Date.UTC(
-          new Date(filters.toDate).getFullYear(),
-          new Date(filters.toDate).getMonth(),
-          new Date(filters.toDate).getDate(),
-          23, 59, 59, 999
-        )).toISOString()
+      ? new Date(
+          Date.UTC(
+            new Date(filters.toDate).getFullYear(),
+            new Date(filters.toDate).getMonth(),
+            new Date(filters.toDate).getDate(),
+            23,
+            59,
+            59,
+            999
+          )
+        ).toISOString()
       : "";
 
     const query =
@@ -121,7 +131,7 @@ const Notification = () => {
   }, [tableData.pagination.pageCount]);
 
   const columns = [
-  {
+    {
       name: t("title"),
       selector: (row: any) => row.title,
       sortable: true,
@@ -189,8 +199,8 @@ const Notification = () => {
     <Col xs="12">
       <Card>
         <CommonCardHeader title={t("Notifications")}>
-          <Row>
-            <Col xs="2">
+          <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+            <Col>
               <CustomDatePicker
                 name="fromDate"
                 isRequired
@@ -201,7 +211,7 @@ const Notification = () => {
                 }
               />
             </Col>
-            <Col xs="2">
+            <Col>
               <CustomDatePicker
                 name="toDate"
                 isRequired
@@ -212,7 +222,7 @@ const Notification = () => {
                 }
               />
             </Col>
-            <Col xs="2">
+            <Col>
               <CustomInput
                 name="title"
                 label={t("Title")}
@@ -221,7 +231,7 @@ const Notification = () => {
                 onChange={(e) => handleFilterChange("title", e.target.value)}
               />
             </Col>
-            <Col xs="2">
+            <Col>
               <CustomInput
                 name="phoneNumber"
                 type="text"
@@ -234,7 +244,7 @@ const Notification = () => {
                 }}
               />
             </Col>
-            <Col xs="2">
+            <Col>
               <CustomSelect
                 name="templateId"
                 label={t("Template Name")}
@@ -242,12 +252,14 @@ const Notification = () => {
                 onChange={(val) =>
                   setFilters((prev) => ({ ...prev, templateId: val ?? "" }))
                 }
-                endpointId={NotificationAlertRepository.NotificationTypes.getAll}
+                endpointId={
+                  NotificationAlertRepository.NotificationTypes.getAll
+                }
                 valueKey="key"
                 labelKey="value"
               />
             </Col>
-            <Col xs="2" className="d-flex align-items-center">
+            <Col className="d-flex align-items-center">
               <SharedButton title={t("Filter")} onClick={() => fetchData(0)} />
             </Col>
           </Row>

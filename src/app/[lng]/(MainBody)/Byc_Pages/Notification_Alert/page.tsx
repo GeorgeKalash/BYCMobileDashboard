@@ -186,8 +186,8 @@ const Notification_Alert = () => {
           >
             {({ values, setFieldValue }) => (
               <Form>
-                <Row className="align-items-end">
-                  <Col md="3">
+                <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+                  <Col>
                     <CustomDatePicker
                       name="fromBirthDate"
                       label={t("From Birth Date")}
@@ -195,7 +195,7 @@ const Notification_Alert = () => {
                       onChange={(val) => setFieldValue("fromBirthDate", val)}
                     />
                   </Col>
-                  <Col md="3">
+                  <Col>
                     <CustomDatePicker
                       name="toBirthDate"
                       label={t("To Birth Date")}
@@ -203,7 +203,7 @@ const Notification_Alert = () => {
                       onChange={(val) => setFieldValue("toBirthDate", val)}
                     />
                   </Col>
-                  <Col md="3">
+                  <Col>
                     <CustomSelect
                       name="Nationality"
                       label={t("Nationality")}
@@ -216,7 +216,7 @@ const Notification_Alert = () => {
                       valueKey="recordId"
                     />
                   </Col>
-                  <Col md="3">
+                  <Col>
                     <CustomInput
                       name="mobile"
                       label={t("Phone Number")}
@@ -227,7 +227,7 @@ const Notification_Alert = () => {
                       }}
                     />
                   </Col>
-                  <Col md="3">
+                  <Col>
                     <CustomInput
                       name="idNumber"
                       label={t("ID Number")}
@@ -238,17 +238,14 @@ const Notification_Alert = () => {
                       }
                     />
                   </Col>
-                  <Col md="3">
+                  <Col>
                     <MultiValueInput
                       name="sponsors"
                       label={t("Sponsor Name")}
                       placeholder={t("Enter Sponsor Name")}
                     />
                   </Col>
-                  <Col
-                    md="3"
-                    className="d-flex justify-content-end align-items-end"
-                  >
+                  <Col className="d-flex align-items-center">
                     <SharedButton
                       title={t("Filter")}
                       onClick={() => {
@@ -258,8 +255,8 @@ const Notification_Alert = () => {
                     />
                   </Col>
                 </Row>
-                <Row>
-                  <Col md="3">
+                <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+                  <Col>
                     <CustomSelect
                       name="Group"
                       label={t("Group")}
@@ -283,8 +280,8 @@ const Notification_Alert = () => {
                     />
                   </Col>
                 </Row>
-                <Row className="align-items-end mb-2">
-                  <Col md="3">
+                <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+                  <Col>
                     <CustomSelect
                       name="template"
                       isRequired
@@ -301,10 +298,7 @@ const Notification_Alert = () => {
                       valueKey="recordId"
                     />
                   </Col>
-                  <Col
-                    md="12"
-                    className="d-flex justify-content-end align-items-end"
-                  >
+                  <Col className="d-flex align-items-center">
                     <SharedButton
                       title={t("Next")}
                       color="primary"

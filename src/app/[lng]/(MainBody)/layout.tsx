@@ -72,7 +72,9 @@ export default function RootLayout({
         <Header />
         <div className="page-body-wrapper">
           <SideBar />
-          <div className="page-body">{children}</div>
+          <div className="page-body" style={{ overflowY: "auto" }}>
+            {children}
+          </div>
         </div>
         <ThemeCustomizer />
         <ToastContainer />
