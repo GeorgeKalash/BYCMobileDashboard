@@ -143,7 +143,6 @@ const UsersPage = () => {
     {
       name: t("Name"),
       selector: (row: any) => row.clientMaster?.name ?? "",
-      sortable: true,
     },
     {
       name: t("Phone Number"),
