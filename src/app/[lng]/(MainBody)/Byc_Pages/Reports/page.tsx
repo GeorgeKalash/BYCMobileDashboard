@@ -105,7 +105,7 @@ const Reports = () => {
           }, []);
 
           return (
-            <Form style={{ maxHeight: "85vh", overflowY: "auto" }}>
+            <Form>
               <Card className="mb-3">
                 <CommonCardHeader title={t("Reports")}>
                   <Row>

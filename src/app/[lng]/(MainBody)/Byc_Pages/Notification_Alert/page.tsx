@@ -166,7 +166,7 @@ const Notification_Alert = () => {
   }, [paginationState.pageCount]);
 
   return (
-    <Col xs="12" Form style={{ maxHeight: "85vh", overflowY: "auto" }}>
+    <Col xs="12" Form>
       <Card>
         <CommonCardHeader title={t("View Notification")} />
         <CardBody>
