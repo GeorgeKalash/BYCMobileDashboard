@@ -146,7 +146,7 @@ const Reports = () => {
                   </Row>
                 </CommonCardHeader>
                 <CardBody>
-                  <Row>
+                  <Row className="g-3 row-cols-lg-5">
                     <SimpleStatsGrid
                       data={Object.fromEntries(
                         Object.entries(values).map(([key, val]) => [
