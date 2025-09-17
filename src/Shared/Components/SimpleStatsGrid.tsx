@@ -49,7 +49,7 @@ const SimpleStatsGrid: React.FC<SimpleStatsGridProps> = ({
         return (
           <Col key={i} className="mb-3">
             <Card className="h-100">
-              <CardBody className="d-flex align-items-center gap-3">
+              <CardBody className="d-flex align-items-center gap-2 py-1 px-3">
                 {iconName && (
                   <div
                     className="flex-shrink-0 d-flex align-items-center justify-content-center"
