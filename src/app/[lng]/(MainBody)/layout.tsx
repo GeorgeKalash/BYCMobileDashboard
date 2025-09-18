@@ -13,6 +13,7 @@ import { Header } from "@/Layout/Header/Header";
 import TapTop from "@/Layout/TapTop";
 import { ToastContainer } from "react-toastify";
 import "../../../../src/index.scss";
+import { Card, Col } from "reactstrap";
 
 export default function RootLayout({
   children,
@@ -68,14 +69,50 @@ export default function RootLayout({
 
   return (
     <Provider store={Store}>
-      <div className={`page-wrapper ${layout}`} id="pageWrapper">
+      <div
+        className={`page-wrapper ${layout}`}
+        id="pageWrapper"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100vh",
+        }}
+      >
         <Header />
-        <div className="page-body-wrapper">
+
+        <div
+          className="page-body-wrapper"
+          style={{
+            display: "flex",
+            flex: 1,
+            minHeight: 0,
+          }}
+        >
           <SideBar />
-          <div className="page-body" style={{ overflowY: "auto" }}>
-            {children}
+
+          <div
+            className="page-body"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              minWidth: 0,
+              minHeight: 0,
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                flex: 1,
+                minHeight: 0,
+                overflowY: "auto",
+              }}
+            >
+              {children}
+            </div>
           </div>
         </div>
+
         <ThemeCustomizer />
         <ToastContainer />
         <TapTop />
