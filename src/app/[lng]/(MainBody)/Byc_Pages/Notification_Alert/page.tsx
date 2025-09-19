@@ -186,7 +186,7 @@ const Notification_Alert = () => {
           >
             {({ values, setFieldValue }) => (
               <Form>
-                <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+                <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
                   <Col>
                     <CustomDatePicker
                       name="fromBirthDate"
@@ -255,7 +255,7 @@ const Notification_Alert = () => {
                     />
                   </Col>
                 </Row>
-                <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+                <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
                   <Col>
                     <CustomSelect
                       name="Group"
@@ -280,7 +280,7 @@ const Notification_Alert = () => {
                     />
                   </Col>
                 </Row>
-                <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+                <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
                   <Col>
                     <CustomSelect
                       name="template"

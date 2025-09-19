@@ -8,7 +8,9 @@ import { getMobileRequest } from "@/Redux/Reducers/RequestThunks";
 import { withRequestTracking } from "@/utils/withRequestTracking";
 import { RefreshCw, XCircle } from "react-feather";
 import { useTranslation } from "react-i18next";
+
 type OptionType = { value: string | number; label: string };
+
 interface CustomSelectProps {
   name: string;
   label?: string;
@@ -29,6 +31,7 @@ interface CustomSelectProps {
   clearable?: boolean;
   placeholder?: string;
 }
+
 const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   name,
   label = "",
@@ -54,6 +57,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   const reduxLangId = useSelector((s: RootState) => s.authSlice.languageId);
   const langId =
     reduxLangId || parseInt(localStorage.getItem("languageId") || "1", 10);
+
   const [selectOptions, setSelectOptions] = useState<OptionType[]>(
     options || []
   );
@@ -61,15 +65,44 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(-1);
+
   const inputRef = useRef<HTMLInputElement | null>(null);
   const listRef = useRef<HTMLUListElement | null>(null);
+
+  const clearIconEnd = useMemo(
+    () => (isRequired ? "2rem" : "0.5rem"),
+    [isRequired]
+  );
+  const refreshIconEnd = useMemo(
+    () => (clearable ? `calc(${clearIconEnd} + 1.5rem)` : clearIconEnd),
+    [clearIconEnd, clearable]
+  );
+  const inputPaddingEnd = useMemo(() => {
+    if (readOnly) return undefined;
+    const hasRemoteSource = !!(dashboardDatasetId || dataSetId || endpointId);
+    const refreshVisible = showRefresh && hasRemoteSource;
+    if (clearable && refreshVisible) return "3.5rem";
+    if (clearable || refreshVisible) return "2rem";
+    return "0.75rem";
+  }, [
+    readOnly,
+    clearable,
+    showRefresh,
+    dashboardDatasetId,
+    dataSetId,
+    endpointId,
+  ]);
+
   useEffect(() => {
     if (options) setSelectOptions(options);
   }, [options]);
+
   const fetchOptions = async (preserveSelected = true) => {
     if (readOnly) return;
+
     let url = "";
     let params = "";
+
     if (dashboardDatasetId) {
       url = "/api/KVS/Dashboard/getAllKVS";
       params = `_dataset=${dashboardDatasetId}&_language=${langId}`;
@@ -84,45 +117,56 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
           : `?${parameters}`
         : "";
     }
+
     if (!url) return;
+
     setIsLoading(true);
     const action = await withRequestTracking(dispatch, () =>
       dispatch(getMobileRequest({ extension: url, parameters: params }))
     );
     const data = action.payload?.data ?? [];
+
     const mapped: OptionType[] = data.map((item: any) => ({
       value: item[valueKey],
       label: item[labelKey],
     }));
+
     setSelectOptions(mapped);
+
     if (preserveSelected || (value !== null && value !== undefined)) {
       setIsLoading(false);
       return;
     }
+
     if (typeof defaultIndex === "number" && mapped[defaultIndex]) {
       onChange?.(mapped[defaultIndex].value);
     }
     setIsLoading(false);
   };
+
   useEffect(() => {
     if ((dashboardDatasetId || dataSetId || endpointId) && !readOnly) {
       fetchOptions(true);
     }
   }, [dashboardDatasetId, dataSetId, endpointId, parameters, langId]);
+
   useEffect(() => {
     const selected = selectOptions.find(
       (o) => String(o.value) === String(value ?? "")
     );
     setQuery(selected?.label ?? "");
   }, [value, selectOptions]);
+
   const filteredOptions = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return selectOptions;
     return selectOptions.filter((o) => o.label.toLowerCase().includes(q));
   }, [query, selectOptions]);
+
   const isFieldFilled =
     value !== "" && value !== null && typeof value !== "undefined";
   const validationClass = isRequired && !isFieldFilled ? "is-invalid" : "";
+
   const selectOption = (opt: OptionType) => {
     if (readOnly) return;
     onChange?.(opt.value);
@@ -130,6 +174,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
     setOpen(false);
     setActiveIndex(-1);
   };
+
   const clearSelection = () => {
     if (readOnly) return;
     onChange?.(null);
@@ -138,6 +183,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
     setOpen(true);
     setTimeout(() => inputRef.current?.focus(), 0);
   };
+
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (readOnly) return;
     if (!open && (e.key.length === 1 || e.key === "Backspace")) {
@@ -164,6 +210,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
       setActiveIndex(-1);
     }
   };
+
   useEffect(() => {
     const onDocClick = (ev: MouseEvent) => {
       const t = ev.target as Node;
@@ -179,6 +226,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
+
   return (
     <FormGroup>
       {label && (
@@ -186,8 +234,10 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
           {t(label)} {isRequired && <span className="text-danger">*</span>}
         </Label>
       )}
+
       <div style={{ position: "relative" }}>
         <input type="hidden" name={name} value={value ?? ""} />
+
         {isLoading ? (
           <div className="form-control d-flex align-items-center">
             <Spinner size="sm" /> <span className="ms-2">{t(loadingText)}</span>
@@ -200,6 +250,9 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
               className={`form-control ${validationClass} ${
                 readOnly ? "bg-light text-muted" : ""
               }`}
+              style={{
+                paddingInlineEnd: inputPaddingEnd,
+              }}
               value={query}
               onChange={(e) => {
                 if (readOnly) return;
@@ -220,6 +273,7 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
                 activeIndex >= 0 ? `${name}-option-${activeIndex}` : undefined
               }
             />
+
             {!readOnly && (
               <>
                 {(dashboardDatasetId || dataSetId || endpointId) &&
@@ -232,15 +286,17 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
                       style={{
                         position: "absolute",
                         top: "50%",
-                        insetInlineEnd: clearable ? "3.5rem" : "2rem",
+                        insetInlineEnd: refreshIconEnd,
                         transform: "translateY(-50%)",
                         padding: 0,
                       }}
                       title={t("Refresh")}
+                      aria-label={t("Refresh")}
                     >
                       <RefreshCw size={16} />
                     </Button>
                   )}
+
                 {clearable && (
                   <Button
                     type="button"
@@ -251,17 +307,19 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
                     style={{
                       position: "absolute",
                       top: "50%",
-                      insetInlineEnd: "2rem",
+                      insetInlineEnd: clearIconEnd,
                       transform: "translateY(-50%)",
                       padding: 0,
                     }}
                     title={t("Clear")}
+                    aria-label={t("Clear")}
                   >
                     <XCircle size={16} />
                   </Button>
                 )}
               </>
             )}
+
             {!readOnly && open && (
               <ul
                 ref={listRef}
@@ -315,4 +373,5 @@ const CustomSelectInlineIcons: React.FC<CustomSelectProps> = ({
     </FormGroup>
   );
 };
+
 export default CustomSelectInlineIcons;

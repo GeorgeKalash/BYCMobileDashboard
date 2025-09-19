@@ -234,7 +234,7 @@ const PaymentsHistoryPage = () => {
     <Col xs="12">
       <Card>
         <CommonCardHeader title={t("Payment History")}>
-          <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+          <Row className="g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
             <Col>
               <CustomDatePicker
                 name="fromTrxDate"

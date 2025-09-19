@@ -99,6 +99,7 @@ export default function RootLayout({
               minWidth: 0,
               minHeight: 0,
               overflow: "hidden",
+              paddingTop: "9vh",
             }}
           >
             <div
