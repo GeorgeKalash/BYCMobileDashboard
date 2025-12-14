@@ -19,7 +19,9 @@ const Notification_Type = () => {
   const { t } = useTranslation(i18LangStatus);
   const dispatch = useAppDispatch();
 
-  const [data, setData] = useState<{ id: any; key: string; value: string }[]>([]);
+  const [data, setData] = useState<{ id: any; key: string; value: string }[]>(
+    []
+  );
   const [modalState, setModalState] = useState({
     open: false,
     action: null as "add" | "edit" | null,
@@ -116,7 +118,7 @@ const Notification_Type = () => {
             : t("Edit Notification Type")
         }
         width="600px"
-        height="15vh"
+        height="20vh"
         onSubmit={handleSubmit}
       >
         <NotificationTypeForm

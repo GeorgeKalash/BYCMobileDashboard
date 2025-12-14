@@ -2,11 +2,11 @@ import React from "react";
 import { Card, CardBody, Col } from "reactstrap";
 import { useAppSelector } from "@/Redux/Hooks";
 import { useTranslation } from "@/app/i18n/client";
-import * as Icons from "lucide-react"; 
+import * as Icons from "lucide-react";
 
 interface SimpleStatsGridProps {
   data: Record<string, number | string>;
-  logoMap?: Record<string, string>; 
+  logoMap?: Record<string, string>;
 }
 
 function toPascalCase(str: string) {
@@ -22,7 +22,9 @@ const IconComponent: React.FC<{
   strokeWidth?: number;
 }> = ({ name, size = 24, color = "currentColor", strokeWidth = 2 }) => {
   const iconName = toPascalCase(name);
-  const Icon = Icons[iconName as keyof typeof Icons] as React.ElementType | undefined;
+  const Icon = Icons[iconName as keyof typeof Icons] as
+    | React.ElementType
+    | undefined;
 
   if (!Icon) {
     console.warn(`Icon "${iconName}" not found in lucide-react.`);
@@ -45,9 +47,9 @@ const SimpleStatsGrid: React.FC<SimpleStatsGridProps> = ({
         const iconName = logoMap[title];
 
         return (
-          <Col xl="3" sm="6" key={i} className="mb-3">
+          <Col key={i} className="mb-3">
             <Card className="h-100">
-              <CardBody className="d-flex align-items-center gap-3">
+              <CardBody className="d-flex align-items-center gap-2 py-1 px-3">
                 {iconName && (
                   <div
                     className="flex-shrink-0 d-flex align-items-center justify-content-center"

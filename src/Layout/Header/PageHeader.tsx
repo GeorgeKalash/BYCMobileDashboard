@@ -9,7 +9,7 @@ export const PageHeader = () => {
       <Row>
         {/* <Searchbar /> */}
         <HeaderLogo />
-        <HeaderRight/>
+        <HeaderRight />
       </Row>
     </Col>
   );

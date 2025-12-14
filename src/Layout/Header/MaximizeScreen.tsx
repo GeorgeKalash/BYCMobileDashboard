@@ -16,7 +16,11 @@ const MaximizeScreen = () => {
 
   return (
     <li>
-      <a className="text-dark" onClick={() => fullScreenHandler(!fullScreen)} href={Href}>
+      <a
+        className="text-dark"
+        onClick={() => fullScreenHandler(!fullScreen)}
+        href={Href}
+      >
         <Maximize />
       </a>
     </li>

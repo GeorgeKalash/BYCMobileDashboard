@@ -105,7 +105,7 @@ const Reports = () => {
           }, []);
 
           return (
-            <Form style={{ maxHeight: "85vh", overflowY: "auto" }}>
+            <Form>
               <Card className="mb-3">
                 <CommonCardHeader title={t("Reports")}>
                   <Row>
@@ -146,7 +146,7 @@ const Reports = () => {
                   </Row>
                 </CommonCardHeader>
                 <CardBody>
-                  <Row>
+                  <Row className="g-3 row-cols-lg-5">
                     <SimpleStatsGrid
                       data={Object.fromEntries(
                         Object.entries(values).map(([key, val]) => [

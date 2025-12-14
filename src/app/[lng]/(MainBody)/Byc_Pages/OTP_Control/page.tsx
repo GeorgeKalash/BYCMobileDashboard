@@ -96,7 +96,7 @@ const MobileVerificationForm = () => {
             onSubmit={handleSubmit}
           >
             {({ values, setFieldValue }) => (
-              <Form style={{ maxHeight: "85vh", overflowY: "auto" }}>
+              <Form>
                 <FieldArray name="settings">
                   {() =>
                     values.settings.map((item, index) => (
@@ -115,10 +115,14 @@ const MobileVerificationForm = () => {
                                   val = val.replace(/[^0-9.]/g, "");
                                   const parts = val.split(".");
                                   if (parts.length > 2) {
-                                    val = parts[0] + "." + parts.slice(1).join("");
+                                    val =
+                                      parts[0] + "." + parts.slice(1).join("");
                                   }
 
-                                  setFieldValue(`settings[${index}].timeFrame`, val);
+                                  setFieldValue(
+                                    `settings[${index}].timeFrame`,
+                                    val
+                                  );
                                 }}
                               />
                             </Col>
